@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />  
+    <link rel="shortcut icon" href="../IMG/amf/favicon-ot.png">
+    <title>Prioridades</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+</head>
+<body>
+    <main>
+        <header>
+            <figure>
+                <img src="assets/img/OT-image.png" alt="">
+            </figure>
+        </header>
+    </main>
+ 
+    <section class="containers">
+        <article class="sub-container">
+            <h2>Datos de la Orden</h2>
+            <form action="">
+                <div class="eventos">
+                    <label for="">Tiempo Probable de falla (o equivalente)</label>
+                    <select name="" id="tiempoprobable">
+                        <option value="" selected>Selecciona...</option>
+                    </select>
+                </div>
+                <article class="eventos">
+                    <h3>Consecuencias si no se ejecuta el trabajo y ocurre la falla: </h3>
+               
+                    <label for="">Seguridad y salud: </label>
+                    <select name="" id="selSeguridad">
+                        <option value="" selected>Selecciona...</option>
+                    </select>
+                    <label for="">Ambiente: </label>
+                    <select name="" id="selAmbiente">
+                        <option value="" selected>Selecciona...</option>
+                    </select>
+                    <label for="">Clientes: </label>
+                    <select name="" id="selClientes">
+                        <option value="" selected>Selecciona...</option>
+                    </select>
+                    <label for="">Costos (Lucro, Cesante, Daños, Materiales): </label>
+                    <select name="" id="selCostos">
+                        <option value="" selected>Selecciona...</option>
+                    </select>
+                </article>
+                <div class="botones">
+                    <!-- SOLO añade type="button" -->
+                    <button id="procesar" type="button">Procesar</button>
+                    <button id="borrar"   type="button">Borrar</button>
+                </div>
+
+            </form>
+            <section class="resultados  hidden">
+                <article class="">
+                    <h6>ESTA ORDEN DE TRABAJO TIENE PRIORIDAD: </h6>
+                    <div>
+                        <h1 id="calculo_prioridad">Cargando...</h1>
+                    </div>
+                </article>
+                <article class="">
+                    <h6>DEBE SER EJECUTADA EN UN PLAZO NO MAYOR A: </h6>
+                    <div>
+                        <h1 id="dias_de_ejecucion">Cargando...</h1>
+                    </div>
+                   
+                </article>
+            </section>
+        </article>
+    </section>
+    <footer>
+        <img src="assets/img/LogoPP.jpg" alt="" class="logito">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            Ver matriz de evaluación
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: #fcc328;">Guía para la asignación de prioridades con evaluación de Riesgo</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img src="../assets/img/CriterioparaAsignacióndePrioridad.svg" alt="Matriz" class="matriz">
+                </div>
+                </div>
+            </div>
+            </div>
+
+    </footer>
+    <!-- Modal introductorio solo para la primera visita -->
+    <div class="modal fade" id="introModal" tabindex="-1" aria-labelledby="introModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content intro-modal">
+                <div class="modal-header intro-modal__header">
+                    <div>
+                        <p class="intro-modal__eyebrow">Uso interno y confidencial</p>
+                        <h1 class="modal-title" id="introModalLabel">Aviso de confidencialidad</h1>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body intro-modal__body">
+                    <p>Esta herramienta opera en entornos externos (redes abiertas y dispositivos personales), por lo que todo acceso debe realizarse con conexiones seguras y únicamente por personal autorizado.</p>
+                    <ul class="intro-modal__list">
+                        <li>Los datos ingresados son confidenciales y no deben compartirse fuera del equipo responsable de la operación.</li>
+                        <li>Si te conectas desde celulares o laptops personales, confirma que la red sea confiable y cierra sesión al finalizar.</li>
+                        <li>Respeta los lineamientos de SGIA y los roles asignados (Programador, Planeador, Analista, Supervisor, Técnico, etc.).</li>
+                    </ul>
+                    <p class="intro-modal__note">La interfaz se adapta automáticamente a escritorio y móviles; utiliza el botón <strong>Procesar</strong> solo después de completar todos los campos requeridos.</p>
+                </div>
+                <div class="modal-footer intro-modal__footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Acepto y continuar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="js/script.js"></script>
+</body>
+</html>
