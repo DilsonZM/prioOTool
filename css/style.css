@@ -137,8 +137,8 @@ button:hover{ filter:brightness(1.05); }
 .btn:hover{ border:none !important; box-shadow:none !important; }
 
 /* Modal: mostramos la imagen al 100% del contenedor sin trucos de ancho */
-.modal-body{ padding:0 !important; }
-.modal-content{ width:auto !important; }
+#exampleModal .modal-body{ padding:0 !important; }
+#exampleModal .modal-content{ width:auto !important; }
 .intro-modal{
   border:0;
   border-radius:24px;
@@ -204,6 +204,7 @@ footer .matriz{ width:100%; height:auto; }
 @media (max-width:480px){
   header{ margin:20px 0 0; }
   .containers{ padding:16px 12px 48px; }
-  select{ font-size:15px; }
+  .sub-container{ padding:16px; }
+  select{ font-size:15px; max-width: 100%; }
   .resultados h1{ font-size:30px; }
 }
