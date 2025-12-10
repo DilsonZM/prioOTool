@@ -190,14 +190,22 @@ document.getElementById('borrar').addEventListener('click', () => {
 const introModalEl = document.getElementById('introModal');
 if (introModalEl && window.bootstrap) {
   const INTRO_STORAGE_KEY = 'priotool_intro_seen';
-  const introModal = new bootstrap.Modal(introModalEl, { backdrop: 'static' });
-  const yaVisto = localStorage.getItem(INTRO_STORAGE_KEY);
+  let introModalInstance = null;
 
-  if (!yaVisto) {
-    introModal.show();
-  }
+  const launchIntroModal = () => {
+    if (localStorage.getItem(INTRO_STORAGE_KEY)) {
+      return;
+    }
 
-  introModalEl.addEventListener('hidden.bs.modal', () => {
-    localStorage.setItem(INTRO_STORAGE_KEY, 'true');
-  });
+    if (!introModalInstance) {
+      introModalInstance = new bootstrap.Modal(introModalEl, { backdrop: 'static' });
+      introModalEl.addEventListener('hidden.bs.modal', () => {
+        localStorage.setItem(INTRO_STORAGE_KEY, 'true');
+      });
+    }
+
+    introModalInstance.show();
+  };
+
+  window.prioShowIntro = launchIntroModal;
 }

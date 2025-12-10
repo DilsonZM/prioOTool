@@ -12,117 +12,225 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 </head>
 <body>
-    <main>
-        <header>
-            <figure>
-                <img src="assets/img/OT-image.png" alt="">
-            </figure>
-        </header>
-    </main>
- 
-    <section class="containers">
-        <article class="sub-container">
-            <h2>Datos de la Orden</h2>
-            <form action="">
-                <div class="eventos">
-                    <label for="">Tiempo Probable de falla (o equivalente)</label>
-                    <select name="" id="tiempoprobable">
-                        <option value="" selected>Selecciona...</option>
-                    </select>
+    <section id="auth-shell" class="auth-shell">
+        <span class="auth-accent auth-accent--primary"></span>
+        <span class="auth-accent auth-accent--secondary"></span>
+        <div class="auth-surface">
+        <div class="mobile-hero-head">
+            <img src="assets/img/OT-image.png" alt="PriOTool" loading="lazy">
+            <div class="mobile-hero-copy">
+                <p class="mobile-hero-eyebrow">PriOTool</p>
+                <p class="mobile-hero-title">Controla prioridades sin perder seguridad.</p>
+            </div>
+        </div>
+        <div class="auth-panel">
+            <article class="auth-card" id="login-card">
+            <h2>Acceso seguro</h2>
+            <p class="auth-copy">Ingresa con tu correo corporativo antes de utilizar la matriz de prioridades.</p>
+            <form id="login-form">
+                <label for="login-email">Correo</label>
+                <input type="email" id="login-email" required placeholder="usuario@empresa.com">
+                <label for="login-password">Contraseña</label>
+                <input type="password" id="login-password" required placeholder="••••••••">
+                <div class="auth-actions">
+                    <button type="submit" class="btn-primary">Ingresar</button>
+                    <button type="button" class="btn-link" data-view="register">Solicitar acceso</button>
                 </div>
-                <article class="eventos">
-                    <h3>Consecuencias si no se ejecuta el trabajo y ocurre la falla: </h3>
-               
-                    <label for="">Seguridad y salud: </label>
-                    <select name="" id="selSeguridad">
-                        <option value="" selected>Selecciona...</option>
-                    </select>
-                    <label for="">Ambiente: </label>
-                    <select name="" id="selAmbiente">
-                        <option value="" selected>Selecciona...</option>
-                    </select>
-                    <label for="">Clientes: </label>
-                    <select name="" id="selClientes">
-                        <option value="" selected>Selecciona...</option>
-                    </select>
-                    <label for="">Costos (Lucro, Cesante, Daños, Materiales): </label>
-                    <select name="" id="selCostos">
-                        <option value="" selected>Selecciona...</option>
-                    </select>
-                </article>
-                <div class="botones">
-                    <!-- SOLO añade type="button" -->
-                    <button id="procesar" type="button">Procesar</button>
-                    <button id="borrar"   type="button">Borrar</button>
-                </div>
-
+                <p class="auth-alert hidden" id="login-alert"></p>
             </form>
-            <section class="resultados  hidden">
-                <article class="">
-                    <h6>ESTA ORDEN DE TRABAJO TIENE PRIORIDAD: </h6>
-                    <div>
-                        <h1 id="calculo_prioridad">Cargando...</h1>
-                    </div>
-                </article>
-                <article class="">
-                    <h6>DEBE SER EJECUTADA EN UN PLAZO NO MAYOR A: </h6>
-                    <div>
-                        <h1 id="dias_de_ejecucion">Cargando...</h1>
-                    </div>
-                   
-                </article>
-            </section>
+            </article>
+
+            <article class="auth-card hidden" id="register-card">
+            <h2>Solicitar acceso</h2>
+            <p class="auth-copy">Los registros se aprueban manualmente para proteger la información operativa.</p>
+            <form id="register-form">
+                <label for="reg-name">Nombre completo</label>
+                <input type="text" id="reg-name" required>
+                <label for="reg-email">Correo corporativo</label>
+                <input type="email" id="reg-email" required>
+                <label for="reg-password">Contraseña temporal</label>
+                <input type="password" id="reg-password" required>
+                <label for="reg-area">Area / Superintendencia</label>
+                <input type="text" id="reg-area" required>
+                <label for="reg-supervisor">Supervisor responsable</label>
+                <input type="text" id="reg-supervisor" required>
+                <label for="reg-gerencia">Gerencia</label>
+                <input type="text" id="reg-gerencia" required>
+                <label for="reg-role">Rol solicitado</label>
+                <select id="reg-role" required>
+                    <option value="tecnico" selected>Técnico</option>
+                    <option value="analista">Analista</option>
+                    <option value="planeador">Planeador</option>
+                    <option value="programador">Programador</option>
+                    <option value="supervisor">Supervisor</option>
+                </select>
+                <div class="auth-actions">
+                    <button type="submit" class="btn-primary">Enviar solicitud</button>
+                    <button type="button" class="btn-link" data-view="login">Ya tengo cuenta</button>
+                </div>
+                <p class="auth-alert hidden" id="register-alert"></p>
+            </form>
         </article>
-    </section>
-    <footer>
-        <img src="assets/img/LogoPP.jpg" alt="" class="logito">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-            Ver matriz de evaluación
-            </button>
+        </div>
 
-            <!-- Modal -->
-            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-xl">
-                <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: #fcc328;">Guía para la asignación de prioridades con evaluación de Riesgo</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <img src="../assets/img/CriterioparaAsignacióndePrioridad.svg" alt="Matriz" class="matriz">
-                </div>
-                </div>
-            </div>
-            </div>
-
-    </footer>
-    <!-- Modal introductorio solo para la primera visita -->
-    <div class="modal fade" id="introModal" tabindex="-1" aria-labelledby="introModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content intro-modal">
-                <div class="modal-header intro-modal__header">
-                    <div>
-                        <p class="intro-modal__eyebrow">Uso interno y confidencial</p>
-                        <h1 class="modal-title" id="introModalLabel">Aviso de confidencialidad</h1>
-                    </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body intro-modal__body">
-                    <p>Esta herramienta opera en entornos externos (redes abiertas y dispositivos personales), por lo que todo acceso debe realizarse con conexiones seguras y únicamente por personal autorizado.</p>
-                    <ul class="intro-modal__list">
-                        <li>Los datos ingresados son confidenciales y no deben compartirse fuera del equipo responsable de la operación.</li>
-                        <li>Si te conectas desde celulares o laptops personales, confirma que la red sea confiable y cierra sesión al finalizar.</li>
-                        <li>Respeta los lineamientos de SGIA y los roles asignados (Programador, Planeador, Analista, Supervisor, Técnico, etc.).</li>
+        <aside class="hero-panel">
+            <img src="assets/img/Flujo.png" alt="Flujo PriOTool" class="hero-image" loading="lazy">
+            <div class="hero-overlay">
+                <img src="assets/img/OT-image.png" alt="Logotipo PriOTool" class="hero-logo-top" loading="lazy">
+                <div class="hero-text">
+                    <h1>Controla las prioridades<br>con un vistazo.</h1>
+                    <p class="hero-copy">Visualiza el camino completo de aprobación y mantén segura la información operativa sin depender de intranets cerradas.</p>
+                    <ul class="hero-list">
+                        <li>Secuencia visual del flujo SGIA.</li>
+                        <li>Roles delegados por el administrador central.</li>
+                        <li>Listo para móviles y redes externas.</li>
                     </ul>
-                    <p class="intro-modal__note">La interfaz se adapta automáticamente a escritorio y móviles; utiliza el botón <strong>Procesar</strong> solo después de completar todos los campos requeridos.</p>
+                    <div class="hero-signature">
+                        <span>PriOTool</span>
+                        <small>Gestión Integral de Activos</small>
+                    </div>
                 </div>
-                <div class="modal-footer intro-modal__footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Acepto y continuar</button>
+            </div>
+        </aside>
+        </div>
+    </section>
+
+    <section id="pending-card" class="pending-card hidden">
+        <div>
+            <p class="pending-eyebrow">Solicitud recibida</p>
+            <h3>Tu cuenta está pendiente de aprobación</h3>
+            <p>El administrador validará tus datos y asignará los roles correspondientes. Te notificaremos al correo registrado.</p>
+            <button type="button" class="btn-secondary" id="pending-logout">Cerrar sesión</button>
+        </div>
+    </section>
+
+    <div id="app-shell" class="app-shell hidden">
+        <div class="session-bar" id="session-bar">
+            <div>
+                <p class="session-eyebrow">Usuario autenticado</p>
+                <p class="session-user" id="session-user">—</p>
+            </div>
+            <div class="session-meta">
+                <span id="session-role">Rol: —</span>
+                <button type="button" id="logoutBtn" class="btn-secondary">Cerrar sesión</button>
+            </div>
+        </div>
+
+        <main>
+            <header>
+                <figure>
+                    <img src="assets/img/OT-image.png" alt="">
+                </figure>
+            </header>
+        </main>
+    
+        <section class="containers">
+            <article class="sub-container">
+                <h2>Datos de la Orden</h2>
+                <form action="">
+                    <div class="eventos">
+                        <label for="">Tiempo Probable de falla (o equivalente)</label>
+                        <select name="" id="tiempoprobable">
+                            <option value="" selected>Selecciona...</option>
+                        </select>
+                    </div>
+                    <article class="eventos">
+                        <h3>Consecuencias si no se ejecuta el trabajo y ocurre la falla: </h3>
+                   
+                        <label for="">Seguridad y salud: </label>
+                        <select name="" id="selSeguridad">
+                            <option value="" selected>Selecciona...</option>
+                        </select>
+                        <label for="">Ambiente: </label>
+                        <select name="" id="selAmbiente">
+                            <option value="" selected>Selecciona...</option>
+                        </select>
+                        <label for="">Clientes: </label>
+                        <select name="" id="selClientes">
+                            <option value="" selected>Selecciona...</option>
+                        </select>
+                        <label for="">Costos (Lucro, Cesante, Daños, Materiales): </label>
+                        <select name="" id="selCostos">
+                            <option value="" selected>Selecciona...</option>
+                        </select>
+                    </article>
+                    <div class="botones">
+                        <!-- SOLO añade type="button" -->
+                        <button id="procesar" type="button">Procesar</button>
+                        <button id="borrar"   type="button">Borrar</button>
+                    </div>
+
+                </form>
+                <section class="resultados  hidden">
+                    <article class="">
+                        <h6>ESTA ORDEN DE TRABAJO TIENE PRIORIDAD: </h6>
+                        <div>
+                            <h1 id="calculo_prioridad">Cargando...</h1>
+                        </div>
+                    </article>
+                    <article class="">
+                        <h6>DEBE SER EJECUTADA EN UN PLAZO NO MAYOR A: </h6>
+                        <div>
+                            <h1 id="dias_de_ejecucion">Cargando...</h1>
+                        </div>
+                       
+                    </article>
+                </section>
+            </article>
+        </section>
+        <footer>
+            <img src="assets/img/LogoPP.jpg" alt="" class="logito">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Ver matriz de evaluación
+                </button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: #fcc328;">Guía para la asignación de prioridades con evaluación de Riesgo</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <img src="assets/img/CriterioparaAsignacióndePrioridad.svg" alt="Matriz" class="matriz">
+                    </div>
+                    </div>
+                </div>
+                </div>
+
+        </footer>
+        <!-- Modal introductorio solo para la primera visita -->
+        <div class="modal fade" id="introModal" tabindex="-1" aria-labelledby="introModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content intro-modal">
+                    <div class="modal-header intro-modal__header">
+                        <div>
+                            <p class="intro-modal__eyebrow">Uso interno y confidencial</p>
+                            <h1 class="modal-title" id="introModalLabel">Aviso de confidencialidad</h1>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body intro-modal__body">
+                        <p>Esta herramienta opera en entornos externos (redes abiertas y dispositivos personales), por lo que todo acceso debe realizarse con conexiones seguras y únicamente por personal autorizado.</p>
+                        <ul class="intro-modal__list">
+                            <li>Los datos ingresados son confidenciales y no deben compartirse fuera del equipo responsable de la operación.</li>
+                            <li>Si te conectas desde celulares o laptops personales, confirma que la red sea confiable y cierra sesión al finalizar.</li>
+                            <li>Respeta los lineamientos de SGIA y los roles asignados (Programador, Planeador, Analista, Supervisor, Técnico, etc.).</li>
+                        </ul>
+                        <p class="intro-modal__note">La interfaz se adapta automáticamente a escritorio y móviles; utiliza el botón <strong>Procesar</strong> solo después de completar todos los campos requeridos.</p>
+                    </div>
+                    <div class="modal-footer intro-modal__footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Acepto y continuar</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="js/script.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script type="module" src="js/auth.js"></script>
 </body>
 </html>
