@@ -1,6 +1,6 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js';
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, sendEmailVerification } from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js';
-import { getFirestore, doc, getDoc, setDoc, serverTimestamp, updateDoc } from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js';
+import { getFirestore, doc, getDoc, setDoc, serverTimestamp, updateDoc, collection, getDocs, query, where } from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js';
 
 const cfg = window.PRIO_FIREBASE_CONFIG;
 if (!cfg) {
@@ -39,6 +39,25 @@ const pendingLogout = qs('pending-logout');
 const pendingRequestAgain = qs('pending-request-again');
 const pendingClose = qs('pending-close');
 const sessionBar = qs('session-bar');
+const drawer = qs('side-drawer');
+const drawerToggle = qs('drawerToggle');
+const drawerClose = qs('drawerClose');
+const drawerLogout = qs('logoutDrawer');
+const drawerRoles = qs('drawer-roles');
+const drawerArea = qs('drawer-area');
+const drawerGerencia = qs('drawer-gerencia');
+const drawerSupervisor = qs('drawer-supervisor');
+const drawerEmail = qs('drawer-email');
+const adminEmpty = qs('admin-empty');
+const adminTableWrapper = qs('admin-table-wrapper');
+const adminRows = qs('request-rows');
+const pageForm = qs('page-form');
+const pageAdmin = qs('page-admin');
+const navDrawerForm = qs('nav-drawer-form');
+const navDrawerAdmin = qs('nav-drawer-admin');
+
+let currentProfile = null;
+let currentRoles = [];
 
 const viewButtons = document.querySelectorAll('.btn-link[data-view]');
 viewButtons.forEach(btn => {
@@ -57,6 +76,9 @@ function renderState(state){
   toggle(shells.auth, state === 'auth');
   toggle(shells.pending, state === 'pending');
   toggle(shells.app, state === 'app');
+  if (state !== 'app') {
+    closeDrawer();
+  }
 }
 
 function setLoading(on){
@@ -108,6 +130,127 @@ function showError(el, message){
 function resetAlerts(){
   loginAlert?.classList.add('hidden');
   registerAlert?.classList.add('hidden');
+}
+
+function isSuperAdmin(roles = []){
+  return roles.includes('superadmin') || roles.includes('admin');
+}
+
+function isSupervisor(roles = []){
+  return roles.includes('supervisor');
+}
+
+function setDrawerData(profile, roles){
+  const rolesText = roles?.length ? roles.join(', ') : '—';
+  setText(drawerRoles?.id, rolesText);
+  setText(drawerArea?.id, profile?.area || '—');
+  setText(drawerGerencia?.id, profile?.gerencia || '—');
+  setText(drawerSupervisor?.id, profile?.supervisor || '—');
+  setText(drawerEmail?.id, profile?.email || '—');
+}
+
+function openDrawer(){
+  if (!drawer) return;
+  drawer.classList.add('is-open');
+  toggle(drawer, true);
+}
+
+function closeDrawer(){
+  if (!drawer) return;
+  drawer.classList.remove('is-open');
+  setTimeout(() => toggle(drawer, false), 180);
+}
+
+function syncAdminVisibility(roles){
+  const allowed = isSuperAdmin(roles) || isSupervisor(roles);
+  if (navDrawerAdmin) {
+    toggle(navDrawerAdmin, allowed);
+  }
+}
+
+function setActiveTab(isAdmin){
+  if (navDrawerForm) navDrawerForm.classList.toggle('is-active', !isAdmin);
+  if (navDrawerAdmin) navDrawerAdmin.classList.toggle('is-active', !!isAdmin);
+}
+
+function goToPage(page){
+  const toAdmin = page === 'admin';
+  toggle(pageForm, !toAdmin);
+  toggle(pageAdmin, toAdmin);
+  setActiveTab(toAdmin);
+  if (toAdmin) {
+    loadAdminPage();
+  }
+}
+
+function formatDate(ts){
+  if (!ts) return '—';
+  try {
+    const date = ts.toDate ? ts.toDate() : new Date(ts);
+    return date.toLocaleDateString();
+  } catch (e) {
+    return '—';
+  }
+}
+
+async function fetchRequests(profile){
+  if (!db) return [];
+  const filters = [];
+  const superAdmin = isSuperAdmin(currentRoles);
+  const supervisor = isSupervisor(currentRoles);
+  if (!superAdmin && supervisor) {
+    if (profile?.area) filters.push(where('area', '==', profile.area));
+    else if (profile?.gerencia) filters.push(where('gerencia', '==', profile.gerencia));
+  }
+
+  const colRef = collection(db, 'users');
+  const q = filters.length ? query(colRef, ...filters) : colRef;
+  const snap = await getDocs(q);
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+}
+
+function renderRequests(rows){
+  if (!adminRows || !adminEmpty || !adminTableWrapper) return;
+  const filtered = rows.filter(r => !r.approved || (Array.isArray(r.roles) && r.roles.includes('solicitado')));
+  adminRows.innerHTML = '';
+  if (!filtered.length) {
+    toggle(adminEmpty, true);
+    toggle(adminTableWrapper, false);
+    return;
+  }
+  toggle(adminEmpty, false);
+  toggle(adminTableWrapper, true);
+
+  filtered.forEach(r => {
+    const estadoAprobado = !!r.approved;
+    const chipClass = estadoAprobado ? 'admin-chip admin-chip--approved' : 'admin-chip admin-chip--pending';
+    const estadoTxt = estadoAprobado ? 'Aprobado' : 'Pendiente';
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${r.email || '—'}</td>
+      <td>${r.requestedRole || (Array.isArray(r.roles) ? r.roles.join(', ') : '—')}</td>
+      <td>${r.area || '—'}</td>
+      <td>${r.gerencia || '—'}</td>
+      <td><span class="${chipClass}">${estadoTxt}</span></td>
+      <td>${formatDate(r.createdAt)}</td>
+    `;
+    adminRows.appendChild(row);
+  });
+}
+
+async function loadAdminPage(){
+  try {
+    setLoading(true);
+    const rows = await fetchRequests(currentProfile);
+    renderRequests(rows);
+  } catch (err) {
+    console.error('No se pudieron cargar las solicitudes', err);
+    adminRows.innerHTML = '<tr><td colspan="6">Error al cargar solicitudes.</td></tr>';
+    toggle(adminEmpty, false);
+    toggle(adminTableWrapper, true);
+  } finally {
+    setLoading(false);
+  }
 }
 
 async function handleLogin(evt){
@@ -193,10 +336,17 @@ async function hydrateSession(user){
     const syncedData = await ensureRoleSync(user, data);
     const approved = !!syncedData?.approved;
     const roles = syncedData?.roles?.length ? syncedData.roles : [syncedData?.requestedRole || 'pendiente'];
+    currentProfile = { ...syncedData, email: user.email };
+    currentRoles = roles;
     setText('session-user', syncedData?.displayName || user.email || 'Usuario');
     setText('session-role', 'Rol: ' + roles.join(', '));
+    setDrawerData(currentProfile, roles);
+    syncAdminVisibility(roles);
     toggle(sessionBar, approved);
     renderState(approved ? 'app' : 'pending');
+    if (approved) {
+      goToPage('form');
+    }
     if (approved && typeof window.prioShowIntro === 'function') {
       window.prioShowIntro();
     }
@@ -227,6 +377,12 @@ if (pendingClose) pendingClose.addEventListener('click', async () => {
   renderState('auth');
   switchForm('login');
 });
+
+if (drawerToggle) drawerToggle.addEventListener('click', openDrawer);
+if (drawerClose) drawerClose.addEventListener('click', closeDrawer);
+if (drawerLogout) drawerLogout.addEventListener('click', () => auth && signOut(auth));
+if (navDrawerAdmin) navDrawerAdmin.addEventListener('click', () => { goToPage('admin'); closeDrawer(); });
+if (navDrawerForm) navDrawerForm.addEventListener('click', () => { goToPage('form'); closeDrawer(); });
 
 // Permite cerrar al clicar fuera de la tarjeta
 if (shells.pending) {

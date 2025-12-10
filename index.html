@@ -117,101 +117,174 @@
     </section>
 
     <div id="app-shell" class="app-shell hidden">
+        <aside id="side-drawer" class="side-drawer hidden" aria-label="Menú lateral">
+            <div class="drawer-head">
+                <div class="drawer-brand">
+                    <span class="drawer-logo">priOTool</span>
+                    <small>Gestión de activos</small>
+                </div>
+                <button type="button" id="drawerClose" aria-label="Cerrar menú" class="drawer-close">×</button>
+            </div>
+            <div class="drawer-user-meta">
+                <p class="drawer-label">Rol</p>
+                <p id="drawer-roles" class="drawer-value">—</p>
+                <p class="drawer-label">Área / Sup.</p>
+                <p id="drawer-area" class="drawer-value">—</p>
+                <p class="drawer-label">Gerencia</p>
+                <p id="drawer-gerencia" class="drawer-value">—</p>
+                <p class="drawer-label">Supervisor</p>
+                <p id="drawer-supervisor" class="drawer-value">—</p>
+                <p class="drawer-label">Correo</p>
+                <p id="drawer-email" class="drawer-value">—</p>
+            </div>
+            <nav class="drawer-nav" aria-label="Navegación principal">
+                <button type="button" id="nav-drawer-form" class="drawer-link is-active">
+                    <span class="drawer-ico" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" role="img"><path d="M3 11.5 12 4l9 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 10v10h5v-6h4v6h5V10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </span>
+                    <span>Formulario</span>
+                </button>
+                <button type="button" id="nav-drawer-admin" class="drawer-link hidden">
+                    <span class="drawer-ico" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" role="img"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 12l2 2 4-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </span>
+                    <span>Solicitudes</span>
+                </button>
+            </nav>
+            <div class="drawer-actions">
+                <button type="button" id="logoutDrawer" class="drawer-btn drawer-btn--ghost">Cerrar sesión</button>
+            </div>
+        </aside>
+
         <div class="session-bar" id="session-bar">
-            <div>
-                <p class="session-eyebrow">Usuario autenticado</p>
-                <p class="session-user" id="session-user">—</p>
+            <div class="session-left">
+                <button type="button" id="drawerToggle" class="menu-toggle" aria-label="Abrir menú">☰</button>
+                <div>
+                    <p class="session-eyebrow">Sesión activa</p>
+                    <p class="session-user" id="session-user">—</p>
+                </div>
             </div>
             <div class="session-meta">
                 <span id="session-role">Rol: —</span>
-                <button type="button" id="logoutBtn" class="btn-secondary">Cerrar sesión</button>
             </div>
         </div>
 
-        <main>
-            <header>
-                <figure>
-                    <img src="assets/img/OT-image.png" alt="">
-                </figure>
-            </header>
-        </main>
-    
-        <section class="containers">
-            <article class="sub-container">
-                <h2>Datos de la Orden</h2>
-                <form action="">
-                    <div class="eventos">
-                        <label for="">Tiempo Probable de falla (o equivalente)</label>
-                        <select name="" id="tiempoprobable">
-                            <option value="" selected>Selecciona...</option>
-                        </select>
-                    </div>
-                    <article class="eventos">
-                        <h3>Consecuencias si no se ejecuta el trabajo y ocurre la falla: </h3>
-                   
-                        <label for="">Seguridad y salud: </label>
-                        <select name="" id="selSeguridad">
-                            <option value="" selected>Selecciona...</option>
-                        </select>
-                        <label for="">Ambiente: </label>
-                        <select name="" id="selAmbiente">
-                            <option value="" selected>Selecciona...</option>
-                        </select>
-                        <label for="">Clientes: </label>
-                        <select name="" id="selClientes">
-                            <option value="" selected>Selecciona...</option>
-                        </select>
-                        <label for="">Costos (Lucro, Cesante, Daños, Materiales): </label>
-                        <select name="" id="selCostos">
-                            <option value="" selected>Selecciona...</option>
-                        </select>
-                    </article>
-                    <div class="botones">
-                        <!-- SOLO añade type="button" -->
-                        <button id="procesar" type="button">Procesar</button>
-                        <button id="borrar"   type="button">Borrar</button>
-                    </div>
-
-                </form>
-                <section class="resultados  hidden">
-                    <article class="">
-                        <h6>ESTA ORDEN DE TRABAJO TIENE PRIORIDAD: </h6>
-                        <div>
-                            <h1 id="calculo_prioridad">Cargando...</h1>
+        <section id="page-form" class="page-view">
+            <main>
+                <header>
+                    <figure>
+                        <img src="assets/img/OT-image.png" alt="">
+                    </figure>
+                </header>
+            </main>
+        
+            <section class="containers">
+                <article class="sub-container">
+                    <h2>Datos de la Orden</h2>
+                    <form action="">
+                        <div class="eventos">
+                            <label for="">Tiempo Probable de falla (o equivalente)</label>
+                            <select name="" id="tiempoprobable">
+                                <option value="" selected>Selecciona...</option>
+                            </select>
                         </div>
-                    </article>
-                    <article class="">
-                        <h6>DEBE SER EJECUTADA EN UN PLAZO NO MAYOR A: </h6>
-                        <div>
-                            <h1 id="dias_de_ejecucion">Cargando...</h1>
-                        </div>
+                        <article class="eventos">
+                            <h3>Consecuencias si no se ejecuta el trabajo y ocurre la falla: </h3>
                        
-                    </article>
-                </section>
-            </article>
+                            <label for="">Seguridad y salud: </label>
+                            <select name="" id="selSeguridad">
+                                <option value="" selected>Selecciona...</option>
+                            </select>
+                            <label for="">Ambiente: </label>
+                            <select name="" id="selAmbiente">
+                                <option value="" selected>Selecciona...</option>
+                            </select>
+                            <label for="">Clientes: </label>
+                            <select name="" id="selClientes">
+                                <option value="" selected>Selecciona...</option>
+                            </select>
+                            <label for="">Costos (Lucro, Cesante, Daños, Materiales): </label>
+                            <select name="" id="selCostos">
+                                <option value="" selected>Selecciona...</option>
+                            </select>
+                        </article>
+                        <div class="botones">
+                            <!-- SOLO añade type="button" -->
+                            <button id="procesar" type="button">Procesar</button>
+                            <button id="borrar"   type="button">Borrar</button>
+                        </div>
+
+                    </form>
+                    <section class="resultados  hidden">
+                        <article class="">
+                            <h6>ESTA ORDEN DE TRABAJO TIENE PRIORIDAD: </h6>
+                            <div>
+                                <h1 id="calculo_prioridad">Cargando...</h1>
+                            </div>
+                        </article>
+                        <article class="">
+                            <h6>DEBE SER EJECUTADA EN UN PLAZO NO MAYOR A: </h6>
+                            <div>
+                                <h1 id="dias_de_ejecucion">Cargando...</h1>
+                            </div>
+                           
+                        </article>
+                    </section>
+                </article>
+            </section>
+            <footer>
+                <img src="assets/img/LogoPP.jpg" alt="" class="logito">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    Ver matriz de evaluación
+                    </button>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: #fcc328;">Guía para la asignación de prioridades con evaluación de Riesgo</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <img src="assets/img/CriterioparaAsignacióndePrioridad.svg" alt="Matriz" class="matriz">
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+
+            </footer>
         </section>
-        <footer>
-            <img src="assets/img/LogoPP.jpg" alt="" class="logito">
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                Ver matriz de evaluación
-                </button>
 
-                <!-- Modal -->
-                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-xl">
-                    <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel" style="color: #fcc328;">Guía para la asignación de prioridades con evaluación de Riesgo</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <img src="assets/img/CriterioparaAsignacióndePrioridad.svg" alt="Matriz" class="matriz">
-                    </div>
+        <section id="page-admin" class="page-view hidden" aria-label="Panel de solicitudes">
+            <div class="admin-page">
+                <div class="admin-head">
+                    <div>
+                        <p class="admin-eyebrow">Solicitudes</p>
+                        <h3 class="admin-title">Registro de usuarios</h3>
+                        <p class="admin-subtitle">Super admin ve todo; supervisores solo su área/gerencia.</p>
                     </div>
                 </div>
+                <div class="admin-body">
+                    <div id="admin-empty" class="admin-empty hidden">No hay solicitudes para mostrar.</div>
+                    <div class="admin-table-wrapper hidden" id="admin-table-wrapper">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Correo</th>
+                                    <th>Rol solicitado</th>
+                                    <th>Área</th>
+                                    <th>Gerencia</th>
+                                    <th>Estado</th>
+                                    <th>Creado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="request-rows"></tbody>
+                        </table>
+                    </div>
                 </div>
-
-        </footer>
+            </div>
+        </section>
         <!-- Modal introductorio solo para la primera visita -->
         <div class="modal fade" id="introModal" tabindex="-1" aria-labelledby="introModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
