@@ -27,6 +27,7 @@ const shells = {
   pending: qs('pending-card'),
   app: qs('app-shell')
 };
+const loader = qs('loading-overlay');
 const loginCard = qs('login-card');
 const registerCard = qs('register-card');
 const loginForm = qs('login-form');
@@ -35,6 +36,8 @@ const loginAlert = qs('login-alert');
 const registerAlert = qs('register-alert');
 const logoutBtn = qs('logoutBtn');
 const pendingLogout = qs('pending-logout');
+const pendingRequestAgain = qs('pending-request-again');
+const pendingClose = qs('pending-close');
 const sessionBar = qs('session-bar');
 
 const viewButtons = document.querySelectorAll('.btn-link[data-view]');
@@ -54,6 +57,10 @@ function renderState(state){
   toggle(shells.auth, state === 'auth');
   toggle(shells.pending, state === 'pending');
   toggle(shells.app, state === 'app');
+}
+
+function setLoading(on){
+  toggle(loader, !!on);
 }
 
 async function ensureUserDoc(user){
@@ -180,7 +187,7 @@ async function hydrateSession(user){
     renderState('auth');
     return;
   }
-  renderState('pending');
+  setLoading(true);
   try {
     const data = await ensureUserDoc(user);
     const syncedData = await ensureRoleSync(user, data);
@@ -188,7 +195,7 @@ async function hydrateSession(user){
     const roles = syncedData?.roles?.length ? syncedData.roles : [syncedData?.requestedRole || 'pendiente'];
     setText('session-user', syncedData?.displayName || user.email || 'Usuario');
     setText('session-role', 'Rol: ' + roles.join(', '));
-    toggle(sessionBar, true);
+    toggle(sessionBar, approved);
     renderState(approved ? 'app' : 'pending');
     if (approved && typeof window.prioShowIntro === 'function') {
       window.prioShowIntro();
@@ -197,6 +204,8 @@ async function hydrateSession(user){
     console.error('Error al obtener el perfil:', err);
     renderState('auth');
     showError(loginAlert, 'No pudimos validar tu perfil. Intenta más tarde.');
+  } finally {
+    setLoading(false);
   }
 }
 
@@ -204,6 +213,33 @@ if (loginForm) loginForm.addEventListener('submit', handleLogin);
 if (registerForm) registerForm.addEventListener('submit', handleRegister);
 if (logoutBtn) logoutBtn.addEventListener('click', () => auth && signOut(auth));
 if (pendingLogout) pendingLogout.addEventListener('click', () => auth && signOut(auth));
+if (pendingRequestAgain) pendingRequestAgain.addEventListener('click', async () => {
+  if (auth) {
+    try { await signOut(auth); } catch (e) { /* noop */ }
+  }
+  renderState('auth');
+  switchForm('register');
+});
+if (pendingClose) pendingClose.addEventListener('click', async () => {
+  if (auth) {
+    try { await signOut(auth); } catch (e) { /* noop */ }
+  }
+  renderState('auth');
+  switchForm('login');
+});
+
+// Permite cerrar al clicar fuera de la tarjeta
+if (shells.pending) {
+  shells.pending.addEventListener('click', async (evt) => {
+    if (evt.target === shells.pending) {
+      if (auth) {
+        try { await signOut(auth); } catch (e) { /* noop */ }
+      }
+      renderState('auth');
+      switchForm('login');
+    }
+  });
+}
 
 if (auth) {
   onAuthStateChanged(auth, user => {
