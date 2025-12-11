@@ -1392,7 +1392,10 @@ if (btnCreateUserSubmit) {
   btnCreateUserSubmit.addEventListener('click', handleCreateUser);
 }
 if (drawerEditProfile) {
-  drawerEditProfile.addEventListener('click', openProfileEditor);
+  drawerEditProfile.addEventListener('click', () => {
+    openProfileEditor();
+    closeDrawer();
+  });
 }
 if (btnProfileSave) {
   btnProfileSave.addEventListener('click', saveProfileEdits);
