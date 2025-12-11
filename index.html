@@ -50,6 +50,20 @@
             <h2>Solicitar acceso</h2>
             <p class="auth-copy">Los registros se aprueban manualmente para proteger la información operativa.</p>
             <form id="register-form">
+                <div class="form-group" style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Tipo de Usuario</label>
+                    <div style="display: flex; gap: 1.5rem;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="reg-user-type" value="contractor" checked>
+                            <span>Contratista</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="reg-user-type" value="cerrejon">
+                            <span>Cerrejón</span>
+                        </label>
+                    </div>
+                </div>
+
                 <label for="reg-name">Nombre completo</label>
                 <input type="text" id="reg-name" required>
                 <label for="reg-email">Correo corporativo</label>

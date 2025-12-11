@@ -48,7 +48,7 @@ const regCompany = qs('reg-company');
 const regSupervisor = qs('reg-supervisor');
 const regSupervisorWrapper = qs('reg-supervisor-wrapper');
 const supervisorExtras = qs('supervisor-extras');
-const supervisorOriginInputs = document.querySelectorAll('input[name="supervisor-origin"]');
+const userTypeInputs = document.querySelectorAll('input[name="reg-user-type"]');
 const supervisorCompaniesWrapper = qs('supervisor-companies-wrapper');
 const regSupervisedCompanies = qs('reg-supervised-companies');
 const logoutBtn = qs('logoutBtn');
@@ -134,42 +134,42 @@ function getSelectedSupervisedCompaniesFrom(selectEl) {
     .filter(Boolean);
 }
 
-function syncSupervisorFields() {
+function syncUserFields() {
+  // 1. User Type Logic
+  let userType = 'contractor';
+  userTypeInputs.forEach(radio => {
+    if (radio.checked) userType = radio.value;
+  });
+
+  if (regCompany) {
+    if (userType === 'cerrejon') {
+      regCompany.value = 'Cerrejón';
+      regCompany.readOnly = true;
+      regCompany.parentElement.classList.add('locked-input'); // Optional styling
+    } else {
+      if (regCompany.value === 'Cerrejón') regCompany.value = '';
+      regCompany.readOnly = false;
+      regCompany.parentElement.classList.remove('locked-input');
+    }
+  }
+
+  // 2. Supervisor Role Logic
   if (!regRole) return;
   const isSupervisorRole = regRole.value === 'supervisor';
-  toggle(supervisorExtras, isSupervisorRole);
+  
+  // Show "Supervised Companies" only for Cerrejón Supervisors
+  if (supervisorCompaniesWrapper) {
+    const showSupervised = isSupervisorRole && userType === 'cerrejon';
+    toggle(supervisorCompaniesWrapper, showSupervised);
+  }
 
-  // El campo "Supervisor responsable" solo aplica a no-supervisores
+  // "Supervisor responsable" field logic
   if (regSupervisorWrapper && regSupervisor) {
+    // Supervisors don't need to specify a supervisor (or it's optional/different)
     toggle(regSupervisorWrapper, !isSupervisorRole);
     regSupervisor.required = !isSupervisorRole;
     if (isSupervisorRole) {
       regSupervisor.value = '';
-    }
-  }
-
-  // Controlar opciones según origen (Cerrejón vs contratista)
-  let origin = '';
-  supervisorOriginInputs.forEach(radio => {
-    if (radio.checked) origin = radio.value;
-  });
-
-  const isCerrejonSupervisor = isSupervisorRole && origin === 'cerrejon';
-
-  if (supervisorCompaniesWrapper) {
-    toggle(supervisorCompaniesWrapper, isCerrejonSupervisor);
-  }
-
-  if (regCompany) {
-    if (isCerrejonSupervisor) {
-      regCompany.value = 'Cerrejón';
-      regCompany.readOnly = true;
-    } else {
-      const wasLocked = regCompany.readOnly;
-      regCompany.readOnly = false;
-      if (wasLocked || !regCompany.value) {
-        regCompany.value = '';
-      }
     }
   }
 }
@@ -579,8 +579,11 @@ function createRequestRow(r, forceEdit = false) {
     const autoSaveAttr = isBulk ? `onblur=\"autoSave('${r.id}', 'FIELD', this.value)\"` : '';
     const autoSaveSelect = isBulk ? `onchange=\"autoSave('${r.id}', 'requestedRole', this.value)\"` : '';
 
+    const isSupervisorUser = isSupervisor(currentRoles) && !isSuperAdmin(currentRoles);
+    const companyReadOnly = isSupervisorUser ? 'readonly disabled style="background-color: #f3f4f6; color: #6b7280;"' : '';
+
     const nameInput = `<input type=\"text\" class=\"admin-input\" value=\"${r.displayName || ''}\" data-field=\"displayName\" ${isBulk ? autoSaveAttr.replace('FIELD','displayName') : ''}>`;
-    const companyInput = `<input type=\"text\" class=\"admin-input\" value=\"${r.company || ''}\" data-field=\"company\" ${isBulk ? autoSaveAttr.replace('FIELD','company') : ''}>`;
+    const companyInput = `<input type=\"text\" class=\"admin-input\" value=\"${r.company || ''}\" data-field=\"company\" ${companyReadOnly} ${isBulk && !isSupervisorUser ? autoSaveAttr.replace('FIELD','company') : ''}>`;
     const supervisorInput = `<input type=\"text\" class=\"admin-input\" value=\"${r.supervisor || ''}\" data-field=\"supervisor\" ${isBulk ? autoSaveAttr.replace('FIELD','supervisor') : ''}>`;
     
     let actions = '';
@@ -989,12 +992,16 @@ async function handleRegister(evt) {
   const supervisorInput = regSupervisor ? regSupervisor.value.trim() : '';
   const requestedRole = regRole ? regRole.value : '';
 
-  const isSupervisorRole = requestedRole === 'supervisor';
-  let supervisorType = '';
-  supervisorOriginInputs.forEach(radio => {
-    if (radio.checked) supervisorType = radio.value;
+  // User Type Logic
+  let userType = 'contractor';
+  userTypeInputs.forEach(radio => {
+    if (radio.checked) userType = radio.value;
   });
-  const supervisedCompanies = supervisorType === 'cerrejon' ? getSelectedSupervisedCompanies() : [];
+
+  const isSupervisorRole = requestedRole === 'supervisor';
+  const supervisedCompanies = (isSupervisorRole && userType === 'cerrejon') 
+    ? getSelectedSupervisedCompanies() 
+    : [];
 
   if (!name || !email || !requestedRole) {
     showError(registerAlert, 'Por favor completa todos los campos obligatorios.');
@@ -1007,15 +1014,12 @@ async function handleRegister(evt) {
       return;
     }
   } else {
-    if (!supervisorType) {
-      showError(registerAlert, 'Indica si eres supervisor de Cerrejón o de tu contratista.');
-      return;
-    }
-    if (supervisorType === 'cerrejon' && !supervisedCompanies.length) {
+    // Supervisor validations
+    if (userType === 'cerrejon' && !supervisedCompanies.length) {
       showError(registerAlert, 'Selecciona las empresas que supervisas.');
       return;
     }
-    if (supervisorType === 'contratista' && !companyInput) {
+    if (userType === 'contractor' && !companyInput) {
       showError(registerAlert, 'Indica la empresa a la que perteneces.');
       return;
     }
@@ -1032,8 +1036,9 @@ async function handleRegister(evt) {
   }
 
   try {
-    const company = isSupervisorRole && supervisorType === 'cerrejon' ? 'Cerrejón' : companyInput;
+    const company = userType === 'cerrejon' ? 'Cerrejón' : companyInput;
     const supervisorValue = isSupervisorRole ? name : supervisorInput;
+    
     await registerUser({
       name,
       email,
@@ -1041,7 +1046,7 @@ async function handleRegister(evt) {
       company,
       supervisor: supervisorValue,
       requestedRole,
-      supervisorType,
+      supervisorType: userType, // 'cerrejon' or 'contractor'
       supervisedCompanies
     });
     renderState('pending');
@@ -1098,12 +1103,12 @@ viewButtons.forEach(btn => {
 populateSupervisedCompanies();
 populateSupervisedCompanies(profileSupervisedSelect);
 if (regRole) {
-  regRole.addEventListener('change', syncSupervisorFields);
+  regRole.addEventListener('change', syncUserFields);
 }
-supervisorOriginInputs.forEach(radio => {
-  radio.addEventListener('change', syncSupervisorFields);
+userTypeInputs.forEach(radio => {
+  radio.addEventListener('change', syncUserFields);
 });
-syncSupervisorFields();
+syncUserFields();
 
 if (loginForm) loginForm.addEventListener('submit', handleLogin);
 if (registerForm) registerForm.addEventListener('submit', handleRegister);
