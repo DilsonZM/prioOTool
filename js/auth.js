@@ -1,5 +1,5 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js';
-import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, sendEmailVerification } from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js';
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, sendEmailVerification, deleteUser } from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js';
 import { getFirestore, doc, getDoc, setDoc, serverTimestamp, updateDoc, collection, getDocs, query, where } from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js';
 
 const cfg = window.PRIO_FIREBASE_CONFIG;
@@ -61,6 +61,7 @@ const adminFilterApply = qs('adminFilterApply');
 const adminFilterClear = qs('adminFilterClear');
 const adminFilterPanel = qs('admin-filter-panel');
 const adminActiveFilters = qs('admin-active-filters');
+const adminBulkEdit = qs('adminBulkEdit');
 const fStatusPending = qs('fStatusPending');
 const fStatusApproved = qs('fStatusApproved');
 const fArea = qs('fArea');
@@ -74,6 +75,8 @@ let adminFilters = {
   gerencia: '',
   role: ''
 };
+let isBulkEditMode = false;
+const excludedFromBulk = new Set(); // IDs de filas que el usuario canceló en modo masivo
 
 let currentProfile = null;
 let currentRoles = [];
@@ -316,6 +319,136 @@ function matchesSelect(val, term){
   return (val || '').toString().toLowerCase() === term.toLowerCase();
 }
 
+async function autoSave(id, field, value) {
+  const row = document.getElementById(`row-${id}`);
+  if (!row) return;
+
+  // Feedback visual: borde azul mientras guarda
+  const input = row.querySelector(`[data-field="${field}"]`);
+  if (input) {
+    input.style.borderColor = '#3b82f6';
+    input.style.boxShadow = '0 0 0 2px rgba(59,130,246,0.1)';
+  }
+
+  const payload = { [field]: value };
+  if (field === 'requestedRole') {
+    payload.roles = [value];
+  }
+
+  try {
+    await updateDoc(doc(db, 'users', id), payload);
+    
+    // Actualizar caché local
+    const reqIndex = lastRequests.findIndex(r => r.id === id);
+    if (reqIndex !== -1) {
+       lastRequests[reqIndex] = { ...lastRequests[reqIndex], ...payload };
+    }
+
+    // Feedback visual: éxito (verde momentáneo)
+    if (input) {
+      input.style.borderColor = '#10b981';
+      input.style.boxShadow = '0 0 0 2px rgba(16,185,129,0.1)';
+      setTimeout(() => {
+        input.style.borderColor = '';
+        input.style.boxShadow = '';
+      }, 1000);
+    }
+  } catch (err) {
+    console.error('Error auto-save', err);
+    if (input) {
+      input.style.borderColor = '#ef4444';
+      alert('Error al guardar: ' + err.message);
+    }
+  }
+}
+// Exponemos autoSave globalmente para que funcione en los atributos onblur/onchange
+window.autoSave = autoSave;
+
+function createRequestRow(r, forceEdit = false) {
+  const estadoAprobado = !!r.approved;
+  const chipClass = estadoAprobado ? 'admin-chip admin-chip--approved' : 'admin-chip admin-chip--pending';
+  const estadoTxt = estadoAprobado ? 'Aprobado' : 'Pendiente';
+  const row = document.createElement('tr');
+  row.id = `row-${r.id}`;
+  const puedeAprobar = isSuperAdmin(currentRoles) || currentRoles.includes('admin');
+
+  // Renderizamos inputs si:
+  // 1. Estamos en modo masivo Y la fila NO está excluida
+  // 2. O si se forzó la edición individual
+  const isBulk = isBulkEditMode && !excludedFromBulk.has(r.id);
+  const isEditable = isBulk || forceEdit;
+
+  if (isEditable && puedeAprobar) {
+    const currentRole = r.requestedRole || (Array.isArray(r.roles) ? r.roles[0] : '');
+    const roleOptions = ['tecnico', 'analista', 'planeador', 'programador', 'supervisor', 'admin']
+      .map(opt => `<option value="${opt}" ${opt === currentRole ? 'selected' : ''}>${opt}</option>`)
+      .join('');
+
+    // Si es modo masivo, usamos auto-save (onblur/onchange)
+    // Si es modo individual (forceEdit), usamos inputs normales y botón Guardar
+    const autoSaveAttr = isBulk ? `onblur="autoSave('${r.id}', 'FIELD', this.value)"` : '';
+    const autoSaveSelect = isBulk ? `onchange="autoSave('${r.id}', 'requestedRole', this.value)"` : '';
+
+    const nameInput = `<input type="text" class="admin-input" value="${r.displayName || ''}" data-field="displayName" ${isBulk ? autoSaveAttr.replace('FIELD','displayName') : ''}>`;
+    const areaInput = `<input type="text" class="admin-input" value="${r.area || ''}" data-field="area" ${isBulk ? autoSaveAttr.replace('FIELD','area') : ''}>`;
+    const gerInput = `<input type="text" class="admin-input" value="${r.gerencia || ''}" data-field="gerencia" ${isBulk ? autoSaveAttr.replace('FIELD','gerencia') : ''}>`;
+    
+    let actions = '';
+    if (isBulk) {
+      actions = `<button class="admin-cancel-btn" data-cancel="${r.id}" title="Salir de edición">✕</button>`;
+    } else {
+      actions = `
+        <button class="admin-save-btn" data-save="${r.id}">Guardar</button>
+        <button class="admin-cancel-btn" data-cancel="${r.id}">Cancelar</button>
+      `;
+    }
+
+    row.innerHTML = `
+      <td>${nameInput}</td>
+      <td>${r.email || '—'}</td>
+      <td>
+        <select class="admin-input" data-field="requestedRole" ${autoSaveSelect}>
+          <option value="">Seleccionar...</option>
+          ${roleOptions}
+        </select>
+      </td>
+      <td>${areaInput}</td>
+      <td>${gerInput}</td>
+      <td><span class="${chipClass}">${estadoTxt}</span></td>
+      <td>${formatDate(r.createdAt)}</td>
+      <td>
+        <div class="admin-actions-cell">
+          ${actions}
+        </div>
+      </td>
+    `;
+  } else {
+    // Modo visualización normal
+    let actionCell = '—';
+    if (puedeAprobar) {
+      const parts = [];
+      parts.push(`<button class="admin-edit-btn" data-edit="${r.id}">Editar</button>`);
+      if (!estadoAprobado) {
+        parts.push(`<button class="admin-approve-btn" data-approve="${r.id}" data-role="${r.requestedRole || ''}">Aprobar</button>`);
+      } else {
+        parts.push(`<button class="admin-revoke-btn" data-revoke="${r.id}">Revocar</button>`);
+      }
+      actionCell = `<div class="admin-actions-cell">${parts.join('')}</div>`;
+    }
+    row.innerHTML = `
+      <td>${r.displayName || '—'}</td>
+      <td>${r.email || '—'}</td>
+      <td>${r.requestedRole || (Array.isArray(r.roles) ? r.roles.join(', ') : '—')}</td>
+      <td>${r.area || '—'}</td>
+      <td>${r.gerencia || '—'}</td>
+      <td><span class="${chipClass}">${estadoTxt}</span></td>
+      <td>${formatDate(r.createdAt)}</td>
+      <td>${actionCell}</td>
+    `;
+  }
+  return row;
+}
+
 function renderRequests(rows){
   if (!adminRows || !adminEmpty || !adminTableWrapper) return;
   lastRequests = rows || [];
@@ -338,33 +471,7 @@ function renderRequests(rows){
   toggle(adminTableWrapper, true);
 
   filtered.forEach(r => {
-    const estadoAprobado = !!r.approved;
-    const chipClass = estadoAprobado ? 'admin-chip admin-chip--approved' : 'admin-chip admin-chip--pending';
-    const estadoTxt = estadoAprobado ? 'Aprobado' : 'Pendiente';
-    const row = document.createElement('tr');
-    const puedeAprobar = isSuperAdmin(currentRoles) || currentRoles.includes('admin');
-    let actionCell = '—';
-    if (puedeAprobar) {
-      const parts = [];
-      parts.push(`<button class="admin-edit-btn" data-edit="${r.id}">Editar</button>`);
-      if (!estadoAprobado) {
-        parts.push(`<button class="admin-approve-btn" data-approve="${r.id}" data-role="${r.requestedRole || ''}">Aprobar</button>`);
-      } else {
-        parts.push(`<button class="admin-revoke-btn" data-revoke="${r.id}">Revocar</button>`);
-      }
-      actionCell = `<div class="admin-actions-cell">${parts.join('')}</div>`;
-    }
-    row.innerHTML = `
-      <td>${r.displayName || '—'}</td>
-      <td>${r.email || '—'}</td>
-      <td>${r.requestedRole || (Array.isArray(r.roles) ? r.roles.join(', ') : '—')}</td>
-      <td>${r.area || '—'}</td>
-      <td>${r.gerencia || '—'}</td>
-      <td><span class="${chipClass}">${estadoTxt}</span></td>
-      <td>${formatDate(r.createdAt)}</td>
-      <td>${actionCell}</td>
-    `;
-    adminRows.appendChild(row);
+    adminRows.appendChild(createRequestRow(r));
   });
 }
 
@@ -409,27 +516,91 @@ async function revokeAccess(id){
   }
 }
 
-async function editRequest(id, data){
-  const allowed = isSuperAdmin(currentRoles) || currentRoles.includes('admin');
-  if (!allowed) return;
-  const newRole = prompt('Nuevo rol (dejar vacío para mantener)', data.requestedRole || (Array.isArray(data.roles) ? data.roles[0] : '')) || '';
-  const newArea = prompt('Área', data.area || '') || '';
-  const newGer = prompt('Gerencia', data.gerencia || '') || '';
-  if (!newRole && !newArea && !newGer) return;
+async function saveInlineEdit(id){
+  const row = document.getElementById(`row-${id}`);
+  if (!row) return;
+  
+  const inputs = row.querySelectorAll('[data-field]');
+  const payload = {};
+  let hasChanges = false;
+
+  inputs.forEach(input => {
+    const field = input.dataset.field;
+    const val = input.value.trim();
+    if (val) {
+      payload[field] = val;
+      hasChanges = true;
+    }
+  });
+
+  if (payload.requestedRole) {
+    payload.roles = [payload.requestedRole];
+  }
+
+  if (!hasChanges) {
+    cancelInlineEdit(id);
+    return;
+  }
+
   try {
     setLoading(true);
-    const payload = {};
-    if (newRole) payload.requestedRole = newRole;
-    if (newArea) payload.area = newArea;
-    if (newGer) payload.gerencia = newGer;
     await updateDoc(doc(db, 'users', id), payload);
-    await loadAdminPage();
+    
+    // Actualizar caché local
+    const reqIndex = lastRequests.findIndex(r => r.id === id);
+    if (reqIndex !== -1) {
+       lastRequests[reqIndex] = { ...lastRequests[reqIndex], ...payload };
+    }
+
+    // Si NO es edición masiva, volvemos a modo lectura
+    if (!isBulkEditMode) {
+      const newRow = createRequestRow(lastRequests[reqIndex]);
+      row.replaceWith(newRow);
+    } else {
+      // Si es masiva, nos quedamos en modo edición pero actualizamos visualmente si es necesario
+      // (Opcional: mostrar un toast de éxito)
+    }
   } catch (err) {
     console.error('No se pudo actualizar', err);
-    alert('No se pudo actualizar: ' + (err?.code || err?.message || 'error'));
+    alert('Error al guardar: ' + err.message);
   } finally {
     setLoading(false);
   }
+}
+
+function cancelInlineEdit(id){
+  const reqIndex = lastRequests.findIndex(r => r.id === id);
+  if (reqIndex === -1) return;
+  const r = lastRequests[reqIndex];
+  const row = document.getElementById(`row-${id}`);
+  
+  if (isBulkEditMode) {
+    // En modo masivo, "Cancelar" significa excluir esta fila de la edición
+    excludedFromBulk.add(id);
+    const newRow = createRequestRow(r, false);
+    if (row) row.replaceWith(newRow);
+  } else {
+    // En modo individual, volvemos a renderizar la fila en modo lectura
+    const newRow = createRequestRow(r, false);
+    if (row) row.replaceWith(newRow);
+  }
+}
+
+function enableInlineEdit(id){
+  const r = lastRequests.find(req => req.id === id);
+  if (!r) return;
+  
+  const row = document.getElementById(`row-${id}`);
+  if (!row) return;
+
+  // Reemplazamos la fila actual con una versión editable forzada
+  const newRow = createRequestRow(r, true);
+  row.replaceWith(newRow);
+}
+
+async function editRequest(id, data){
+  // Deprecated in favor of inline edit
+  enableInlineEdit(id);
 }
 
 async function loadAdminPage(){
@@ -503,6 +674,11 @@ async function handleRegister(evt){
     });
     renderState('pending');
   } catch (err) {
+    console.error('Error en registro:', err);
+    // Si el usuario se creó en Auth pero falló Firestore, lo borramos para evitar inconsistencias
+    if (auth.currentUser) {
+      try { await deleteUser(auth.currentUser); } catch(e){ console.warn('No se pudo revertir usuario', e); }
+    }
     showError(registerAlert, mapFirebaseError(err));
   }
 }
@@ -599,8 +775,19 @@ if (adminRows) {
     const editBtn = evt.target.closest('[data-edit]');
     if (editBtn) {
       const id = editBtn.dataset.edit;
-      const data = lastRequests.find(r => r.id === id);
-      if (data) editRequest(id, data);
+      enableInlineEdit(id);
+      return;
+    }
+    const saveBtn = evt.target.closest('[data-save]');
+    if (saveBtn) {
+      const id = saveBtn.dataset.save;
+      saveInlineEdit(id);
+      return;
+    }
+    const cancelBtn = evt.target.closest('[data-cancel]');
+    if (cancelBtn) {
+      const id = cancelBtn.dataset.cancel;
+      cancelInlineEdit(id);
     }
   });
 }
@@ -627,6 +814,16 @@ if (adminFilterApply) adminFilterApply.addEventListener('click', () => {
   renderRequests(lastRequests);
   renderFilterChips();
 });
+
+if (adminBulkEdit) {
+  adminBulkEdit.addEventListener('click', () => {
+    isBulkEditMode = !isBulkEditMode;
+    adminBulkEdit.classList.toggle('pill-ghost', !isBulkEditMode);
+    adminBulkEdit.textContent = isBulkEditMode ? 'Salir de edición' : 'Edición rápida';
+    excludedFromBulk.clear(); // Reseteamos exclusiones al cambiar modo
+    renderRequests(lastRequests);
+  });
+}
 
 // Permite cerrar al clicar fuera de la tarjeta
 if (shells.pending) {

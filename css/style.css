@@ -399,6 +399,42 @@ body{
   border-radius:10px;
   font-weight:800;
 }
+.admin-save-btn{
+  background:#10b981;
+  color:#fff;
+  border:1px solid #059669;
+  padding:6px 10px;
+  border-radius:8px;
+  font-weight:700;
+  font-size:12px;
+}
+.admin-cancel-btn{
+  background:#f1f5f9;
+  color:#475569;
+  border:1px solid #cbd5e1;
+  padding:6px 10px;
+  border-radius:8px;
+  font-weight:700;
+  font-size:12px;
+}
+.admin-input{
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 13px;
+  background: #fff;
+}
+.admin-input:focus{
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59,130,246,0.1);
+}
+.admin-actions-cell{
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
 .admin-actions-cell{ display:flex; gap:6px; flex-wrap:wrap; }
 
 /* ====== Filter overlay ====== */
