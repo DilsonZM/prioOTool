@@ -20,6 +20,16 @@ import {
 } from './auth-service.js';
 import { qs, toggle, setText } from './ui-common.js';
 
+// Catálogo editable de empresas supervisables (puedes sobrescribir con window.PRIO_SUPERVISED_COMPANIES)
+const SUPERVISED_COMPANY_OPTIONS = Array.isArray(window.PRIO_SUPERVISED_COMPANIES)
+  ? window.PRIO_SUPERVISED_COMPANIES
+  : [
+      'Cerrejón',
+      'Contratista A',
+      'Contratista B',
+      'Contratista C'
+    ];
+
 /* ===== DOM helpers ===== */
 const shells = {
   auth: qs('auth-shell'),
@@ -33,6 +43,14 @@ const loginForm = qs('login-form');
 const registerForm = qs('register-form');
 const loginAlert = qs('login-alert');
 const registerAlert = qs('register-alert');
+const regRole = qs('reg-role');
+const regCompany = qs('reg-company');
+const regSupervisor = qs('reg-supervisor');
+const regSupervisorWrapper = qs('reg-supervisor-wrapper');
+const supervisorExtras = qs('supervisor-extras');
+const supervisorOriginInputs = document.querySelectorAll('input[name="supervisor-origin"]');
+const supervisorCompaniesWrapper = qs('supervisor-companies-wrapper');
+const regSupervisedCompanies = qs('reg-supervised-companies');
 const logoutBtn = qs('logoutBtn');
 const pendingLogout = qs('pending-logout');
 const pendingRequestAgain = qs('pending-request-again');
@@ -46,6 +64,7 @@ const drawerRoles = qs('drawer-roles');
 const drawerArea = qs('drawer-area');
 const drawerGerencia = qs('drawer-gerencia');
 const drawerSupervisor = qs('drawer-supervisor');
+const drawerSupervised = qs('drawer-supervised');
 const drawerEmail = qs('drawer-email');
 const adminEmpty = qs('admin-empty');
 const adminTableWrapper = qs('admin-table-wrapper');
@@ -64,6 +83,10 @@ const adminBulkEdit = qs('adminBulkEdit');
 const adminCreateUserBtn = qs('adminCreateUserBtn');
 const navDrawerCreateUser = qs('nav-drawer-create-user');
 const btnCreateUserSubmit = qs('btn-create-user-submit');
+const drawerEditProfile = qs('drawerEditProfile');
+const profileCompanyInput = qs('profile-company');
+const profileSupervisedSelect = qs('profile-supervised-companies');
+const btnProfileSave = qs('btn-profile-save');
 const fStatusPending = qs('fStatusPending');
 const fStatusApproved = qs('fStatusApproved');
 const fArea = qs('fArea');
@@ -85,6 +108,72 @@ let deleteTargetId = null; // ID del usuario a eliminar
 
 let currentProfile = null;
 let currentRoles = [];
+
+/* ===== Registro: helpers para supervisores ===== */
+function populateSupervisedCompanies(selectEl = regSupervisedCompanies) {
+  if (!selectEl) return;
+  selectEl.innerHTML = '';
+  SUPERVISED_COMPANY_OPTIONS.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c;
+    opt.textContent = c;
+    selectEl.appendChild(opt);
+  });
+}
+
+function getSelectedSupervisedCompanies() {
+  if (!regSupervisedCompanies) return [];
+  return Array.from(regSupervisedCompanies.selectedOptions)
+    .map(o => o.value)
+    .filter(Boolean);
+}
+
+function getSelectedSupervisedCompaniesFrom(selectEl) {
+  if (!selectEl) return [];
+  return Array.from(selectEl.selectedOptions)
+    .map(o => o.value)
+    .filter(Boolean);
+}
+
+function syncSupervisorFields() {
+  if (!regRole) return;
+  const isSupervisorRole = regRole.value === 'supervisor';
+  toggle(supervisorExtras, isSupervisorRole);
+
+  // El campo "Supervisor responsable" solo aplica a no-supervisores
+  if (regSupervisorWrapper && regSupervisor) {
+    toggle(regSupervisorWrapper, !isSupervisorRole);
+    regSupervisor.required = !isSupervisorRole;
+    if (isSupervisorRole) {
+      regSupervisor.value = '';
+    }
+  }
+
+  // Controlar opciones según origen (Cerrejón vs contratista)
+  let origin = '';
+  supervisorOriginInputs.forEach(radio => {
+    if (radio.checked) origin = radio.value;
+  });
+
+  const isCerrejonSupervisor = isSupervisorRole && origin === 'cerrejon';
+
+  if (supervisorCompaniesWrapper) {
+    toggle(supervisorCompaniesWrapper, isCerrejonSupervisor);
+  }
+
+  if (regCompany) {
+    if (isCerrejonSupervisor) {
+      regCompany.value = 'Cerrejón';
+      regCompany.readOnly = true;
+    } else {
+      const wasLocked = regCompany.readOnly;
+      regCompany.readOnly = false;
+      if (wasLocked || !regCompany.value) {
+        regCompany.value = '';
+      }
+    }
+  }
+}
 
 /* ===== UI state ===== */
 function switchForm(view) {
@@ -125,6 +214,10 @@ function setDrawerData(profile, roles) {
   setText(drawerArea?.id, profile?.area || '—');
   setText(drawerGerencia?.id, profile?.gerencia || '—');
   setText(drawerSupervisor?.id, profile?.supervisor || '—');
+  const supervised = Array.isArray(profile?.supervisedCompanies) && profile.supervisedCompanies.length
+    ? profile.supervisedCompanies.join(', ')
+    : '—';
+  setText(drawerSupervised?.id, supervised);
   setText(drawerEmail?.id, profile?.email || '—');
 }
 
@@ -144,6 +237,10 @@ function syncAdminVisibility(roles, approved) {
   const allowed = canAccessAdmin(roles, approved);
   if (navDrawerAdmin) {
     toggle(navDrawerAdmin, allowed);
+  }
+  if (drawerEditProfile) {
+    const canEditProfile = isSupervisor(roles);
+    toggle(drawerEditProfile, canEditProfile);
   }
 }
 
@@ -314,6 +411,102 @@ function matchesSelect(val, term) {
   return (val || '').toString().toLowerCase() === term.toLowerCase();
 }
 
+function companyMatchesScope(company) {
+  const target = (company || '').trim().toLowerCase();
+  if (!target) return false;
+  const scoped = Array.isArray(currentProfile?.supervisedCompanies)
+    ? currentProfile.supervisedCompanies
+    : [];
+  if (scoped.length) {
+    return scoped.some(c => (c || '').trim().toLowerCase() === target);
+  }
+  // Fallback: si no hay lista, usar la propia empresa del supervisor
+  if (currentProfile?.company) {
+    return currentProfile.company.trim().toLowerCase() === target;
+  }
+  return false;
+}
+
+function canManageRequest(r) {
+  if (isSuperAdmin(currentRoles) || currentRoles.includes('admin')) return true;
+  if (isSupervisor(currentRoles)) {
+    return companyMatchesScope(r.company);
+  }
+  return false;
+}
+
+function openProfileEditor() {
+  if (!isSupervisor(currentRoles)) return;
+  populateSupervisedCompanies(profileSupervisedSelect);
+
+  const company = currentProfile?.company || '';
+  const supervised = Array.isArray(currentProfile?.supervisedCompanies)
+    ? currentProfile.supervisedCompanies.filter(Boolean)
+    : [];
+  const isCerrejon = company.trim().toLowerCase() === 'cerrejón';
+
+  if (profileCompanyInput) {
+    profileCompanyInput.value = company;
+    profileCompanyInput.readOnly = isCerrejon;
+    profileCompanyInput.placeholder = isCerrejon ? 'Cerrejón' : 'Contratista';
+  }
+  if (profileSupervisedSelect) {
+    Array.from(profileSupervisedSelect.options).forEach(opt => {
+      opt.selected = supervised.some(val => val.toLowerCase() === opt.value.toLowerCase());
+    });
+  }
+
+  const modalEl = document.getElementById('editProfileModal');
+  if (modalEl && window.bootstrap) {
+    const modal = new bootstrap.Modal(modalEl);
+    modal.show();
+  }
+}
+
+async function saveProfileEdits() {
+  if (!currentProfile?.uid) return;
+  const isCerrejon = (currentProfile.company || '').trim().toLowerCase() === 'cerrejón';
+  const companyVal = profileCompanyInput ? profileCompanyInput.value.trim() : '';
+  const supervised = getSelectedSupervisedCompaniesFrom(profileSupervisedSelect);
+
+  const finalCompany = isCerrejon ? 'Cerrejón' : companyVal;
+  if (!finalCompany) {
+    alert('Ingresa la empresa base.');
+    return;
+  }
+
+  try {
+    setLoading(true);
+    await updateUserFields(currentProfile.uid, {
+      company: finalCompany,
+      supervisedCompanies: supervised
+    });
+
+    currentProfile = {
+      ...currentProfile,
+      company: finalCompany,
+      supervisedCompanies: supervised
+    };
+    setDrawerData(currentProfile, currentRoles);
+    const adminVisible = pageAdmin && !pageAdmin.classList.contains('hidden');
+    if (adminVisible) {
+      await loadAdminPage();
+    }
+
+    const modalEl = document.getElementById('editProfileModal');
+    if (modalEl) {
+      const modalInstance = bootstrap.Modal.getInstance(modalEl);
+      if (modalInstance) modalInstance.hide();
+    }
+    Swal.fire('Guardado', 'Perfil actualizado.', 'success');
+  } catch (err) {
+    console.error('Error actualizando perfil', err);
+    Swal.fire('Error', mapFirebaseError(err), 'error');
+  } finally {
+    setLoading(false);
+  }
+}
+
 async function autoSave(id, field, value) {
   const row = document.getElementById(`row-${id}`);
   if (!row) return;
@@ -365,7 +558,7 @@ function createRequestRow(r, forceEdit = false) {
   const estadoTxt = estadoAprobado ? 'Aprobado' : 'Pendiente';
   const row = document.createElement('tr');
   row.id = `row-${r.id}`;
-  const puedeAprobar = isSuperAdmin(currentRoles) || currentRoles.includes('admin');
+  const puedeAprobar = canManageRequest(r);
 
   // Renderizamos inputs si:
   // 1. Estamos en modo masivo Y la fila NO está excluida
@@ -485,8 +678,8 @@ function renderRequests(rows) {
 }
 
 async function approveRequest(id, requestedRole) {
-  const allowed = isSuperAdmin(currentRoles) || currentRoles.includes('admin');
-  if (!allowed) return;
+  const target = lastRequests.find(r => r.id === id);
+  if (!target || !canManageRequest(target)) return;
   try {
     setLoading(true);
     await approveRequestDoc(id, requestedRole || 'usuario');
@@ -500,8 +693,8 @@ async function approveRequest(id, requestedRole) {
 }
 
 async function revokeAccess(id) {
-  const allowed = isSuperAdmin(currentRoles) || currentRoles.includes('admin');
-  if (!allowed) return;
+  const target = lastRequests.find(r => r.id === id);
+  if (!target || !canManageRequest(target)) return;
   if (currentProfile?.uid === id) {
     alert('No puedes revocar tu propio acceso.');
     return;
@@ -519,8 +712,8 @@ async function revokeAccess(id) {
 }
 
 async function deleteRequest(id) {
-  const allowed = isSuperAdmin(currentRoles) || currentRoles.includes('admin');
-  if (!allowed) return;
+  const target = lastRequests.find(r => r.id === id);
+  if (!target || !canManageRequest(target)) return;
   if (currentProfile?.uid === id) {
     Swal.fire('Error', 'No puedes eliminar tu propio usuario.', 'error');
     return;
@@ -790,13 +983,40 @@ async function handleRegister(evt) {
   const email = qs('reg-email').value.trim();
   const password = qs('reg-password').value;
   const passwordConfirm = qs('reg-password-confirm').value;
-  const company = qs('reg-company').value.trim();
-  const supervisor = qs('reg-supervisor').value.trim();
-  const requestedRole = qs('reg-role').value;
+  const companyInput = regCompany ? regCompany.value.trim() : '';
+  const supervisorInput = regSupervisor ? regSupervisor.value.trim() : '';
+  const requestedRole = regRole ? regRole.value : '';
 
-  if (!name || !email || !company || !supervisor || !requestedRole) {
+  const isSupervisorRole = requestedRole === 'supervisor';
+  let supervisorType = '';
+  supervisorOriginInputs.forEach(radio => {
+    if (radio.checked) supervisorType = radio.value;
+  });
+  const supervisedCompanies = supervisorType === 'cerrejon' ? getSelectedSupervisedCompanies() : [];
+
+  if (!name || !email || !requestedRole) {
     showError(registerAlert, 'Por favor completa todos los campos obligatorios.');
     return;
+  }
+
+  if (!isSupervisorRole) {
+    if (!companyInput || !supervisorInput) {
+      showError(registerAlert, 'Por favor completa todos los campos obligatorios.');
+      return;
+    }
+  } else {
+    if (!supervisorType) {
+      showError(registerAlert, 'Indica si eres supervisor de Cerrejón o de tu contratista.');
+      return;
+    }
+    if (supervisorType === 'cerrejon' && !supervisedCompanies.length) {
+      showError(registerAlert, 'Selecciona las empresas que supervisas.');
+      return;
+    }
+    if (supervisorType === 'contratista' && !companyInput) {
+      showError(registerAlert, 'Indica la empresa a la que perteneces.');
+      return;
+    }
   }
 
   if (password.length < 8) {
@@ -810,7 +1030,18 @@ async function handleRegister(evt) {
   }
 
   try {
-    await registerUser({ name, email, password, company, supervisor, requestedRole });
+    const company = isSupervisorRole && supervisorType === 'cerrejon' ? 'Cerrejón' : companyInput;
+    const supervisorValue = isSupervisorRole ? name : supervisorInput;
+    await registerUser({
+      name,
+      email,
+      password,
+      company,
+      supervisor: supervisorValue,
+      requestedRole,
+      supervisorType,
+      supervisedCompanies
+    });
     renderState('pending');
   } catch (err) {
     console.error('Error en registro:', err);
@@ -860,6 +1091,17 @@ const viewButtons = document.querySelectorAll('.btn-link[data-view]');
 viewButtons.forEach(btn => {
   btn.addEventListener('click', () => switchForm(btn.dataset.view));
 });
+
+// Configurar campos dinámicos de registro
+populateSupervisedCompanies();
+populateSupervisedCompanies(profileSupervisedSelect);
+if (regRole) {
+  regRole.addEventListener('change', syncSupervisorFields);
+}
+supervisorOriginInputs.forEach(radio => {
+  radio.addEventListener('change', syncSupervisorFields);
+});
+syncSupervisorFields();
 
 if (loginForm) loginForm.addEventListener('submit', handleLogin);
 if (registerForm) registerForm.addEventListener('submit', handleRegister);
@@ -980,6 +1222,12 @@ if (navDrawerCreateUser) {
 }
 if (btnCreateUserSubmit) {
   btnCreateUserSubmit.addEventListener('click', handleCreateUser);
+}
+if (drawerEditProfile) {
+  drawerEditProfile.addEventListener('click', openProfileEditor);
+}
+if (btnProfileSave) {
+  btnProfileSave.addEventListener('click', saveProfileEdits);
 }
 
 const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');

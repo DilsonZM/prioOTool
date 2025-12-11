@@ -76,15 +76,31 @@ async function fetchRequests(profile, currentRoles = []) {
   const filters = [];
   const superAdmin = isSuperAdmin(currentRoles);
   const supervisor = isSupervisor(currentRoles);
+  let postFilterCompanies = null;
   if (!superAdmin && supervisor) {
-    if (profile?.area) filters.push(where('area', '==', profile.area));
-    else if (profile?.gerencia) filters.push(where('gerencia', '==', profile.gerencia));
+    const supervisedCompanies = Array.isArray(profile?.supervisedCompanies)
+      ? profile.supervisedCompanies.filter(Boolean)
+      : [];
+    if (supervisedCompanies.length && supervisedCompanies.length <= 10) {
+      filters.push(where('company', 'in', supervisedCompanies));
+    } else if (profile?.company) {
+      filters.push(where('company', '==', profile.company));
+    } else if (supervisedCompanies.length > 10) {
+      // Demasiados valores para un "in"; filtramos en cliente
+      postFilterCompanies = supervisedCompanies;
+    }
   }
 
   const colRef = collection(db, 'users');
   const q = filters.length ? query(colRef, ...filters) : colRef;
   const snap = await getDocs(q);
-  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  let rows = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+  if (postFilterCompanies && postFilterCompanies.length) {
+    rows = rows.filter(r => postFilterCompanies.includes(r.company));
+  }
+
+  return rows;
 }
 
 async function approveRequestDoc(id, requestedRole = 'usuario') {
@@ -118,7 +134,7 @@ async function login(email, password) {
   return signInWithEmailAndPassword(auth, email, password);
 }
 
-async function registerUser({ name, email, password, company, supervisor, requestedRole }) {
+async function registerUser({ name, email, password, company, supervisor, requestedRole, supervisorType = '', supervisedCompanies = [] }) {
   if (!auth || !db) return null;
 
   const cred = await createUserWithEmailAndPassword(auth, email, password);
@@ -134,6 +150,8 @@ async function registerUser({ name, email, password, company, supervisor, reques
       company,
       supervisor,
       requestedRole,
+      supervisorType: supervisorType || null,
+      supervisedCompanies: Array.isArray(supervisedCompanies) ? supervisedCompanies : [],
       roles: ['solicitado'],
       approved: false,
       createdAt: serverTimestamp(),
@@ -148,7 +166,7 @@ async function registerUser({ name, email, password, company, supervisor, reques
   return cred.user;
 }
 
-async function createUserWithSecondaryApp({ email, password, name, company, role, supervisor, currentUserEmail }) {
+async function createUserWithSecondaryApp({ email, password, name, company, role, supervisor, currentUserEmail, supervisorType = '', supervisedCompanies = [] }) {
   if (!db || !cfg) {
     throw new Error('Falta configuración de Firebase.');
   }
@@ -168,6 +186,8 @@ async function createUserWithSecondaryApp({ email, password, name, company, role
       supervisor,
       roles: [role],
       requestedRole: role,
+      supervisorType: supervisorType || null,
+      supervisedCompanies: Array.isArray(supervisedCompanies) ? supervisedCompanies : [],
       approved: true,
       createdAt: serverTimestamp(),
       createdBy: currentUserEmail

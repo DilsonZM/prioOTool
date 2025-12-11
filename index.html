@@ -58,10 +58,16 @@
                 <input type="password" id="reg-password" required>
                 <label for="reg-password-confirm">Validar contraseña</label>
                 <input type="password" id="reg-password-confirm" required>
-                <label for="reg-company">Empresa</label>
-                <input type="text" id="reg-company" required>
-                <label for="reg-supervisor">Supervisor responsable</label>
-                <input type="text" id="reg-supervisor" required>
+                <div id="reg-company-wrapper">
+                    <label for="reg-company">Empresa</label>
+                    <input type="text" id="reg-company" required>
+                </div>
+
+                <div id="reg-supervisor-wrapper">
+                    <label for="reg-supervisor">Supervisor responsable</label>
+                    <input type="text" id="reg-supervisor" required>
+                </div>
+
                 <label for="reg-role">Rol solicitado</label>
                 <select id="reg-role" required>
                     <option value="tecnico" selected>Técnico</option>
@@ -70,6 +76,25 @@
                     <option value="programador">Programador</option>
                     <option value="supervisor">Supervisor</option>
                 </select>
+
+                <div id="supervisor-extras" class="hidden">
+                    <p style="margin: 0.5rem 0; color: #475569;">Si eres supervisor, indícanos de dónde:</p>
+                    <div class="auth-actions" style="gap: 1rem; justify-content: flex-start;">
+                        <label style="display: flex; align-items: center; gap: 0.4rem; font-weight: 600; cursor: pointer;">
+                            <input type="radio" name="supervisor-origin" value="cerrejon"> Supervisor de Cerrejón
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.4rem; font-weight: 600; cursor: pointer;">
+                            <input type="radio" name="supervisor-origin" value="contratista"> Supervisor de mi contratista
+                        </label>
+                    </div>
+                    <div id="supervisor-companies-wrapper" class="hidden">
+                        <label for="reg-supervised-companies">Empresas que supervisas</label>
+                        <select id="reg-supervised-companies" multiple size="4" style="min-height: 120px;">
+                            <option value="">Selecciona empresas</option>
+                        </select>
+                        <p class="auth-copy" style="margin-top: 0.5rem;">Selecciona todas las empresas que podrás aprobar/gestionar.</p>
+                    </div>
+                </div>
                 <div class="auth-actions">
                     <button type="submit" class="btn-primary">Enviar solicitud</button>
                     <button type="button" class="btn-link" data-view="login">Ya tengo cuenta</button>
@@ -134,6 +159,8 @@
                 <p id="drawer-gerencia" class="drawer-value">—</p>
                 <p class="drawer-label">Supervisor</p>
                 <p id="drawer-supervisor" class="drawer-value">—</p>
+                <p class="drawer-label">Empresas supervisadas</p>
+                <p id="drawer-supervised" class="drawer-value">—</p>
                 <p class="drawer-label">Correo</p>
                 <p id="drawer-email" class="drawer-value">—</p>
             </div>
@@ -158,6 +185,7 @@
                 </button>
             </nav>
             <div class="drawer-actions">
+                <button type="button" id="drawerEditProfile" class="drawer-btn">Editar perfil</button>
                 <button type="button" id="logoutDrawer" class="drawer-btn drawer-btn--ghost">Cerrar sesión</button>
             </div>
         </aside>
@@ -417,6 +445,36 @@
                                 <div class="auth-actions" style="margin-top: 1rem;">
                                     <button type="button" class="btn-link" data-bs-dismiss="modal">Cancelar</button>
                                     <button type="button" class="btn-primary" id="btn-create-user-submit">Crear Usuario</button>
+                                </div>
+                            </form>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Editar Perfil -->
+        <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content" style="border-radius: 24px; border: none; overflow: hidden;">
+                    <div class="auth-panel" style="padding: 2rem; border-radius: 0; width: 100%;">
+                        <article class="auth-card">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                <h2>Editar perfil</h2>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <p class="auth-copy">Actualiza las empresas que supervisas. Tu información básica permanece protegida.</p>
+                            <form id="edit-profile-form">
+                                <label for="profile-company">Empresa base</label>
+                                <input type="text" id="profile-company" required placeholder="Contratista o Cerrejón">
+
+                                <label for="profile-supervised-companies">Empresas que supervisas</label>
+                                <select id="profile-supervised-companies" multiple size="6" style="min-height: 160px;"></select>
+                                <p class="auth-copy" style="margin-top: 0.5rem;">Selecciona todas las empresas sobre las que tendrás alcance.</p>
+
+                                <div class="auth-actions" style="margin-top: 1rem;">
+                                    <button type="button" class="btn-link" data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="button" class="btn-primary" id="btn-profile-save">Guardar cambios</button>
                                 </div>
                             </form>
                         </article>
