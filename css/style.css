@@ -712,6 +712,7 @@ button{
 }
 button:hover{ filter:brightness(1.05); }
 .botones{ display:flex; justify-content:flex-end; gap:12px; margin-top:8px; }
+.botones button { border-radius: 999px; padding-left: 24px; padding-right: 24px; }
 
 /* ====== Resultados ====== */
 .resultados{
