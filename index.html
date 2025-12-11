@@ -54,14 +54,14 @@
                 <input type="text" id="reg-name" required>
                 <label for="reg-email">Correo corporativo</label>
                 <input type="email" id="reg-email" required>
-                <label for="reg-password">Contraseña temporal</label>
+                <label for="reg-password">Contraseña</label>
                 <input type="password" id="reg-password" required>
-                <label for="reg-area">Area / Superintendencia</label>
-                <input type="text" id="reg-area" required>
+                <label for="reg-password-confirm">Validar contraseña</label>
+                <input type="password" id="reg-password-confirm" required>
+                <label for="reg-company">Empresa</label>
+                <input type="text" id="reg-company" required>
                 <label for="reg-supervisor">Supervisor responsable</label>
                 <input type="text" id="reg-supervisor" required>
-                <label for="reg-gerencia">Gerencia</label>
-                <input type="text" id="reg-gerencia" required>
                 <label for="reg-role">Rol solicitado</label>
                 <select id="reg-role" required>
                     <option value="tecnico" selected>Técnico</option>
@@ -359,8 +359,11 @@
                 </div>
             </div>
         </div>
+        </div>
+
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="js/script.js"></script>
     <script src="js/firebase-config.js"></script>

@@ -1,6 +1,6 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js';
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, sendEmailVerification, deleteUser } from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js';
-import { getFirestore, doc, getDoc, setDoc, serverTimestamp, updateDoc, collection, getDocs, query, where } from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js';
+import { getFirestore, doc, getDoc, setDoc, serverTimestamp, updateDoc, deleteDoc, collection, getDocs, query, where } from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js';
 
 const cfg = window.PRIO_FIREBASE_CONFIG;
 if (!cfg) {
@@ -77,6 +77,7 @@ let adminFilters = {
 };
 let isBulkEditMode = false;
 const excludedFromBulk = new Set(); // IDs de filas que el usuario canceló en modo masivo
+let deleteTargetId = null; // ID del usuario a eliminar
 
 let currentProfile = null;
 let currentRoles = [];
@@ -390,8 +391,7 @@ function createRequestRow(r, forceEdit = false) {
     const autoSaveSelect = isBulk ? `onchange="autoSave('${r.id}', 'requestedRole', this.value)"` : '';
 
     const nameInput = `<input type="text" class="admin-input" value="${r.displayName || ''}" data-field="displayName" ${isBulk ? autoSaveAttr.replace('FIELD','displayName') : ''}>`;
-    const areaInput = `<input type="text" class="admin-input" value="${r.area || ''}" data-field="area" ${isBulk ? autoSaveAttr.replace('FIELD','area') : ''}>`;
-    const gerInput = `<input type="text" class="admin-input" value="${r.gerencia || ''}" data-field="gerencia" ${isBulk ? autoSaveAttr.replace('FIELD','gerencia') : ''}>`;
+    const companyInput = `<input type="text" class="admin-input" value="${r.company || ''}" data-field="company" ${isBulk ? autoSaveAttr.replace('FIELD','company') : ''}>`;
     
     let actions = '';
     if (isBulk) {
@@ -412,8 +412,7 @@ function createRequestRow(r, forceEdit = false) {
           ${roleOptions}
         </select>
       </td>
-      <td>${areaInput}</td>
-      <td>${gerInput}</td>
+      <td>${companyInput}</td>
       <td><span class="${chipClass}">${estadoTxt}</span></td>
       <td>${formatDate(r.createdAt)}</td>
       <td>
@@ -433,14 +432,14 @@ function createRequestRow(r, forceEdit = false) {
       } else {
         parts.push(`<button class="admin-revoke-btn" data-revoke="${r.id}">Revocar</button>`);
       }
+      parts.push(`<button class="admin-delete-btn" data-delete="${r.id}" title="Eliminar">🗑️</button>`);
       actionCell = `<div class="admin-actions-cell">${parts.join('')}</div>`;
     }
     row.innerHTML = `
       <td>${r.displayName || '—'}</td>
       <td>${r.email || '—'}</td>
       <td>${r.requestedRole || (Array.isArray(r.roles) ? r.roles.join(', ') : '—')}</td>
-      <td>${r.area || '—'}</td>
-      <td>${r.gerencia || '—'}</td>
+      <td>${r.company || '—'}</td>
       <td><span class="${chipClass}">${estadoTxt}</span></td>
       <td>${formatDate(r.createdAt)}</td>
       <td>${actionCell}</td>
@@ -514,6 +513,51 @@ async function revokeAccess(id){
   } finally {
     setLoading(false);
   }
+}
+
+async function deleteRequest(id){
+  const allowed = isSuperAdmin(currentRoles) || currentRoles.includes('admin');
+  if (!allowed) return;
+  if (currentProfile?.uid === id) {
+    Swal.fire('Error', 'No puedes eliminar tu propio usuario.', 'error');
+    return;
+  }
+  
+  Swal.fire({
+    title: "¿Estás seguro?",
+    text: "¡No podrás revertir esto!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+    confirmButtonText: "¡Sí, eliminar!",
+    cancelButtonText: "Cancelar"
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        setLoading(true);
+        await deleteDoc(doc(db, 'users', id));
+        // Remove from local cache
+        lastRequests = lastRequests.filter(r => r.id !== id);
+        renderRequests(lastRequests);
+        
+        Swal.fire({
+          title: "¡Eliminado!",
+          text: "El usuario ha sido eliminado.",
+          icon: "success"
+        });
+      } catch (err) {
+        console.error('No se pudo eliminar', err);
+        Swal.fire({
+          title: "Error",
+          text: "No se pudo eliminar el usuario.",
+          icon: "error"
+        });
+      } finally {
+        setLoading(false);
+      }
+    }
+  });
 }
 
 async function saveInlineEdit(id){
@@ -639,16 +683,35 @@ async function handleRegister(evt){
   evt.preventDefault();
   if (!auth || !db) return;
   resetAlerts();
+
+  // 1. Validación estricta del formulario (HTML5 required, email, etc.)
+  // Esto evita que se envíen datos si falta algún campo "required" en el HTML
+  if (registerForm && !registerForm.checkValidity()) {
+    registerForm.reportValidity();
+    return;
+  }
+
   const name = qs('reg-name').value.trim();
   const email = qs('reg-email').value.trim();
   const password = qs('reg-password').value;
-  const area = qs('reg-area').value.trim();
+  const passwordConfirm = qs('reg-password-confirm').value;
+  const company = qs('reg-company').value.trim();
   const supervisor = qs('reg-supervisor').value.trim();
-  const gerencia = qs('reg-gerencia').value.trim();
   const requestedRole = qs('reg-role').value;
+
+  // 2. Doble verificación manual para asegurar que no viajen strings vacíos
+  if (!name || !email || !company || !supervisor || !requestedRole) {
+    showError(registerAlert, 'Por favor completa todos los campos obligatorios.');
+    return;
+  }
 
   if (password.length < 8) {
     showError(registerAlert, 'La contraseña debe tener al menos 8 caracteres.');
+    return;
+  }
+
+  if (password !== passwordConfirm) {
+    showError(registerAlert, 'Las contraseñas no coinciden.');
     return;
   }
 
@@ -662,9 +725,8 @@ async function handleRegister(evt){
       uid: cred.user.uid,
       email,
       displayName: name,
-      area,
+      company,
       supervisor,
-      gerencia,
       requestedRole,
       roles: ['solicitado'],
       approved: false,
@@ -772,6 +834,12 @@ if (adminRows) {
       revokeAccess(id);
       return;
     }
+    const deleteBtn = evt.target.closest('[data-delete]');
+    if (deleteBtn) {
+      const id = deleteBtn.dataset.delete;
+      deleteRequest(id);
+      return;
+    }
     const editBtn = evt.target.closest('[data-edit]');
     if (editBtn) {
       const id = editBtn.dataset.edit;
@@ -825,6 +893,31 @@ if (adminBulkEdit) {
   });
 }
 
+const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+if (confirmDeleteBtn) {
+  confirmDeleteBtn.addEventListener('click', () => {
+    if (deleteTargetId) {
+      performDelete(deleteTargetId);
+    }
+  });
+}
+const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+if (cancelDeleteBtn) {
+  cancelDeleteBtn.addEventListener('click', () => {
+    const modalEl = document.getElementById('deleteModal');
+    if (modalEl) modalEl.classList.add('hidden');
+    deleteTargetId = null;
+  });
+}
+const closeDeleteModal = document.getElementById('closeDeleteModal');
+if (closeDeleteModal) {
+  closeDeleteModal.addEventListener('click', () => {
+    const modalEl = document.getElementById('deleteModal');
+    if (modalEl) modalEl.classList.add('hidden');
+    deleteTargetId = null;
+  });
+}
+
 // Permite cerrar al clicar fuera de la tarjeta
 if (shells.pending) {
   shells.pending.addEventListener('click', async (evt) => {
@@ -838,12 +931,32 @@ if (shells.pending) {
   });
 }
 
-if (auth) {
-  onAuthStateChanged(auth, user => {
-    if (!user) {
-      renderState('auth');
-      return;
-    }
-    hydrateSession(user);
-  });
-}
+  const password = qs('reg-password');
+  const passwordConfirm = qs('reg-password-confirm');
+  
+  // Validación en tiempo real de contraseñas
+  if (password && passwordConfirm) {
+    const validatePasswords = () => {
+      const p1 = password.value;
+      const p2 = passwordConfirm.value;
+      if (p2 && p1 !== p2) {
+        passwordConfirm.style.borderColor = '#ef4444';
+        passwordConfirm.setCustomValidity('Las contraseñas no coinciden');
+      } else {
+        passwordConfirm.style.borderColor = '';
+        passwordConfirm.setCustomValidity('');
+      }
+    };
+    password.addEventListener('input', validatePasswords);
+    passwordConfirm.addEventListener('input', validatePasswords);
+  }
+
+  if (auth) {
+    onAuthStateChanged(auth, user => {
+      if (!user) {
+        renderState('auth');
+        return;
+      }
+      hydrateSession(user);
+    });
+  }
