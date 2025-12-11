@@ -379,7 +379,12 @@ body{
   box-shadow:none;
 }
 
-.page-view{ display:block; }
+.page-view{
+  display:flex;
+  flex-direction:column;
+  flex:1;
+  width:100%;
+}
 
 /* ====== Drawer ====== */
 .drawer-backdrop {
