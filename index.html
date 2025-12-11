@@ -467,6 +467,31 @@
             </div>
         </div>
 
+        <!-- Modal editar alcance supervisor -->
+        <div class="modal fade" id="editScopeModal" tabindex="-1" aria-labelledby="editScopeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content scope-modal">
+                    <div class="scope-head">
+                        <div>
+                            <p class="scope-eyebrow">Supervisor</p>
+                            <h5 class="modal-title" id="editScopeModalLabel">Empresas que supervisa</h5>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="scope-body">
+                        <p class="scope-copy">Elige todas las empresas sobre las que este supervisor tendrá alcance.</p>
+                        <label for="edit-scope-companies" class="scope-label">Empresas supervisadas</label>
+                        <select id="edit-scope-companies" multiple size="6" class="scope-select"></select>
+                        <p class="scope-note">Solo para roles supervisor. No modifica la empresa base.</p>
+                    </div>
+                    <div class="scope-footer">
+                        <button type="button" class="btn-scope ghost" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn-scope primary" id="btn-scope-save">Guardar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Modal Editar Perfil -->
         <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">

@@ -65,6 +65,9 @@ const drawerCompany = qs('drawer-company');
 const drawerSupervisedWrap = qs('drawer-supervised-wrap');
 const drawerSupervised = qs('drawer-supervised');
 const drawerEmail = qs('drawer-email');
+const scopeModalEl = qs('editScopeModal');
+const scopeSelect = qs('edit-scope-companies');
+const btnScopeSave = qs('btn-scope-save');
 const adminEmpty = qs('admin-empty');
 const adminTableWrapper = qs('admin-table-wrapper');
 const adminRows = qs('request-rows');
@@ -175,6 +178,51 @@ function syncUserFields() {
     if (isSupervisorRole) {
       regSupervisor.value = '';
     }
+  }
+}
+
+/* ===== Modal de alcance para supervisores (admin/superadmin) ===== */
+let scopeTargetId = null;
+
+function openScopeModal(userId) {
+  const target = lastRequests.find(r => r.id === userId);
+  if (!target) return;
+  scopeTargetId = userId;
+  populateSupervisedCompanies(scopeSelect);
+  const current = Array.isArray(target.supervisedCompanies) ? target.supervisedCompanies : [];
+  if (scopeSelect) {
+    Array.from(scopeSelect.options).forEach(opt => {
+      opt.selected = current.some(c => (c || '').toLowerCase() === opt.value.toLowerCase());
+    });
+  }
+  if (scopeModalEl && window.bootstrap) {
+    const modal = new bootstrap.Modal(scopeModalEl);
+    modal.show();
+  }
+}
+
+async function saveScopeModal() {
+  if (!scopeTargetId || !scopeSelect) return;
+  const selected = getSelectedSupervisedCompaniesFrom(scopeSelect);
+  try {
+    setLoading(true);
+    await updateUserFields(scopeTargetId, { supervisedCompanies: selected });
+
+    const idx = lastRequests.findIndex(r => r.id === scopeTargetId);
+    if (idx !== -1) {
+      lastRequests[idx] = { ...lastRequests[idx], supervisedCompanies: selected };
+    }
+    renderRequests(lastRequests);
+
+    const modalInstance = bootstrap.Modal.getInstance(scopeModalEl);
+    if (modalInstance) modalInstance.hide();
+    Swal.fire('Guardado', 'Alcance actualizado.', 'success');
+  } catch (err) {
+    console.error('Error al actualizar alcance', err);
+    Swal.fire('Error', mapFirebaseError(err), 'error');
+  } finally {
+    setLoading(false);
+    scopeTargetId = null;
   }
 }
 
@@ -605,6 +653,7 @@ function createRequestRow(r, forceEdit = false) {
   const row = document.createElement('tr');
   row.id = `row-${r.id}`;
   const puedeAprobar = canManageRequest(r);
+  const isTargetSupervisor = Array.isArray(r.roles) ? r.roles.includes('supervisor') : r.requestedRole === 'supervisor';
 
   // Renderizamos inputs si:
   // 1. Estamos en modo masivo Y la fila NO está excluida
@@ -667,6 +716,9 @@ function createRequestRow(r, forceEdit = false) {
       parts.push(`<button class=\"admin-edit-btn\" data-edit=\"${r.id}\">Editar</button>`);
       if (!estadoAprobado) {
         parts.push(`<button class=\"admin-approve-btn\" data-approve=\"${r.id}\" data-role=\"${r.requestedRole || ''}\">Aprobar</button>`);
+      }
+      if (isTargetSupervisor) {
+        parts.push(`<button class=\"admin-edit-btn\" data-scope=\"${r.id}\">Alcance</button>`);
       }
       parts.push(`<button class=\"admin-delete-btn\" data-delete=\"${r.id}\" title=\"Eliminar\">🗑️</button>`);
       actionCell = `<div class=\"admin-actions-cell\">${parts.join('')}</div>`;
@@ -1234,6 +1286,12 @@ if (adminRows) {
       revokeAccess(id);
       return;
     }
+    const scopeBtn = evt.target.closest('[data-scope]');
+    if (scopeBtn) {
+      const id = scopeBtn.dataset.scope;
+      openScopeModal(id);
+      return;
+    }
     const deleteBtn = evt.target.closest('[data-delete]');
     if (deleteBtn) {
       const id = deleteBtn.dataset.delete;
@@ -1331,6 +1389,9 @@ if (pendingPill) {
       goToPage('admin');
     }
   });
+}
+if (btnScopeSave) {
+  btnScopeSave.addEventListener('click', saveScopeModal);
 }
 
 const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
