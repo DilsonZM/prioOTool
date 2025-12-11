@@ -57,6 +57,7 @@ const pendingRequestAgain = qs('pending-request-again');
 const pendingClose = qs('pending-close');
 const sessionBar = qs('session-bar');
 const drawer = qs('side-drawer');
+const drawerBackdrop = qs('drawer-backdrop');
 const drawerToggle = qs('drawerToggle');
 const drawerClose = qs('drawerClose');
 const drawerLogout = qs('logoutDrawer');
@@ -289,11 +290,23 @@ function openDrawer() {
   if (!drawer) return;
   drawer.classList.add('is-open');
   toggle(drawer, true);
+  if (drawerBackdrop) {
+    drawerBackdrop.classList.remove('hidden');
+    // Force reflow to enable transition
+    void drawerBackdrop.offsetWidth;
+    drawerBackdrop.classList.add('is-visible');
+  }
 }
 
 function closeDrawer() {
   if (!drawer) return;
   drawer.classList.remove('is-open');
+  if (drawerBackdrop) {
+    drawerBackdrop.classList.remove('is-visible');
+    setTimeout(() => {
+      drawerBackdrop.classList.add('hidden');
+    }, 300);
+  }
   setTimeout(() => toggle(drawer, false), 180);
 }
 
@@ -1268,6 +1281,7 @@ if (pendingClose) pendingClose.addEventListener('click', async () => {
 
 if (drawerToggle) drawerToggle.addEventListener('click', openDrawer);
 if (drawerClose) drawerClose.addEventListener('click', closeDrawer);
+if (drawerBackdrop) drawerBackdrop.addEventListener('click', closeDrawer);
 if (drawerLogout) drawerLogout.addEventListener('click', () => logout());
 if (navDrawerAdmin) navDrawerAdmin.addEventListener('click', () => { goToPage('admin'); closeDrawer(); });
 if (navDrawerForm) navDrawerForm.addEventListener('click', () => { goToPage('form'); closeDrawer(); });
