@@ -11,7 +11,7 @@
 }
 
 *{ box-sizing:border-box; }
-* { font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important; }
+* { font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, Arial, sans-serif !important; }
 
 /* Scrollbar personalizado (webkit) */
 body, .auth-shell{
@@ -464,9 +464,21 @@ body{
   box-shadow:0 30px 80px rgba(0,0,0,.32);
   border:1px solid #e5e7eb;
 }
-.filter-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
-.filter-close{ background:transparent; border:1px solid #e5e7eb; border-radius:8px; padding:6px 10px; }
-.filter-body{ display:grid; gap:12px; }
+.filter-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+.filter-close{ 
+  background:transparent; 
+  border:none; 
+  border-radius:50%; 
+  padding:8px; 
+  cursor:pointer; 
+  color:#64748b; 
+  display:flex; 
+  align-items:center; 
+  justify-content:center; 
+  transition:background 0.2s;
+}
+.filter-close:hover{ background:#f1f5f9; color:#0f172a; }
+.filter-body{ display:grid; gap:16px; }
 .filter-group{ display:flex; flex-direction:column; gap:6px; }
 .filter-label{ margin:0; font-weight:700; color:#111827; }
 .checkline{ display:flex; align-items:center; gap:8px; font-weight:600; color:#111827; }
@@ -850,7 +862,7 @@ footer .matriz{ width:100%; height:auto; }
 
 /* SweetAlert2 Customization (Optional) */
 .swal2-popup {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+  font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Helvetica, Arial, sans-serif !important;
   border-radius: 16px !important;
 }
 .swal2-title {

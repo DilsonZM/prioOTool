@@ -68,15 +68,17 @@ const btnCreateUserSubmit = qs('btn-create-user-submit');
 const fStatusPending = qs('fStatusPending');
 const fStatusApproved = qs('fStatusApproved');
 const fArea = qs('fArea');
-const fGerencia = qs('fGerencia');
 const fRole = qs('fRole');
+const fDateStart = qs('fDateStart');
+const fDateEnd = qs('fDateEnd');
 
 let lastRequests = [];
 let adminFilters = {
   statuses: ['pending', 'approved'],
   area: '',
-  gerencia: '',
-  role: ''
+  role: '',
+  dateStart: '',
+  dateEnd: ''
 };
 let isBulkEditMode = false;
 const excludedFromBulk = new Set(); // IDs de filas que el usuario canceló en modo masivo
@@ -224,8 +226,12 @@ function renderFilterChips(){
     chips.push({ key:'status', label: adminFilters.statuses[0] === 'pending' ? 'Pendientes' : 'Aprobados' });
   }
   if (adminFilters.area) chips.push({ key:'area', label:'Área: ' + adminFilters.area });
-  if (adminFilters.gerencia) chips.push({ key:'gerencia', label:'Gerencia: ' + adminFilters.gerencia });
   if (adminFilters.role) chips.push({ key:'role', label:'Rol: ' + adminFilters.role });
+  if (adminFilters.dateStart || adminFilters.dateEnd) {
+    const start = adminFilters.dateStart ? new Date(adminFilters.dateStart).toLocaleDateString() : 'Inicio';
+    const end = adminFilters.dateEnd ? new Date(adminFilters.dateEnd).toLocaleDateString() : 'Fin';
+    chips.push({ key:'date', label:`Fecha: ${start} - ${end}` });
+  }
 
   if (!chips.length) return;
   chips.forEach(chip => {
@@ -242,13 +248,15 @@ function renderFilterChips(){
         adminFilters.area = '';
         fArea.value = '';
       }
-      if (chip.key === 'gerencia') {
-        adminFilters.gerencia = '';
-        fGerencia.value = '';
-      }
       if (chip.key === 'role') {
         adminFilters.role = '';
         fRole.value = '';
+      }
+      if (chip.key === 'date') {
+        adminFilters.dateStart = '';
+        adminFilters.dateEnd = '';
+        fDateStart.value = '';
+        fDateEnd.value = '';
       }
       renderRequests(lastRequests);
       renderFilterChips();
@@ -257,35 +265,86 @@ function renderFilterChips(){
   });
 }
 
-function buildFilterOptions(){
-  const areas = new Set();
-  const gerencias = new Set();
-  const roles = new Set();
-  lastRequests.forEach(r => {
-    if (r.area) areas.add(r.area);
-    if (r.gerencia) gerencias.add(r.gerencia);
-    if (r.requestedRole) roles.add(r.requestedRole);
-    else if (Array.isArray(r.roles) && r.roles.length) roles.add(r.roles[0]);
-  });
-  const fill = (sel, set) => {
-    if (!sel) return;
-    const current = sel.value;
-    sel.innerHTML = '<option value="">Todas</option>';
-    Array.from(set).sort().forEach(v => {
-      sel.insertAdjacentHTML('beforeend', `<option value="${v}">${v}</option>`);
-    });
-    sel.value = current || '';
+function updateFilterOptions(changedField = null) {
+  // Helper: verifica si un registro cumple los filtros actuales (ignorando uno específico)
+  const matches = (r, ignoreField) => {
+    // Status
+    if (ignoreField !== 'status') {
+       const pending = isPendingRequest(r);
+       if (!fStatusPending.checked && pending) return false;
+       if (!fStatusApproved.checked && !pending) return false;
+    }
+
+    // Date
+    if (ignoreField !== 'date') {
+        const startVal = fDateStart.value;
+        const endVal = fDateEnd.value;
+        if (startVal || endVal) {
+            const created = r.createdAt && r.createdAt.toDate ? r.createdAt.toDate() : new Date(r.createdAt);
+            if (startVal) {
+                const s = new Date(startVal); s.setHours(0,0,0,0);
+                if (created < s) return false;
+            }
+            if (endVal) {
+                const e = new Date(endVal); e.setHours(23,59,59,999);
+                if (created > e) return false;
+            }
+        }
+    }
+
+    // Company
+    if (ignoreField !== 'company') {
+        const val = fArea.value;
+        if (val && r.company !== val) return false;
+    }
+
+    // Role
+    if (ignoreField !== 'role') {
+        const val = fRole.value;
+        const rRole = r.requestedRole || (Array.isArray(r.roles) ? r.roles[0] : '');
+        if (val && rRole !== val) return false;
+    }
+
+    return true;
   };
-  fill(fArea, areas);
-  fill(fGerencia, gerencias);
-  if (fRole) {
-    const current = fRole.value;
-    fRole.innerHTML = '<option value="">Todos</option>';
-    Array.from(roles).sort().forEach(v => {
-      fRole.insertAdjacentHTML('beforeend', `<option value="${v}">${v}</option>`);
-    });
-    fRole.value = current || '';
+
+  // Update Company Options
+  if (changedField !== 'company') {
+      const companies = new Set();
+      lastRequests.forEach(r => {
+          if (matches(r, 'company')) {
+              if (r.company) companies.add(r.company);
+          }
+      });
+      const current = fArea.value;
+      fArea.innerHTML = '<option value="">Todas</option>';
+      Array.from(companies).sort().forEach(v => {
+          fArea.insertAdjacentHTML('beforeend', `<option value="${v}">${v}</option>`);
+      });
+      fArea.value = current; 
   }
+
+  // Update Role Options
+  if (changedField !== 'role') {
+      const roles = new Set();
+      lastRequests.forEach(r => {
+          if (matches(r, 'role')) {
+              const rRole = r.requestedRole || (Array.isArray(r.roles) ? r.roles[0] : '');
+              if (rRole) roles.add(rRole);
+          }
+      });
+      const current = fRole.value;
+      fRole.innerHTML = '<option value="">Todos</option>';
+      Array.from(roles).sort().forEach(v => {
+          fRole.insertAdjacentHTML('beforeend', `<option value="${v}">${v}</option>`);
+      });
+      fRole.value = current;
+  }
+}
+
+// Alias para compatibilidad con llamadas existentes
+function buildFilterOptions() {
+    updateFilterOptions();
 }
 
 function formatDate(ts){
@@ -395,6 +454,7 @@ function createRequestRow(r, forceEdit = false) {
 
     const nameInput = `<input type="text" class="admin-input" value="${r.displayName || ''}" data-field="displayName" ${isBulk ? autoSaveAttr.replace('FIELD','displayName') : ''}>`;
     const companyInput = `<input type="text" class="admin-input" value="${r.company || ''}" data-field="company" ${isBulk ? autoSaveAttr.replace('FIELD','company') : ''}>`;
+    const supervisorInput = `<input type="text" class="admin-input" value="${r.supervisor || ''}" data-field="supervisor" ${isBulk ? autoSaveAttr.replace('FIELD','supervisor') : ''}>`;
     
     let actions = '';
     if (isBulk) {
@@ -416,6 +476,7 @@ function createRequestRow(r, forceEdit = false) {
         </select>
       </td>
       <td>${companyInput}</td>
+      <td>${supervisorInput}</td>
       <td><span class="${chipClass}">${estadoTxt}</span></td>
       <td>${formatDate(r.createdAt)}</td>
       <td>
@@ -432,8 +493,6 @@ function createRequestRow(r, forceEdit = false) {
       parts.push(`<button class="admin-edit-btn" data-edit="${r.id}">Editar</button>`);
       if (!estadoAprobado) {
         parts.push(`<button class="admin-approve-btn" data-approve="${r.id}" data-role="${r.requestedRole || ''}">Aprobar</button>`);
-      } else {
-        parts.push(`<button class="admin-revoke-btn" data-revoke="${r.id}">Revocar</button>`);
       }
       parts.push(`<button class="admin-delete-btn" data-delete="${r.id}" title="Eliminar">🗑️</button>`);
       actionCell = `<div class="admin-actions-cell">${parts.join('')}</div>`;
@@ -443,6 +502,7 @@ function createRequestRow(r, forceEdit = false) {
       <td>${r.email || '—'}</td>
       <td>${r.requestedRole || (Array.isArray(r.roles) ? r.roles.join(', ') : '—')}</td>
       <td>${r.company || '—'}</td>
+      <td>${r.supervisor || '—'}</td>
       <td><span class="${chipClass}">${estadoTxt}</span></td>
       <td>${formatDate(r.createdAt)}</td>
       <td>${actionCell}</td>
@@ -458,10 +518,25 @@ function renderRequests(rows){
   const filtered = lastRequests.filter(r => {
     const pending = isPendingRequest(r);
     const statusOk = adminFilters.statuses.includes('pending') && pending || adminFilters.statuses.includes('approved') && !pending;
-    const areaOk = matchesSelect(r.area, adminFilters.area);
-    const gerOk = matchesSelect(r.gerencia, adminFilters.gerencia);
+    const areaOk = matchesSelect(r.company, adminFilters.area); // Usamos company
     const roleOk = matchesSelect(r.requestedRole || (Array.isArray(r.roles) ? r.roles[0] : ''), adminFilters.role);
-    return statusOk && areaOk && gerOk && roleOk;
+    
+    let dateOk = true;
+    if (adminFilters.dateStart || adminFilters.dateEnd) {
+      const created = r.createdAt && r.createdAt.toDate ? r.createdAt.toDate() : new Date(r.createdAt);
+      if (adminFilters.dateStart) {
+        const start = new Date(adminFilters.dateStart);
+        start.setHours(0,0,0,0);
+        if (created < start) dateOk = false;
+      }
+      if (dateOk && adminFilters.dateEnd) {
+        const end = new Date(adminFilters.dateEnd);
+        end.setHours(23,59,59,999);
+        if (created > end) dateOk = false;
+      }
+    }
+
+    return statusOk && areaOk && roleOk && dateOk;
   });
   adminRows.innerHTML = '';
   if (!filtered.length) {
@@ -525,18 +600,30 @@ async function deleteRequest(id){
     Swal.fire('Error', 'No puedes eliminar tu propio usuario.', 'error');
     return;
   }
+
+  // Buscar el usuario en la caché local para saber su estado
+  const user = lastRequests.find(r => r.id === id);
+  const isApproved = user && user.approved;
   
+  // Usamos estilos nativos de SweetAlert2 para asegurar visibilidad
   Swal.fire({
-    title: "¿Estás seguro?",
-    text: "¡No podrás revertir esto!",
+    title: "¿Qué deseas hacer?",
+    text: isApproved 
+      ? "Puedes eliminar el usuario permanentemente o solo revocar su acceso." 
+      : "Esta acción eliminará el usuario permanentemente.",
     icon: "warning",
     showCancelButton: true,
-    confirmButtonColor: "#d33",
-    cancelButtonColor: "#3085d6",
-    confirmButtonText: "¡Sí, eliminar!",
-    cancelButtonText: "Cancelar"
+    showDenyButton: isApproved, // Solo mostrar si está aprobado
+    confirmButtonText: "Eliminar Usuario",
+    denyButtonText: "Revocar Acceso",
+    cancelButtonText: "Cancelar",
+    confirmButtonColor: "#d33", // Rojo para eliminar
+    denyButtonColor: "#f39c12", // Naranja para revocar
+    cancelButtonColor: "#6c757d", // Gris para cancelar
+    reverseButtons: true
   }).then(async (result) => {
     if (result.isConfirmed) {
+      // Eliminar Usuario
       try {
         setLoading(true);
         await deleteDoc(doc(db, 'users', id));
@@ -546,7 +633,7 @@ async function deleteRequest(id){
         
         Swal.fire({
           title: "¡Eliminado!",
-          text: "El usuario ha sido eliminado.",
+          text: "El usuario ha sido eliminado permanentemente.",
           icon: "success"
         });
       } catch (err) {
@@ -554,6 +641,31 @@ async function deleteRequest(id){
         Swal.fire({
           title: "Error",
           text: "No se pudo eliminar el usuario.",
+          icon: "error"
+        });
+      } finally {
+        setLoading(false);
+      }
+    } else if (result.isDenied) {
+      // Revocar Acceso
+      try {
+        setLoading(true);
+        await updateDoc(doc(db, 'users', id), {
+          approved: false,
+          roles: ['solicitado']
+        });
+        await loadAdminPage();
+        
+        Swal.fire({
+          title: "¡Revocado!",
+          text: "El acceso del usuario ha sido revocado.",
+          icon: "info"
+        });
+      } catch (err) {
+        console.error('No se pudo revocar', err);
+        Swal.fire({
+          title: "Error",
+          text: "No se pudo revocar el acceso.",
           icon: "error"
         });
       } finally {
@@ -732,6 +844,7 @@ async function handleCreateUser() {
       email: email,
       displayName: name,
       company: company,
+      supervisor: currentProfile.displayName || currentProfile.email, // Asignar supervisor automáticamente
       roles: [role],
       requestedRole: role,
       approved: true, // Aprobado automáticamente
@@ -958,14 +1071,28 @@ if (adminRows) {
     }
   });
 }
-if (adminFilterOpen) adminFilterOpen.addEventListener('click', () => toggle(adminFilterPanel, true));
+if (adminFilterOpen) adminFilterOpen.addEventListener('click', () => {
+  toggle(adminFilterPanel, true);
+  updateFilterOptions(); // Inicializar opciones al abrir
+});
+
+// Listeners para actualización dinámica de filtros
+if (fStatusPending) fStatusPending.addEventListener('change', () => updateFilterOptions('status'));
+if (fStatusApproved) fStatusApproved.addEventListener('change', () => updateFilterOptions('status'));
+if (fDateStart) fDateStart.addEventListener('change', () => updateFilterOptions('date'));
+if (fDateEnd) fDateEnd.addEventListener('change', () => updateFilterOptions('date'));
+if (fArea) fArea.addEventListener('change', () => updateFilterOptions('company'));
+if (fRole) fRole.addEventListener('change', () => updateFilterOptions('role'));
+
 if (adminFilterClose) adminFilterClose.addEventListener('click', () => toggle(adminFilterPanel, false));
 if (adminFilterClear) adminFilterClear.addEventListener('click', () => {
   fStatusPending.checked = true;
   fStatusApproved.checked = true;
   fArea.value = '';
-  fGerencia.value = '';
   fRole.value = '';
+  fDateStart.value = '';
+  fDateEnd.value = '';
+  updateFilterOptions(); // Reset options
 });
 if (adminFilterApply) adminFilterApply.addEventListener('click', () => {
   const statuses = [];
@@ -974,8 +1101,9 @@ if (adminFilterApply) adminFilterApply.addEventListener('click', () => {
   adminFilters = {
     statuses: statuses.length ? statuses : ['pending','approved'],
     area: fArea.value,
-    gerencia: fGerencia.value,
-    role: fRole.value
+    role: fRole.value,
+    dateStart: fDateStart.value,
+    dateEnd: fDateEnd.value
   };
   toggle(adminFilterPanel, false);
   renderRequests(lastRequests);
