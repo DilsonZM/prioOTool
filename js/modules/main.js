@@ -61,9 +61,8 @@ const drawerToggle = qs('drawerToggle');
 const drawerClose = qs('drawerClose');
 const drawerLogout = qs('logoutDrawer');
 const drawerRoles = qs('drawer-roles');
-const drawerArea = qs('drawer-area');
-const drawerGerencia = qs('drawer-gerencia');
-const drawerSupervisor = qs('drawer-supervisor');
+const drawerCompany = qs('drawer-company');
+const drawerSupervisedWrap = qs('drawer-supervised-wrap');
 const drawerSupervised = qs('drawer-supervised');
 const drawerEmail = qs('drawer-email');
 const adminEmpty = qs('admin-empty');
@@ -211,12 +210,14 @@ function resetAlerts() {
 function setDrawerData(profile, roles) {
   const rolesText = roles?.length ? roles.join(', ') : '—';
   setText(drawerRoles?.id, rolesText);
-  setText(drawerArea?.id, profile?.area || '—');
-  setText(drawerGerencia?.id, profile?.gerencia || '—');
-  setText(drawerSupervisor?.id, profile?.supervisor || '—');
+  setText(drawerCompany?.id, profile?.company || '—');
   const supervised = Array.isArray(profile?.supervisedCompanies) && profile.supervisedCompanies.length
     ? profile.supervisedCompanies.join(', ')
     : '—';
+  const isSup = isSupervisor(roles) || isSuperAdmin(roles) || roles.includes('admin');
+  if (drawerSupervisedWrap) {
+    drawerSupervisedWrap.style.display = isSup ? 'block' : 'none';
+  }
   setText(drawerSupervised?.id, supervised);
   setText(drawerEmail?.id, profile?.email || '—');
 }
@@ -239,7 +240,7 @@ function syncAdminVisibility(roles, approved) {
     toggle(navDrawerAdmin, allowed);
   }
   if (drawerEditProfile) {
-    const canEditProfile = isSupervisor(roles);
+    const canEditProfile = isSupervisor(roles) || isSuperAdmin(roles) || roles.includes('admin');
     toggle(drawerEditProfile, canEditProfile);
   }
 }
@@ -436,7 +437,8 @@ function canManageRequest(r) {
 }
 
 function openProfileEditor() {
-  if (!isSupervisor(currentRoles)) return;
+  const allowed = isSupervisor(currentRoles) || isSuperAdmin(currentRoles) || currentRoles.includes('admin');
+  if (!allowed) return;
   populateSupervisedCompanies(profileSupervisedSelect);
 
   const company = currentProfile?.company || '';

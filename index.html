@@ -150,17 +150,20 @@
                 </div>
                 <button type="button" id="drawerClose" aria-label="Cerrar menú" class="drawer-close">×</button>
             </div>
-            <div class="drawer-user-meta">
+            <div class="drawer-user-meta" style="position: relative;">
                 <p class="drawer-label">Rol</p>
                 <p id="drawer-roles" class="drawer-value">—</p>
-                <p class="drawer-label">Área / Sup.</p>
-                <p id="drawer-area" class="drawer-value">—</p>
-                <p class="drawer-label">Gerencia</p>
-                <p id="drawer-gerencia" class="drawer-value">—</p>
-                <p class="drawer-label">Supervisor</p>
-                <p id="drawer-supervisor" class="drawer-value">—</p>
-                <p class="drawer-label">Empresas supervisadas</p>
-                <p id="drawer-supervised" class="drawer-value">—</p>
+                <div class="drawer-profile-actions" style="display: flex; justify-content: flex-end; margin-bottom: 0.5rem;">
+                    <button type="button" id="drawerEditProfile" aria-label="Editar perfil" title="Editar perfil" class="drawer-icon-btn" style="position: absolute; top: 10px; right: 10px; width: 28px; height: 28px; border-radius: 8px; border: none; background: linear-gradient(135deg, #f59e0b, #fbbf24); color: #0f172a; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; padding: 0; box-shadow: 0 10px 20px rgba(245, 158, 11, 0.35);">
+                        ✎
+                    </button>
+                </div>
+                <p class="drawer-label">Empresa</p>
+                <p id="drawer-company" class="drawer-value">—</p>
+                <div id="drawer-supervised-wrap">
+                    <p class="drawer-label">Empresas supervisadas</p>
+                    <p id="drawer-supervised" class="drawer-value">—</p>
+                </div>
                 <p class="drawer-label">Correo</p>
                 <p id="drawer-email" class="drawer-value">—</p>
             </div>
@@ -185,7 +188,6 @@
                 </button>
             </nav>
             <div class="drawer-actions">
-                <button type="button" id="drawerEditProfile" class="drawer-btn">Editar perfil</button>
                 <button type="button" id="logoutDrawer" class="drawer-btn drawer-btn--ghost">Cerrar sesión</button>
             </div>
         </aside>
