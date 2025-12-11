@@ -1,4 +1,4 @@
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js';
+import { initializeApp, deleteApp } from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js';
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updateProfile, sendEmailVerification, deleteUser } from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js';
 import { getFirestore, doc, getDoc, setDoc, serverTimestamp, updateDoc, deleteDoc, collection, getDocs, query, where } from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js';
 
@@ -62,6 +62,9 @@ const adminFilterClear = qs('adminFilterClear');
 const adminFilterPanel = qs('admin-filter-panel');
 const adminActiveFilters = qs('admin-active-filters');
 const adminBulkEdit = qs('adminBulkEdit');
+const adminCreateUserBtn = qs('adminCreateUserBtn');
+const navDrawerCreateUser = qs('nav-drawer-create-user');
+const btnCreateUserSubmit = qs('btn-create-user-submit');
 const fStatusPending = qs('fStatusPending');
 const fStatusApproved = qs('fStatusApproved');
 const fArea = qs('fArea');
@@ -650,6 +653,9 @@ async function editRequest(id, data){
 async function loadAdminPage(){
   const allowed = canAccessAdmin(currentRoles, currentProfile?.approved);
   if (!allowed) return;
+  
+  updateCreateUserButtonVisibility();
+
   try {
     setLoading(true);
     const rows = await fetchRequests(currentProfile);
@@ -661,6 +667,98 @@ async function loadAdminPage(){
     adminRows.innerHTML = `<tr><td colspan="6">${msg}</td></tr>`;
     toggle(adminEmpty, false);
     toggle(adminTableWrapper, true);
+  } finally {
+    setLoading(false);
+  }
+}
+
+function updateCreateUserButtonVisibility() {
+  const canCreate = isSuperAdmin(currentRoles) || currentRoles.includes('admin') || isSupervisor(currentRoles);
+  toggle(adminCreateUserBtn, canCreate);
+  toggle(navDrawerCreateUser, canCreate);
+}
+
+function openCreateUserModal() {
+  const modalEl = document.getElementById('createUserModal');
+  const roleSelect = document.getElementById('new-user-role');
+  if (!modalEl || !roleSelect) return;
+
+  // Limpiar formulario
+  document.getElementById('create-user-form').reset();
+
+  // Definir roles permitidos según jerarquía
+  let allowedRoles = [];
+  if (isSuperAdmin(currentRoles) || currentRoles.includes('admin')) {
+    allowedRoles = ['tecnico', 'inspector', 'planeador', 'programador', 'supervisor', 'admin'];
+  } else if (isSupervisor(currentRoles)) {
+    allowedRoles = ['tecnico', 'inspector', 'planeador', 'programador'];
+  }
+
+  // Llenar select
+  roleSelect.innerHTML = '<option value="">Seleccionar...</option>' + 
+    allowedRoles.map(r => `<option value="${r}">${r}</option>`).join('');
+
+  // Mostrar modal (Bootstrap 5)
+  const modal = new bootstrap.Modal(modalEl);
+  modal.show();
+}
+
+async function handleCreateUser() {
+  const email = document.getElementById('new-user-email').value.trim();
+  const password = document.getElementById('new-user-password').value;
+  const name = document.getElementById('new-user-name').value.trim();
+  const company = document.getElementById('new-user-company').value.trim();
+  const role = document.getElementById('new-user-role').value;
+
+  if (!email || !password || !name || !company || !role) {
+    Swal.fire('Error', 'Por favor completa todos los campos.', 'warning');
+    return;
+  }
+
+  try {
+    setLoading(true);
+    
+    // 1. Inicializar app secundaria para no cerrar sesión actual
+    const secondaryApp = initializeApp(cfg, "SecondaryApp");
+    const secondaryAuth = getAuth(secondaryApp);
+
+    // 2. Crear usuario en Auth
+    const userCred = await createUserWithEmailAndPassword(secondaryAuth, email, password);
+    const newUser = userCred.user;
+
+    // 3. Crear documento en Firestore (usando la instancia db principal)
+    await setDoc(doc(db, 'users', newUser.uid), {
+      uid: newUser.uid,
+      email: email,
+      displayName: name,
+      company: company,
+      roles: [role],
+      requestedRole: role,
+      approved: true, // Aprobado automáticamente
+      createdAt: serverTimestamp(),
+      createdBy: currentProfile.email
+    });
+
+    // 4. Limpieza
+    await signOut(secondaryAuth);
+    await deleteApp(secondaryApp);
+
+    // 5. Cerrar modal y notificar
+    const modalEl = document.getElementById('createUserModal');
+    const modalInstance = bootstrap.Modal.getInstance(modalEl);
+    if (modalInstance) modalInstance.hide();
+
+    Swal.fire('Éxito', 'Usuario creado correctamente.', 'success');
+
+    // 6. Recargar tabla si estamos en admin
+    if (!adminRows.closest('.hidden')) {
+      loadAdminPage();
+    }
+
+  } catch (err) {
+    console.error('Error creando usuario:', err);
+    const friendlyMsg = mapFirebaseError(err);
+    Swal.fire('Error', friendlyMsg, 'error');
   } finally {
     setLoading(false);
   }
@@ -778,6 +876,7 @@ async function hydrateSession(user){
     setText('session-role', 'Rol: ' + roles.join(', '));
     setDrawerData(currentProfile, roles);
     syncAdminVisibility(roles, approved);
+    updateCreateUserButtonVisibility(); // Actualizar visibilidad de botón crear usuario
     toggle(sessionBar, approved);
     renderState(approved ? 'app' : 'pending');
     if (approved) {
@@ -891,6 +990,19 @@ if (adminBulkEdit) {
     excludedFromBulk.clear(); // Reseteamos exclusiones al cambiar modo
     renderRequests(lastRequests);
   });
+}
+
+if (adminCreateUserBtn) {
+  adminCreateUserBtn.addEventListener('click', openCreateUserModal);
+}
+if (navDrawerCreateUser) {
+  navDrawerCreateUser.addEventListener('click', () => {
+    closeDrawer();
+    openCreateUserModal();
+  });
+}
+if (btnCreateUserSubmit) {
+  btnCreateUserSubmit.addEventListener('click', handleCreateUser);
 }
 
 const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
