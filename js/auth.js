@@ -55,6 +55,25 @@ const pageForm = qs('page-form');
 const pageAdmin = qs('page-admin');
 const navDrawerForm = qs('nav-drawer-form');
 const navDrawerAdmin = qs('nav-drawer-admin');
+const adminFilterOpen = qs('adminFilterOpen');
+const adminFilterClose = qs('adminFilterClose');
+const adminFilterApply = qs('adminFilterApply');
+const adminFilterClear = qs('adminFilterClear');
+const adminFilterPanel = qs('admin-filter-panel');
+const adminActiveFilters = qs('admin-active-filters');
+const fStatusPending = qs('fStatusPending');
+const fStatusApproved = qs('fStatusApproved');
+const fArea = qs('fArea');
+const fGerencia = qs('fGerencia');
+const fRole = qs('fRole');
+
+let lastRequests = [];
+let adminFilters = {
+  statuses: ['pending', 'approved'],
+  area: '',
+  gerencia: '',
+  role: ''
+};
 
 let currentProfile = null;
 let currentRoles = [];
@@ -140,6 +159,11 @@ function isSupervisor(roles = []){
   return roles.includes('supervisor');
 }
 
+function canAccessAdmin(roles = [], approved){
+  if (!approved) return false;
+  return isSuperAdmin(roles) || isSupervisor(roles);
+}
+
 function setDrawerData(profile, roles){
   const rolesText = roles?.length ? roles.join(', ') : '—';
   setText(drawerRoles?.id, rolesText);
@@ -161,8 +185,8 @@ function closeDrawer(){
   setTimeout(() => toggle(drawer, false), 180);
 }
 
-function syncAdminVisibility(roles){
-  const allowed = isSuperAdmin(roles) || isSupervisor(roles);
+function syncAdminVisibility(roles, approved){
+  const allowed = canAccessAdmin(roles, approved);
   if (navDrawerAdmin) {
     toggle(navDrawerAdmin, allowed);
   }
@@ -175,11 +199,85 @@ function setActiveTab(isAdmin){
 
 function goToPage(page){
   const toAdmin = page === 'admin';
+  const allowed = canAccessAdmin(currentRoles, currentProfile?.approved);
+  if (toAdmin && !allowed) return;
   toggle(pageForm, !toAdmin);
   toggle(pageAdmin, toAdmin);
   setActiveTab(toAdmin);
   if (toAdmin) {
     loadAdminPage();
+  }
+}
+
+function renderFilterChips(){
+  if (!adminActiveFilters) return;
+  adminActiveFilters.innerHTML = '';
+  const chips = [];
+  if (adminFilters.statuses.length === 1) {
+    chips.push({ key:'status', label: adminFilters.statuses[0] === 'pending' ? 'Pendientes' : 'Aprobados' });
+  }
+  if (adminFilters.area) chips.push({ key:'area', label:'Área: ' + adminFilters.area });
+  if (adminFilters.gerencia) chips.push({ key:'gerencia', label:'Gerencia: ' + adminFilters.gerencia });
+  if (adminFilters.role) chips.push({ key:'role', label:'Rol: ' + adminFilters.role });
+
+  if (!chips.length) return;
+  chips.forEach(chip => {
+    const el = document.createElement('div');
+    el.className = 'chip';
+    el.innerHTML = `${chip.label} <button type="button" aria-label="Quitar filtro">×</button>`;
+    el.querySelector('button').addEventListener('click', () => {
+      if (chip.key === 'status') {
+        adminFilters.statuses = ['pending','approved'];
+        fStatusPending.checked = true;
+        fStatusApproved.checked = true;
+      }
+      if (chip.key === 'area') {
+        adminFilters.area = '';
+        fArea.value = '';
+      }
+      if (chip.key === 'gerencia') {
+        adminFilters.gerencia = '';
+        fGerencia.value = '';
+      }
+      if (chip.key === 'role') {
+        adminFilters.role = '';
+        fRole.value = '';
+      }
+      renderRequests(lastRequests);
+      renderFilterChips();
+    });
+    adminActiveFilters.appendChild(el);
+  });
+}
+
+function buildFilterOptions(){
+  const areas = new Set();
+  const gerencias = new Set();
+  const roles = new Set();
+  lastRequests.forEach(r => {
+    if (r.area) areas.add(r.area);
+    if (r.gerencia) gerencias.add(r.gerencia);
+    if (r.requestedRole) roles.add(r.requestedRole);
+    else if (Array.isArray(r.roles) && r.roles.length) roles.add(r.roles[0]);
+  });
+  const fill = (sel, set) => {
+    if (!sel) return;
+    const current = sel.value;
+    sel.innerHTML = '<option value="">Todas</option>';
+    Array.from(set).sort().forEach(v => {
+      sel.insertAdjacentHTML('beforeend', `<option value="${v}">${v}</option>`);
+    });
+    sel.value = current || '';
+  };
+  fill(fArea, areas);
+  fill(fGerencia, gerencias);
+  if (fRole) {
+    const current = fRole.value;
+    fRole.innerHTML = '<option value="">Todos</option>';
+    Array.from(roles).sort().forEach(v => {
+      fRole.insertAdjacentHTML('beforeend', `<option value="${v}">${v}</option>`);
+    });
+    fRole.value = current || '';
   }
 }
 
@@ -209,9 +307,27 @@ async function fetchRequests(profile){
   return snap.docs.map(d => ({ id: d.id, ...d.data() }));
 }
 
+function isPendingRequest(r){
+  return !r.approved || (Array.isArray(r.roles) && r.roles.includes('solicitado'));
+}
+
+function matchesSelect(val, term){
+  if (!term) return true;
+  return (val || '').toString().toLowerCase() === term.toLowerCase();
+}
+
 function renderRequests(rows){
   if (!adminRows || !adminEmpty || !adminTableWrapper) return;
-  const filtered = rows.filter(r => !r.approved || (Array.isArray(r.roles) && r.roles.includes('solicitado')));
+  lastRequests = rows || [];
+  buildFilterOptions();
+  const filtered = lastRequests.filter(r => {
+    const pending = isPendingRequest(r);
+    const statusOk = adminFilters.statuses.includes('pending') && pending || adminFilters.statuses.includes('approved') && !pending;
+    const areaOk = matchesSelect(r.area, adminFilters.area);
+    const gerOk = matchesSelect(r.gerencia, adminFilters.gerencia);
+    const roleOk = matchesSelect(r.requestedRole || (Array.isArray(r.roles) ? r.roles[0] : ''), adminFilters.role);
+    return statusOk && areaOk && gerOk && roleOk;
+  });
   adminRows.innerHTML = '';
   if (!filtered.length) {
     toggle(adminEmpty, true);
@@ -226,26 +342,108 @@ function renderRequests(rows){
     const chipClass = estadoAprobado ? 'admin-chip admin-chip--approved' : 'admin-chip admin-chip--pending';
     const estadoTxt = estadoAprobado ? 'Aprobado' : 'Pendiente';
     const row = document.createElement('tr');
+    const puedeAprobar = isSuperAdmin(currentRoles) || currentRoles.includes('admin');
+    let actionCell = '—';
+    if (puedeAprobar) {
+      const parts = [];
+      parts.push(`<button class="admin-edit-btn" data-edit="${r.id}">Editar</button>`);
+      if (!estadoAprobado) {
+        parts.push(`<button class="admin-approve-btn" data-approve="${r.id}" data-role="${r.requestedRole || ''}">Aprobar</button>`);
+      } else {
+        parts.push(`<button class="admin-revoke-btn" data-revoke="${r.id}">Revocar</button>`);
+      }
+      actionCell = `<div class="admin-actions-cell">${parts.join('')}</div>`;
+    }
     row.innerHTML = `
+      <td>${r.displayName || '—'}</td>
       <td>${r.email || '—'}</td>
       <td>${r.requestedRole || (Array.isArray(r.roles) ? r.roles.join(', ') : '—')}</td>
       <td>${r.area || '—'}</td>
       <td>${r.gerencia || '—'}</td>
       <td><span class="${chipClass}">${estadoTxt}</span></td>
       <td>${formatDate(r.createdAt)}</td>
+      <td>${actionCell}</td>
     `;
     adminRows.appendChild(row);
   });
 }
 
+async function approveRequest(id, requestedRole){
+  const allowed = isSuperAdmin(currentRoles) || currentRoles.includes('admin');
+  if (!allowed) return;
+  try {
+    setLoading(true);
+    const roleToSet = requestedRole || 'usuario';
+    await updateDoc(doc(db, 'users', id), {
+      approved: true,
+      roles: [roleToSet]
+    });
+    await loadAdminPage();
+  } catch (err) {
+    console.error('No se pudo aprobar', err);
+    alert('No se pudo aprobar: ' + (err?.code || err?.message || 'error'));
+  } finally {
+    setLoading(false);
+  }
+}
+
+async function revokeAccess(id){
+  const allowed = isSuperAdmin(currentRoles) || currentRoles.includes('admin');
+  if (!allowed) return;
+  if (currentProfile?.uid === id) {
+    alert('No puedes revocar tu propio acceso.');
+    return;
+  }
+  try {
+    setLoading(true);
+    await updateDoc(doc(db, 'users', id), {
+      approved: false,
+      roles: ['solicitado']
+    });
+    await loadAdminPage();
+  } catch (err) {
+    console.error('No se pudo revocar', err);
+    alert('No se pudo revocar: ' + (err?.code || err?.message || 'error'));
+  } finally {
+    setLoading(false);
+  }
+}
+
+async function editRequest(id, data){
+  const allowed = isSuperAdmin(currentRoles) || currentRoles.includes('admin');
+  if (!allowed) return;
+  const newRole = prompt('Nuevo rol (dejar vacío para mantener)', data.requestedRole || (Array.isArray(data.roles) ? data.roles[0] : '')) || '';
+  const newArea = prompt('Área', data.area || '') || '';
+  const newGer = prompt('Gerencia', data.gerencia || '') || '';
+  if (!newRole && !newArea && !newGer) return;
+  try {
+    setLoading(true);
+    const payload = {};
+    if (newRole) payload.requestedRole = newRole;
+    if (newArea) payload.area = newArea;
+    if (newGer) payload.gerencia = newGer;
+    await updateDoc(doc(db, 'users', id), payload);
+    await loadAdminPage();
+  } catch (err) {
+    console.error('No se pudo actualizar', err);
+    alert('No se pudo actualizar: ' + (err?.code || err?.message || 'error'));
+  } finally {
+    setLoading(false);
+  }
+}
+
 async function loadAdminPage(){
+  const allowed = canAccessAdmin(currentRoles, currentProfile?.approved);
+  if (!allowed) return;
   try {
     setLoading(true);
     const rows = await fetchRequests(currentProfile);
     renderRequests(rows);
+    renderFilterChips();
   } catch (err) {
     console.error('No se pudieron cargar las solicitudes', err);
-    adminRows.innerHTML = '<tr><td colspan="6">Error al cargar solicitudes.</td></tr>';
+    const msg = err?.code || err?.message || 'Error al cargar solicitudes.';
+    adminRows.innerHTML = `<tr><td colspan="6">${msg}</td></tr>`;
     toggle(adminEmpty, false);
     toggle(adminTableWrapper, true);
   } finally {
@@ -341,7 +539,7 @@ async function hydrateSession(user){
     setText('session-user', syncedData?.displayName || user.email || 'Usuario');
     setText('session-role', 'Rol: ' + roles.join(', '));
     setDrawerData(currentProfile, roles);
-    syncAdminVisibility(roles);
+    syncAdminVisibility(roles, approved);
     toggle(sessionBar, approved);
     renderState(approved ? 'app' : 'pending');
     if (approved) {
@@ -383,6 +581,52 @@ if (drawerClose) drawerClose.addEventListener('click', closeDrawer);
 if (drawerLogout) drawerLogout.addEventListener('click', () => auth && signOut(auth));
 if (navDrawerAdmin) navDrawerAdmin.addEventListener('click', () => { goToPage('admin'); closeDrawer(); });
 if (navDrawerForm) navDrawerForm.addEventListener('click', () => { goToPage('form'); closeDrawer(); });
+if (adminRows) {
+  adminRows.addEventListener('click', evt => {
+    const btn = evt.target.closest('[data-approve]');
+    if (btn) {
+      const id = btn.dataset.approve;
+      const role = btn.dataset.role;
+      approveRequest(id, role);
+      return;
+    }
+    const revokeBtn = evt.target.closest('[data-revoke]');
+    if (revokeBtn) {
+      const id = revokeBtn.dataset.revoke;
+      revokeAccess(id);
+      return;
+    }
+    const editBtn = evt.target.closest('[data-edit]');
+    if (editBtn) {
+      const id = editBtn.dataset.edit;
+      const data = lastRequests.find(r => r.id === id);
+      if (data) editRequest(id, data);
+    }
+  });
+}
+if (adminFilterOpen) adminFilterOpen.addEventListener('click', () => toggle(adminFilterPanel, true));
+if (adminFilterClose) adminFilterClose.addEventListener('click', () => toggle(adminFilterPanel, false));
+if (adminFilterClear) adminFilterClear.addEventListener('click', () => {
+  fStatusPending.checked = true;
+  fStatusApproved.checked = true;
+  fArea.value = '';
+  fGerencia.value = '';
+  fRole.value = '';
+});
+if (adminFilterApply) adminFilterApply.addEventListener('click', () => {
+  const statuses = [];
+  if (fStatusPending.checked) statuses.push('pending');
+  if (fStatusApproved.checked) statuses.push('approved');
+  adminFilters = {
+    statuses: statuses.length ? statuses : ['pending','approved'],
+    area: fArea.value,
+    gerencia: fGerencia.value,
+    role: fRole.value
+  };
+  toggle(adminFilterPanel, false);
+  renderRequests(lastRequests);
+  renderFilterChips();
+});
 
 // Permite cerrar al clicar fuera de la tarjeta
 if (shells.pending) {

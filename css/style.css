@@ -325,6 +325,47 @@ body{
 .admin-title{ margin:2px 0 4px; font-size:20px; }
 .admin-subtitle{ margin:0; color:#6b7280; font-size:13px; }
 .admin-body{ padding:12px 20px 20px; overflow:auto; max-height:none; }
+.admin-toolbar{ display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin:0 0 12px; }
+.admin-actions{ display:flex; gap:8px; flex-wrap:wrap; }
+.admin-chips{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.chip{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 10px;
+  border-radius:999px;
+  background:#f3f4f6;
+  color:#0f172a;
+  border:1px solid #e5e7eb;
+  font-weight:700;
+  font-size:12px;
+}
+.chip button{
+  background:transparent;
+  border:none;
+  color:#6b7280;
+  cursor:pointer;
+  padding:0 4px;
+}
+.pill{
+  border:1px solid #e5e7eb;
+  background:#f8fafc;
+  color:#0f172a;
+  padding:8px 12px;
+  border-radius:999px;
+  font-weight:700;
+  font-size:13px;
+}
+.pill.is-active{
+  background:#fead17;
+  color:#1f1301;
+  border-color:#f3a300;
+  box-shadow:0 8px 20px rgba(254,173,23,.22);
+}
+.pill-ghost{
+  background:transparent;
+  color:#0f172a;
+}
 .admin-empty{ padding:16px; background:#f8fafc; border:1px dashed #cbd5e1; border-radius:12px; color:#475569; }
 .admin-table-wrapper{ width:100%; overflow:auto; }
 .admin-table{ width:100%; border-collapse:collapse; }
@@ -334,6 +375,59 @@ body{
 .admin-chip{ display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; font-weight:700; font-size:12px; }
 .admin-chip--pending{ background:#ffedd5; color:#c2410c; }
 .admin-chip--approved{ background:#dcfce7; color:#166534; }
+.admin-approve-btn{
+  background:#10b981;
+  color:#0b2d1e;
+  border:1px solid #0ea271;
+  padding:8px 12px;
+  border-radius:10px;
+  font-weight:800;
+}
+.admin-revoke-btn{
+  background:#ef4444;
+  color:#fff;
+  border:1px solid #dc2626;
+  padding:8px 12px;
+  border-radius:10px;
+  font-weight:800;
+}
+.admin-edit-btn{
+  background:#3b82f6;
+  color:#fff;
+  border:1px solid #2563eb;
+  padding:8px 12px;
+  border-radius:10px;
+  font-weight:800;
+}
+.admin-actions-cell{ display:flex; gap:6px; flex-wrap:wrap; }
+
+/* ====== Filter overlay ====== */
+.filter-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(15,23,42,.55);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:1400;
+}
+.filter-sheet{
+  width:min(480px, 90vw);
+  background:#fff;
+  border-radius:16px;
+  padding:18px 18px 14px;
+  box-shadow:0 30px 80px rgba(0,0,0,.32);
+  border:1px solid #e5e7eb;
+}
+.filter-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.filter-close{ background:transparent; border:1px solid #e5e7eb; border-radius:8px; padding:6px 10px; }
+.filter-body{ display:grid; gap:12px; }
+.filter-group{ display:flex; flex-direction:column; gap:6px; }
+.filter-label{ margin:0; font-weight:700; color:#111827; }
+.checkline{ display:flex; align-items:center; gap:8px; font-weight:600; color:#111827; }
+.filter-group input[type="text"]{ padding:10px; border-radius:10px; border:1px solid #d1d5db; }
+.filter-group select{ padding:10px; border-radius:10px; border:1px solid #d1d5db; background:#fff; }
+.filter-footer{ margin-top:12px; display:flex; justify-content:flex-end; gap:8px; }
 
 /* ====== Header ====== */
 header{ display:flex; justify-content:center; margin:32px 0 8px; }
