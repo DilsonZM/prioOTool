@@ -48,9 +48,9 @@ const regCompany = qs('reg-company');
 const regSupervisor = qs('reg-supervisor');
 const regSupervisorWrapper = qs('reg-supervisor-wrapper');
 const supervisorExtras = qs('supervisor-extras');
-const userTypeInputs = document.querySelectorAll('input[name="reg-user-type"]');
 const supervisorCompaniesWrapper = qs('supervisor-companies-wrapper');
 const regSupervisedCompanies = qs('reg-supervised-companies');
+const supervisorOriginInputs = document.querySelectorAll('input[name="supervisor-origin"]');
 const logoutBtn = qs('logoutBtn');
 const pendingLogout = qs('pending-logout');
 const pendingRequestAgain = qs('pending-request-again');
@@ -72,6 +72,8 @@ const pageForm = qs('page-form');
 const pageAdmin = qs('page-admin');
 const navDrawerForm = qs('nav-drawer-form');
 const navDrawerAdmin = qs('nav-drawer-admin');
+const navRequestsBadge = qs('nav-requests-badge');
+const pendingPill = qs('session-pending-pill');
 const adminFilterOpen = qs('adminFilterOpen');
 const adminFilterClose = qs('adminFilterClose');
 const adminFilterApply = qs('adminFilterApply');
@@ -107,6 +109,7 @@ let deleteTargetId = null; // ID del usuario a eliminar
 
 let currentProfile = null;
 let currentRoles = [];
+let sortState = { key: 'createdAt', dir: 'desc' };
 
 /* ===== Registro: helpers para supervisores ===== */
 function populateSupervisedCompanies(selectEl = regSupervisedCompanies) {
@@ -135,37 +138,38 @@ function getSelectedSupervisedCompaniesFrom(selectEl) {
 }
 
 function syncUserFields() {
-  // 1. User Type Logic
-  let userType = 'contractor';
-  userTypeInputs.forEach(radio => {
-    if (radio.checked) userType = radio.value;
+  if (!regRole) return;
+  const isSupervisorRole = regRole.value === 'supervisor';
+  toggle(supervisorExtras, isSupervisorRole);
+
+  let supervisorType = 'contratista';
+  supervisorOriginInputs.forEach(radio => {
+    if (radio.checked) supervisorType = radio.value;
   });
 
+  // Empresa base: si supervisor Cerrejón, se bloquea en Cerrejón
   if (regCompany) {
-    if (userType === 'cerrejon') {
+    if (isSupervisorRole && supervisorType === 'cerrejon') {
       regCompany.value = 'Cerrejón';
       regCompany.readOnly = true;
-      regCompany.parentElement.classList.add('locked-input'); // Optional styling
+      regCompany.parentElement.classList.add('locked-input');
     } else {
-      if (regCompany.value === 'Cerrejón') regCompany.value = '';
       regCompany.readOnly = false;
       regCompany.parentElement.classList.remove('locked-input');
+      if (regCompany.value === 'Cerrejón' && supervisorType !== 'cerrejon') {
+        regCompany.value = '';
+      }
     }
   }
 
-  // 2. Supervisor Role Logic
-  if (!regRole) return;
-  const isSupervisorRole = regRole.value === 'supervisor';
-  
-  // Show "Supervised Companies" only for Cerrejón Supervisors
+  // Empresas supervisadas solo para supervisor de Cerrejón
   if (supervisorCompaniesWrapper) {
-    const showSupervised = isSupervisorRole && userType === 'cerrejon';
+    const showSupervised = isSupervisorRole && supervisorType === 'cerrejon';
     toggle(supervisorCompaniesWrapper, showSupervised);
   }
 
-  // "Supervisor responsable" field logic
+  // Campo supervisor responsable: visible solo si NO es supervisor
   if (regSupervisorWrapper && regSupervisor) {
-    // Supervisors don't need to specify a supervisor (or it's optional/different)
     toggle(regSupervisorWrapper, !isSupervisorRole);
     regSupervisor.required = !isSupervisorRole;
     if (isSupervisorRole) {
@@ -220,6 +224,17 @@ function setDrawerData(profile, roles) {
   }
   setText(drawerSupervised?.id, supervised);
   setText(drawerEmail?.id, profile?.email || '—');
+}
+
+function updatePendingBadges(count = 0) {
+  if (navRequestsBadge) {
+    navRequestsBadge.textContent = count;
+    navRequestsBadge.classList.toggle('hidden', count === 0);
+  }
+  if (pendingPill) {
+    pendingPill.textContent = `${count} pendientes`;
+    pendingPill.classList.toggle('hidden', count === 0);
+  }
 }
 
 function openDrawer() {
@@ -436,6 +451,35 @@ function canManageRequest(r) {
   return false;
 }
 
+function valueForSort(r, key) {
+  switch (key) {
+    case 'displayName': return (r.displayName || '').toLowerCase();
+    case 'email': return (r.email || '').toLowerCase();
+    case 'company': return (r.company || '').toLowerCase();
+    case 'supervisor': return (r.supervisor || '').toLowerCase();
+    case 'role': return (r.requestedRole || (Array.isArray(r.roles) ? r.roles[0] : '') || '').toLowerCase();
+    case 'status': return isPendingRequest(r) ? 'pending' : 'approved';
+    case 'createdAt':
+      if (r.createdAt?.toMillis) return r.createdAt.toMillis();
+      if (r.createdAt?.seconds) return r.createdAt.seconds * 1000;
+      const d = r.createdAt ? new Date(r.createdAt) : null;
+      return d ? d.getTime() : 0;
+    default:
+      return '';
+  }
+}
+
+function applySort(rows) {
+  if (!sortState || !sortState.key) return rows;
+  const dir = sortState.dir === 'asc' ? 1 : -1;
+  return [...rows].sort((a, b) => {
+    const va = valueForSort(a, sortState.key);
+    const vb = valueForSort(b, sortState.key);
+    if (va === vb) return 0;
+    return va > vb ? dir : -dir;
+  });
+}
+
 function openProfileEditor() {
   const allowed = isSupervisor(currentRoles) || isSuperAdmin(currentRoles) || currentRoles.includes('admin');
   if (!allowed) return;
@@ -644,8 +688,11 @@ function createRequestRow(r, forceEdit = false) {
 function renderRequests(rows) {
   if (!adminRows || !adminEmpty || !adminTableWrapper) return;
   lastRequests = rows || [];
+  const pendingCount = lastRequests.filter(isPendingRequest).length;
+  updatePendingBadges(pendingCount);
+  const sorted = applySort(lastRequests);
   buildFilterOptions();
-  const filtered = lastRequests.filter(r => {
+  const filtered = sorted.filter(r => {
     const pending = isPendingRequest(r);
     const statusOk = adminFilters.statuses.includes('pending') && pending || adminFilters.statuses.includes('approved') && !pending;
     const areaOk = matchesSelect(r.company, adminFilters.area); // Usamos company
@@ -679,6 +726,29 @@ function renderRequests(rows) {
 
   filtered.forEach(r => {
     adminRows.appendChild(createRequestRow(r));
+  });
+}
+
+function attachSortHandlers() {
+  const headers = document.querySelectorAll('th.sortable');
+  headers.forEach(th => {
+    th.addEventListener('click', () => {
+      const key = th.dataset.sort;
+      if (!key) return;
+      if (sortState.key === key) {
+        sortState.dir = sortState.dir === 'asc' ? 'desc' : 'asc';
+      } else {
+        sortState = { key, dir: key === 'createdAt' ? 'desc' : 'asc' };
+      }
+      headers.forEach(h => h.classList.remove('is-asc', 'is-desc'));
+      th.classList.add(sortState.dir === 'asc' ? 'is-asc' : 'is-desc');
+      renderRequests(lastRequests);
+    });
+  });
+  headers.forEach(th => {
+    if (th.dataset.sort === sortState.key) {
+      th.classList.add(sortState.dir === 'asc' ? 'is-asc' : 'is-desc');
+    }
   });
 }
 
@@ -876,6 +946,7 @@ async function loadAdminPage() {
   try {
     setLoading(true);
     const rows = await fetchRequests(currentProfile, currentRoles);
+    updatePendingBadges(rows.filter(isPendingRequest).length);
     renderRequests(rows);
     renderFilterChips();
   } catch (err) {
@@ -886,6 +957,20 @@ async function loadAdminPage() {
     toggle(adminTableWrapper, true);
   } finally {
     setLoading(false);
+  }
+}
+
+async function refreshPendingCount() {
+  const allowed = canAccessAdmin(currentRoles, currentProfile?.approved);
+  if (!allowed) {
+    updatePendingBadges(0);
+    return;
+  }
+  try {
+    const rows = await fetchRequests(currentProfile, currentRoles);
+    updatePendingBadges(rows.filter(isPendingRequest).length);
+  } catch (err) {
+    updatePendingBadges(0);
   }
 }
 
@@ -992,15 +1077,13 @@ async function handleRegister(evt) {
   const supervisorInput = regSupervisor ? regSupervisor.value.trim() : '';
   const requestedRole = regRole ? regRole.value : '';
 
-  // User Type Logic
-  let userType = 'contractor';
-  userTypeInputs.forEach(radio => {
-    if (radio.checked) userType = radio.value;
-  });
-
   const isSupervisorRole = requestedRole === 'supervisor';
-  const supervisedCompanies = (isSupervisorRole && userType === 'cerrejon') 
-    ? getSelectedSupervisedCompanies() 
+  let supervisorType = 'contractor';
+  supervisorOriginInputs.forEach(radio => {
+    if (radio.checked) supervisorType = radio.value;
+  });
+  const supervisedCompanies = (isSupervisorRole && supervisorType === 'cerrejon')
+    ? getSelectedSupervisedCompanies()
     : [];
 
   if (!name || !email || !requestedRole) {
@@ -1015,11 +1098,11 @@ async function handleRegister(evt) {
     }
   } else {
     // Supervisor validations
-    if (userType === 'cerrejon' && !supervisedCompanies.length) {
+    if (supervisorType === 'cerrejon' && !supervisedCompanies.length) {
       showError(registerAlert, 'Selecciona las empresas que supervisas.');
       return;
     }
-    if (userType === 'contractor' && !companyInput) {
+    if (supervisorType === 'contractor' && !companyInput) {
       showError(registerAlert, 'Indica la empresa a la que perteneces.');
       return;
     }
@@ -1036,7 +1119,7 @@ async function handleRegister(evt) {
   }
 
   try {
-    const company = userType === 'cerrejon' ? 'Cerrejón' : companyInput;
+    const company = supervisorType === 'cerrejon' ? 'Cerrejón' : companyInput;
     const supervisorValue = isSupervisorRole ? name : supervisorInput;
     
     await registerUser({
@@ -1046,7 +1129,7 @@ async function handleRegister(evt) {
       company,
       supervisor: supervisorValue,
       requestedRole,
-      supervisorType: userType, // 'cerrejon' or 'contractor'
+      supervisorType: isSupervisorRole ? supervisorType : '',
       supervisedCompanies
     });
     renderState('pending');
@@ -1078,17 +1161,22 @@ async function hydrateSession(user) {
     updateCreateUserButtonVisibility();
     toggle(sessionBar, approved);
     renderState(approved ? 'app' : 'pending');
-    if (approved) {
-      goToPage('form');
-    }
-    if (approved && typeof window.prioShowIntro === 'function') {
-      window.prioShowIntro();
-    }
-  } catch (err) {
-    console.error('Error al obtener el perfil:', err);
-    renderState('auth');
-    showError(loginAlert, 'No pudimos validar tu perfil. Intenta más tarde.');
-  } finally {
+  if (approved) {
+    goToPage('form');
+  }
+  if (approved && typeof window.prioShowIntro === 'function') {
+    window.prioShowIntro();
+  }
+  if (canAccessAdmin(currentRoles, approved)) {
+    refreshPendingCount();
+  } else {
+    updatePendingBadges(0);
+  }
+} catch (err) {
+  console.error('Error al obtener el perfil:', err);
+  renderState('auth');
+  showError(loginAlert, 'No pudimos validar tu perfil. Intenta más tarde.');
+} finally {
     setLoading(false);
   }
 }
@@ -1105,10 +1193,11 @@ populateSupervisedCompanies(profileSupervisedSelect);
 if (regRole) {
   regRole.addEventListener('change', syncUserFields);
 }
-userTypeInputs.forEach(radio => {
+supervisorOriginInputs.forEach(radio => {
   radio.addEventListener('change', syncUserFields);
 });
 syncUserFields();
+attachSortHandlers();
 
 if (loginForm) loginForm.addEventListener('submit', handleLogin);
 if (registerForm) registerForm.addEventListener('submit', handleRegister);
@@ -1235,6 +1324,13 @@ if (drawerEditProfile) {
 }
 if (btnProfileSave) {
   btnProfileSave.addEventListener('click', saveProfileEdits);
+}
+if (pendingPill) {
+  pendingPill.addEventListener('click', () => {
+    if (canAccessAdmin(currentRoles, currentProfile?.approved)) {
+      goToPage('admin');
+    }
+  });
 }
 
 const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');

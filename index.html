@@ -50,60 +50,56 @@
             <h2>Solicitar acceso</h2>
             <p class="auth-copy">Los registros se aprueban manualmente para proteger la información operativa.</p>
             <form id="register-form">
-                <div class="form-group" style="margin-bottom: 1rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Tipo de Usuario</label>
-                    <div style="display: flex; gap: 1.5rem;">
-                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                            <input type="radio" name="reg-user-type" value="contractor" checked>
-                            <span>Contratista</span>
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                            <input type="radio" name="reg-user-type" value="cerrejon">
-                            <span>Cerrejón</span>
-                        </label>
+                <div class="auth-grid">
+                    <div class="field">
+                        <label for="reg-name">Nombre completo</label>
+                        <input type="text" id="reg-name" required>
+                    </div>
+                    <div class="field">
+                        <label for="reg-email">Correo corporativo</label>
+                        <input type="email" id="reg-email" required>
+                    </div>
+                    <div class="field">
+                        <label for="reg-password">Contraseña</label>
+                        <input type="password" id="reg-password" required>
+                    </div>
+                    <div class="field">
+                        <label for="reg-password-confirm">Validar contraseña</label>
+                        <input type="password" id="reg-password-confirm" required>
+                    </div>
+                    <div class="field full-span" id="reg-company-wrapper">
+                        <label for="reg-company">Empresa</label>
+                        <input type="text" id="reg-company" required>
+                    </div>
+                    <div class="field full-span" id="reg-supervisor-wrapper">
+                        <label for="reg-supervisor">Supervisor responsable</label>
+                        <input type="text" id="reg-supervisor" required>
+                    </div>
+                    <div class="field full-span">
+                        <label for="reg-role">Rol solicitado</label>
+                        <select id="reg-role" required>
+                            <option value="tecnico" selected>Técnico</option>
+                            <option value="analista">Analista</option>
+                            <option value="planeador">Planeador</option>
+                            <option value="programador">Programador</option>
+                            <option value="supervisor">Supervisor</option>
+                        </select>
                     </div>
                 </div>
 
-                <label for="reg-name">Nombre completo</label>
-                <input type="text" id="reg-name" required>
-                <label for="reg-email">Correo corporativo</label>
-                <input type="email" id="reg-email" required>
-                <label for="reg-password">Contraseña</label>
-                <input type="password" id="reg-password" required>
-                <label for="reg-password-confirm">Validar contraseña</label>
-                <input type="password" id="reg-password-confirm" required>
-                <div id="reg-company-wrapper">
-                    <label for="reg-company">Empresa</label>
-                    <input type="text" id="reg-company" required>
-                </div>
-
-                <div id="reg-supervisor-wrapper">
-                    <label for="reg-supervisor">Supervisor responsable</label>
-                    <input type="text" id="reg-supervisor" required>
-                </div>
-
-                <label for="reg-role">Rol solicitado</label>
-                <select id="reg-role" required>
-                    <option value="tecnico" selected>Técnico</option>
-                    <option value="analista">Analista</option>
-                    <option value="planeador">Planeador</option>
-                    <option value="programador">Programador</option>
-                    <option value="supervisor">Supervisor</option>
-                </select>
-
-                <div id="supervisor-extras" class="hidden">
-                    <p style="margin: 0.5rem 0; color: #475569;">Si eres supervisor, indícanos de dónde:</p>
-                    <div class="auth-actions" style="gap: 1rem; justify-content: flex-start;">
-                        <label style="display: flex; align-items: center; gap: 0.4rem; font-weight: 600; cursor: pointer;">
+                <div id="supervisor-extras" class="hidden supervisor-card">
+                    <p class="supervisor-hint">Si eres supervisor, indícanos de dónde:</p>
+                    <div class="supervisor-options">
+                        <label>
                             <input type="radio" name="supervisor-origin" value="cerrejon"> Supervisor de Cerrejón
                         </label>
-                        <label style="display: flex; align-items: center; gap: 0.4rem; font-weight: 600; cursor: pointer;">
+                        <label>
                             <input type="radio" name="supervisor-origin" value="contratista"> Supervisor de mi contratista
                         </label>
                     </div>
                     <div id="supervisor-companies-wrapper" class="hidden">
                         <label for="reg-supervised-companies">Empresas que supervisas</label>
-                        <select id="reg-supervised-companies" multiple size="4" style="min-height: 120px;">
+                        <select id="reg-supervised-companies" multiple size="4">
                             <option value="">Selecciona empresas</option>
                         </select>
                         <p class="auth-copy" style="margin-top: 0.5rem;">Selecciona todas las empresas que podrás aprobar/gestionar.</p>
@@ -193,6 +189,7 @@
                         <svg viewBox="0 0 24 24" role="img"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 12l2 2 4-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </span>
                     <span>Solicitudes</span>
+                    <span id="nav-requests-badge" class="drawer-badge hidden">0</span>
                 </button>
                 <button type="button" id="nav-drawer-create-user" class="drawer-link hidden">
                     <span class="drawer-ico" aria-hidden="true">
@@ -216,6 +213,7 @@
             </div>
             <div class="session-meta">
                 <span id="session-role">Rol: —</span>
+                <span id="session-pending-pill" class="pending-pill hidden">0 pendientes</span>
             </div>
         </div>
 
@@ -330,13 +328,13 @@
                         <table class="admin-table">
                             <thead>
                                 <tr>
-                                    <th>Nombre</th>
-                                    <th>Correo</th>
-                                    <th>Rol</th>
-                                    <th>Empresa</th>
-                                    <th>Supervisor</th>
-                                    <th>Estado</th>
-                                    <th>Creado</th>
+                                    <th class="sortable" data-sort="displayName">Nombre</th>
+                                    <th class="sortable" data-sort="email">Correo</th>
+                                    <th class="sortable" data-sort="role">Rol</th>
+                                    <th class="sortable" data-sort="company">Empresa</th>
+                                    <th class="sortable" data-sort="supervisor">Supervisor</th>
+                                    <th class="sortable" data-sort="status">Estado</th>
+                                    <th class="sortable" data-sort="createdAt">Creado</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
