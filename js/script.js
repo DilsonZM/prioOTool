@@ -112,9 +112,9 @@ document.getElementById('tiempoprobable').addEventListener('change', e => {
 /* =====================================================
  * 5. REFERENCIAS DOM PARA RESULTADOS
  * ==================================================== */
-const resultados = document.querySelector('.resultados');
-const spanPrio  = document.getElementById('calculo_prioridad');
-const spanPlazo = document.getElementById('dias_de_ejecucion');
+// const resultados = document.querySelector('.resultados'); // Ya no se usa visualmente en el DOM
+// const spanPrio  = document.getElementById('calculo_prioridad');
+// const spanPlazo = document.getElementById('dias_de_ejecucion');
 
 /* =====================================================
  *  COLOR SEGÚN PRIORIDAD (incluye P5)
@@ -129,12 +129,22 @@ const COLOR_MAP = {
   pl:'priority-pl'
 };
 
-function pintarColor(code){
-  const clase = COLOR_MAP[code] || '';
-  resultados.querySelectorAll('article').forEach(a=>{
-    Object.values(COLOR_MAP).forEach(c=>a.classList.remove(c));
-    if (clase) a.classList.add(clase);
-  });
+const HEX_MAP = {
+  p0: '#C00000', // Dark Red
+  p1: '#FF0000', // Red
+  p2: '#FFC000', // Orange
+  p3: '#FFFF00', // Yellow
+  p4: '#92D050', // Green
+  p5: '#00B0F0', // Light Blue
+  pl: '#A0A0A0'  // Grey
+};
+
+// Sonido de éxito (URL pública corta)
+let SUCCESS_AUDIO = null;
+try {
+  SUCCESS_AUDIO = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-software-interface-start-2574.mp3');
+} catch (e) {
+  console.warn('Audio not supported', e);
 }
 
 /* =====================================================
@@ -150,7 +160,12 @@ procesarBtn.addEventListener('click', () => {
     .filter(Boolean);
 
   if (!niveles.length) {
-    alert('Seleccione al menos una consecuencia.');
+    Swal.fire({
+      icon: 'warning',
+      title: 'Faltan datos',
+      text: 'Seleccione al menos una consecuencia.',
+      confirmButtonColor: '#fcc328'
+    });
     return;
   }
 
@@ -159,15 +174,79 @@ procesarBtn.addEventListener('click', () => {
   let code   = PRIORITY_MATRIX[row][col];        // p0..pl
 
   // === REGLA ESPECIAL CLIENTES: Mínima -> P5 ===
+  // Se comenta esta regla porque el usuario reporta que "todo da P5".
+  // En la versión original también existía, pero parece ser la causa del comportamiento no deseado.
+  /*
   const clientesVal = +document.getElementById('selClientes').value || 0;
   if (clientesVal === 2) {
     code = 'p5';
   }
+  */
 
-  spanPrio.textContent  = code.toUpperCase();
-  spanPlazo.textContent = PLAZO_TEXTO[code];
-  pintarColor(code);
-  resultados.classList.remove('hidden');
+  // Reproducir sonido
+  if (SUCCESS_AUDIO) {
+    SUCCESS_AUDIO.play().catch(e => console.log('Audio play failed', e));
+  }
+
+  // Mostrar Modal SweetAlert2
+  const color = HEX_MAP[code] || '#333';
+  const plazo = PLAZO_TEXTO[code];
+  // Texto oscuro para colores claros (Amarillo P3, Naranja P2, Verde P4, Azul P5)
+  const textColor = ['p3', 'p2', 'p4', 'p5'].includes(code) ? '#1f1301' : '#fff';
+  
+  Swal.fire({
+    title: '',
+    html: `
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+        <div style="
+          background-color: ${color};
+          color: ${textColor};
+          width: 120px;
+          height: 120px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 3.5em;
+          font-weight: 800;
+          box-shadow: 0 10px 25px ${color}66;
+          margin-bottom: 10px;
+          animation: pulse 2s infinite;
+        ">
+          ${code.toUpperCase()}
+        </div>
+        <h2 style="margin: 0; font-size: 1.5em; color: #333; font-weight: 700;">PRIORIDAD</h2>
+        <div style="width: 60px; height: 4px; background: ${color}; margin: 10px 0; border-radius: 2px;"></div>
+        <p style="font-size: 1.1em; color: #64748b; margin: 0;">Tiempo límite de ejecución:</p>
+        <div style="font-size: 2.2em; font-weight: 800; color: #0f172a;">${plazo}</div>
+      </div>
+      <style>
+        @keyframes pulse {
+          0% { box-shadow: 0 0 0 0 ${color}66; }
+          70% { box-shadow: 0 0 0 20px transparent; }
+          100% { box-shadow: 0 0 0 0 transparent; }
+        }
+      </style>
+    `,
+    showClass: {
+      popup: 'animate__animated animate__zoomIn'
+    },
+    hideClass: {
+      popup: 'animate__animated animate__zoomOut'
+    },
+    confirmButtonText: 'Entendido',
+    confirmButtonColor: '#333',
+    background: '#fff',
+    padding: '2rem',
+    backdrop: `rgba(0,0,0,0.4)`,
+    didOpen: () => {
+      const popup = Swal.getPopup();
+      if(popup) {
+        popup.style.borderRadius = '24px';
+        popup.style.border = `4px solid ${color}`;
+      }
+    }
+  });
 });
 
 /* =====================================================
@@ -178,10 +257,10 @@ document.getElementById('borrar').addEventListener('click', () => {
     document.getElementById(id).selectedIndex = 0;
   });
   toggleConsequenceInputs(false);
-  spanPrio.textContent  = '—';
-  spanPlazo.textContent = '—';
-  pintarColor('');
-  resultados.classList.add('hidden');
+  // spanPrio.textContent  = '—';
+  // spanPlazo.textContent = '—';
+  // pintarColor('');
+  // resultados.classList.add('hidden');
 });
 
 /* =====================================================
