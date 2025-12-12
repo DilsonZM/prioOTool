@@ -1,0 +1,83 @@
+/* History View Styles */
+.history-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding: 1rem 0;
+}
+
+.history-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  padding: 1.5rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid #f1f5f9;
+}
+
+.history-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.history-badge {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: #fff;
+}
+
+.history-meta {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.history-date {
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.history-asset {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.history-body p {
+  margin: 0.5rem 0;
+  font-size: 0.95rem;
+  color: #475569;
+}
+
+.history-comment {
+  font-style: italic;
+  color: #64748b;
+  background: #f8fafc;
+  padding: 0.75rem;
+  border-radius: 8px;
+  margin-top: 0.75rem !important;
+  font-size: 0.9rem !important;
+}
+
+/* Priority Colors for History Badges */
+.history-badge.priority-p0 { background-color: #C00000; box-shadow: 0 4px 12px rgba(192,0,0,0.3); }
+.history-badge.priority-p1 { background-color: #FF0000; box-shadow: 0 4px 12px rgba(255,0,0,0.3); }
+.history-badge.priority-p2 { background-color: #FFC000; color: #1f1301; box-shadow: 0 4px 12px rgba(255,192,0,0.3); }
+.history-badge.priority-p3 { background-color: #FFFF00; color: #1f1301; box-shadow: 0 4px 12px rgba(255,255,0,0.3); }
+.history-badge.priority-p4 { background-color: #92D050; color: #1f1301; box-shadow: 0 4px 12px rgba(146,208,80,0.3); }
+.history-badge.priority-p5 { background-color: #00B0F0; color: #1f1301; box-shadow: 0 4px 12px rgba(0,176,240,0.3); }
+.history-badge.priority-pl { background-color: #A0A0A0; box-shadow: 0 4px 12px rgba(160,160,160,0.3); }

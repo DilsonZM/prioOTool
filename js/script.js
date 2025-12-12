@@ -153,100 +153,158 @@ try {
  *    (tiene prioridad sobre la matriz)
  * ==================================================== */
 procesarBtn.addEventListener('click', () => {
-  const row = +document.getElementById('tiempoprobable').value; // validado por UI
+  console.log('Click en Procesar');
+  try {
+    const row = +document.getElementById('tiempoprobable').value; // validado por UI
 
-  const niveles = consequenceIds
-    .map(id => +document.getElementById(id).value || 0)
-    .filter(Boolean);
+    const niveles = consequenceIds
+      .map(id => +document.getElementById(id).value || 0)
+      .filter(Boolean);
 
-  if (!niveles.length) {
-    Swal.fire({
-      icon: 'warning',
-      title: 'Faltan datos',
-      text: 'Seleccione al menos una consecuencia.',
-      confirmButtonColor: '#fcc328'
-    });
-    return;
-  }
-
-  // Cálculo por matriz con severidad máxima
-  const col  = Math.max(...niveles) - 1;         // 0..5
-  let code   = PRIORITY_MATRIX[row][col];        // p0..pl
-
-  // === REGLA ESPECIAL CLIENTES: Mínima -> P5 ===
-  // Se comenta esta regla porque el usuario reporta que "todo da P5".
-  // En la versión original también existía, pero parece ser la causa del comportamiento no deseado.
-  /*
-  const clientesVal = +document.getElementById('selClientes').value || 0;
-  if (clientesVal === 2) {
-    code = 'p5';
-  }
-  */
-
-  // Reproducir sonido
-  if (SUCCESS_AUDIO) {
-    SUCCESS_AUDIO.play().catch(e => console.log('Audio play failed', e));
-  }
-
-  // Mostrar Modal SweetAlert2
-  const color = HEX_MAP[code] || '#333';
-  const plazo = PLAZO_TEXTO[code];
-  // Texto oscuro para colores claros (Amarillo P3, Naranja P2, Verde P4, Azul P5)
-  const textColor = ['p3', 'p2', 'p4', 'p5'].includes(code) ? '#1f1301' : '#fff';
-  
-  Swal.fire({
-    title: '',
-    html: `
-      <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
-        <div style="
-          background-color: ${color};
-          color: ${textColor};
-          width: 120px;
-          height: 120px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 3.5em;
-          font-weight: 800;
-          box-shadow: 0 10px 25px ${color}66;
-          margin-bottom: 10px;
-          animation: pulse 2s infinite;
-        ">
-          ${code.toUpperCase()}
-        </div>
-        <h2 style="margin: 0; font-size: 1.5em; color: #333; font-weight: 700;">PRIORIDAD</h2>
-        <div style="width: 60px; height: 4px; background: ${color}; margin: 10px 0; border-radius: 2px;"></div>
-        <p style="font-size: 1.1em; color: #64748b; margin: 0;">Tiempo límite de ejecución:</p>
-        <div style="font-size: 2.2em; font-weight: 800; color: #0f172a;">${plazo}</div>
-      </div>
-      <style>
-        @keyframes pulse {
-          0% { box-shadow: 0 0 0 0 ${color}66; }
-          70% { box-shadow: 0 0 0 20px transparent; }
-          100% { box-shadow: 0 0 0 0 transparent; }
-        }
-      </style>
-    `,
-    showClass: {
-      popup: 'animate__animated animate__zoomIn'
-    },
-    hideClass: {
-      popup: 'animate__animated animate__zoomOut'
-    },
-    confirmButtonText: 'Entendido',
-    confirmButtonColor: '#333',
-    background: '#fff',
-    padding: '2rem',
-    backdrop: `rgba(0,0,0,0.4)`,
-    didOpen: () => {
-      const popup = Swal.getPopup();
-      if(popup) {
-        popup.style.borderRadius = '24px';
-        popup.style.border = `4px solid ${color}`;
+    if (!niveles.length) {
+      if (typeof Swal !== 'undefined') {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Faltan datos',
+          text: 'Seleccione al menos una consecuencia.',
+          confirmButtonColor: '#fcc328'
+        });
+      } else {
+        alert('Faltan datos: Seleccione al menos una consecuencia.');
       }
+      return;
     }
-  });
+
+    // Cálculo por matriz con severidad máxima
+    const col  = Math.max(...niveles) - 1;         // 0..5
+    let code   = PRIORITY_MATRIX[row][col];        // p0..pl
+
+    // Reproducir sonido
+    if (SUCCESS_AUDIO) {
+      SUCCESS_AUDIO.play().catch(e => console.log('Audio play failed', e));
+    }
+
+    // Mostrar Modal SweetAlert2
+    const color = HEX_MAP[code] || '#333';
+    const plazo = PLAZO_TEXTO[code];
+    // Texto oscuro para colores claros (Amarillo P3, Naranja P2, Verde P4, Azul P5)
+    const textColor = ['p3', 'p2', 'p4', 'p5'].includes(code) ? '#1f1301' : '#fff';
+    
+    if (typeof Swal === 'undefined') {
+      console.error('SweetAlert2 no está cargado');
+      alert(`Prioridad: ${code.toUpperCase()}\nPlazo: ${plazo}`);
+      return;
+    }
+
+    Swal.fire({
+      title: '',
+      html: `
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+          <div style="
+            background-color: ${color};
+            color: ${textColor};
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5em;
+            font-weight: 800;
+            box-shadow: 0 10px 25px ${color}66;
+            margin-bottom: 10px;
+            animation: pulse 2s infinite;
+          ">
+            ${code.toUpperCase()}
+          </div>
+          <h2 style="margin: 0; font-size: 1.5em; color: #333; font-weight: 700;">PRIORIDAD</h2>
+          <div style="width: 60px; height: 4px; background: ${color}; margin: 10px 0; border-radius: 2px;"></div>
+          <p style="font-size: 1.1em; color: #64748b; margin: 0;">Tiempo límite de ejecución:</p>
+          <div style="font-size: 2.2em; font-weight: 800; color: #0f172a;">${plazo}</div>
+        </div>
+        <style>
+          @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 ${color}66; }
+            70% { box-shadow: 0 0 0 20px transparent; }
+            100% { box-shadow: 0 0 0 0 transparent; }
+          }
+        </style>
+      `,
+      showClass: {
+        popup: 'animate__animated animate__zoomIn'
+      },
+      hideClass: {
+        popup: 'animate__animated animate__zoomOut'
+      },
+      confirmButtonText: 'Entendido',
+      confirmButtonColor: '#333',
+      showDenyButton: true,
+      denyButtonText: 'Guardar',
+      denyButtonColor: '#00B0F0',
+      background: '#fff',
+      padding: '2rem',
+      backdrop: `rgba(0,0,0,0.4)`,
+      didOpen: () => {
+        const popup = Swal.getPopup();
+        if(popup) {
+          popup.style.borderRadius = '24px';
+          popup.style.border = `4px solid ${color}`;
+        }
+      }
+    }).then((result) => {
+      if (result.isDenied) {
+        Swal.fire({
+          title: 'Guardar Resultado',
+          html: `
+            <input type="text" id="assetNumber" class="swal2-input" placeholder="Número de Activo (Obligatorio)">
+            <textarea id="comment" class="swal2-textarea" placeholder="Comentario (Opcional)"></textarea>
+          `,
+          confirmButtonText: 'Guardar',
+          showCancelButton: true,
+          cancelButtonText: 'Cancelar',
+          preConfirm: () => {
+            const assetNumber = Swal.getPopup().querySelector('#assetNumber').value;
+            const comment = Swal.getPopup().querySelector('#comment').value;
+            if (!assetNumber) {
+              Swal.showValidationMessage('El número de activo es obligatorio');
+            }
+            return { assetNumber, comment };
+          }
+        }).then(async (inputResult) => {
+          if (inputResult.isConfirmed) {
+            const { assetNumber, comment } = inputResult.value;
+            
+            const dataToSave = {
+              priorityCode: code,
+              deadline: plazo,
+              assetNumber,
+              comment,
+              inputs: {
+                  time: row,
+                  consequences: niveles
+              }
+            };
+
+            if (window.prioSaveResult) {
+               Swal.fire({ title: 'Guardando...', didOpen: () => Swal.showLoading() });
+               const saveResponse = await window.prioSaveResult(dataToSave);
+               if (saveResponse.success) {
+                   Swal.fire('Guardado', 'El registro se ha guardado correctamente', 'success');
+               } else {
+                   console.error(saveResponse.error);
+                   Swal.fire('Error', `No se pudo guardar: ${saveResponse.error.message || saveResponse.error}`, 'error');
+               }
+            } else {
+               Swal.fire('Error', 'Función de guardado no disponible', 'error');
+            }
+          }
+        });
+      }
+    });
+  } catch (error) {
+    console.error('Error en procesarBtn:', error);
+    alert('Ocurrió un error al procesar: ' + error.message);
+  }
 });
 
 /* =====================================================

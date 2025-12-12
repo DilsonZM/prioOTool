@@ -1,0 +1,54 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Función auxiliar para verificar roles
+    function hasRole(role) {
+      let userDoc = get(/databases/$(database)/documents/users/$(request.auth.uid));
+      return userDoc != null && 
+             userDoc.data.roles != null && 
+             role in userDoc.data.roles;
+    }
+
+    match /users/{userId} {
+      // 1. REGISTRO (CREATE):
+      allow create: if request.auth != null && (
+        request.auth.uid == userId || 
+        hasRole('admin') || 
+        hasRole('superadmin') ||
+        hasRole('supervisor')
+      );
+
+      // 2. LECTURA (READ):
+      allow read: if request.auth != null && (
+        request.auth.uid == userId || 
+        hasRole('admin') || 
+        hasRole('superadmin') ||
+        hasRole('supervisor')
+      );
+
+      // 3. EDICIÓN (UPDATE):
+      allow update: if request.auth != null && (
+        hasRole('admin') || 
+        hasRole('superadmin') || 
+        request.auth.uid == userId
+      );
+
+      // 4. ELIMINAR (DELETE):
+      allow delete: if hasRole('admin') || hasRole('superadmin');
+    }
+
+    // --- NUEVA REGLA PARA HISTORIAL ---
+    match /history/{historyId} {
+      // Permitir crear a cualquier usuario autenticado
+      allow create: if request.auth != null;
+      
+      // Permitir leer solo si es dueño del registro o tiene rol admin/superadmin
+      allow read: if request.auth != null && (
+        resource.data.uid == request.auth.uid || 
+        hasRole('admin') || 
+        hasRole('superadmin')
+      );
+    }
+  }
+}

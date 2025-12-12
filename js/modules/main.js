@@ -16,9 +16,22 @@ import {
   isSuperAdmin,
   isSupervisor,
   canAccessAdmin,
-  mapFirebaseError
+  mapFirebaseError,
+  saveHistoryRecord,
+  getHistory
 } from './auth-service.js';
 import { qs, toggle, setText } from './ui-common.js';
+
+// Exponer función de guardado para script.js (no módulo)
+window.prioSaveResult = async (data) => {
+  try {
+    await saveHistoryRecord(data);
+    return { success: true };
+  } catch (error) {
+    console.error('Error guardando historial:', error);
+    return { success: false, error };
+  }
+};
 
 // Catálogo editable de empresas supervisables (puedes sobrescribir con window.PRIO_SUPERVISED_COMPANIES)
 const SUPERVISED_COMPANY_OPTIONS = Array.isArray(window.PRIO_SUPERVISED_COMPANIES)
@@ -74,8 +87,10 @@ const adminTableWrapper = qs('admin-table-wrapper');
 const adminRows = qs('request-rows');
 const pageForm = qs('page-form');
 const pageAdmin = qs('page-admin');
+const pageHistory = qs('page-history');
 const navDrawerForm = qs('nav-drawer-form');
 const navDrawerAdmin = qs('nav-drawer-admin');
+const navDrawerHistory = qs('nav-drawer-history');
 const navRequestsBadge = qs('nav-requests-badge');
 const pendingPill = qs('session-pending-pill');
 const adminFilterOpen = qs('adminFilterOpen');
@@ -1002,6 +1017,98 @@ function enableInlineEdit(id) {
   row.replaceWith(newRow);
 }
 
+/* ===== HISTORY LOGIC ===== */
+async function loadHistoryPage() {
+  if (!auth.currentUser) return;
+  
+  const loader = qs('history-loading');
+  const empty = qs('history-empty');
+  const list = qs('history-list');
+  
+  toggle(loader, true);
+  toggle(empty, false);
+  list.innerHTML = '';
+  
+  try {
+    const data = await getHistory(auth.currentUser.uid);
+    toggle(loader, false);
+    
+    if (!data || data.length === 0) {
+      toggle(empty, true);
+      return;
+    }
+    
+    data.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'history-card';
+      
+      // Format date
+      let dateStr = '—';
+      if (item.timestamp) {
+        const d = item.timestamp.toDate ? item.timestamp.toDate() : new Date(item.timestamp.seconds * 1000);
+        dateStr = d.toLocaleString();
+      }
+      
+      // Color class
+      const colorClass = `priority-${item.priorityCode || 'pl'}`;
+      
+      card.innerHTML = `
+        <div class="history-header">
+          <div class="history-badge ${colorClass}">${(item.priorityCode || 'PL').toUpperCase()}</div>
+          <div class="history-meta">
+            <span class="history-date">${dateStr}</span>
+            <span class="history-asset">Activo: ${item.assetNumber || 'N/A'}</span>
+          </div>
+        </div>
+        <div class="history-body">
+          <p><strong>Plazo:</strong> ${item.deadline || '—'}</p>
+          ${item.comment ? `<p class="history-comment">"${item.comment}"</p>` : ''}
+        </div>
+      `;
+      list.appendChild(card);
+    });
+    
+  } catch (err) {
+    console.error('Error loading history', err);
+    toggle(loader, false);
+    list.innerHTML = '<p class="error-msg">Error al cargar el historial.</p>';
+  }
+}
+
+/* ===== NAVIGATION ===== */
+function showPage(pageId) {
+  [pageForm, pageAdmin, pageHistory].forEach(p => {
+    if (p) toggle(p, false);
+  });
+  
+  [navDrawerForm, navDrawerAdmin, navDrawerHistory].forEach(n => {
+    if (n) n.classList.remove('is-active');
+  });
+  
+  if (pageId === 'form') {
+    toggle(pageForm, true);
+    navDrawerForm.classList.add('is-active');
+  } else if (pageId === 'admin') {
+    toggle(pageAdmin, true);
+    if (navDrawerAdmin) navDrawerAdmin.classList.add('is-active');
+    loadAdminPage();
+  } else if (pageId === 'history') {
+    toggle(pageHistory, true);
+    if (navDrawerHistory) navDrawerHistory.classList.add('is-active');
+    loadHistoryPage();
+  }
+  
+  // Close drawer on mobile
+  if (window.innerWidth < 768) {
+    toggle(drawer, false);
+    toggle(drawerBackdrop, false);
+  }
+}
+
+navDrawerForm.addEventListener('click', () => { showPage('form'); closeDrawer(); });
+if (navDrawerAdmin) navDrawerAdmin.addEventListener('click', () => { showPage('admin'); closeDrawer(); });
+if (navDrawerHistory) navDrawerHistory.addEventListener('click', () => { showPage('history'); closeDrawer(); });
+
 async function loadAdminPage() {
   const allowed = canAccessAdmin(currentRoles, currentProfile?.approved);
   if (!allowed) return;
@@ -1227,7 +1334,7 @@ async function hydrateSession(user) {
     toggle(sessionBar, approved);
     renderState(approved ? 'app' : 'pending');
   if (approved) {
-    goToPage('form');
+    showPage('form');
   }
   if (approved && typeof window.prioShowIntro === 'function') {
     window.prioShowIntro();
@@ -1283,8 +1390,8 @@ if (drawerToggle) drawerToggle.addEventListener('click', openDrawer);
 if (drawerClose) drawerClose.addEventListener('click', closeDrawer);
 if (drawerBackdrop) drawerBackdrop.addEventListener('click', closeDrawer);
 if (drawerLogout) drawerLogout.addEventListener('click', () => logout());
-if (navDrawerAdmin) navDrawerAdmin.addEventListener('click', () => { goToPage('admin'); closeDrawer(); });
-if (navDrawerForm) navDrawerForm.addEventListener('click', () => { goToPage('form'); closeDrawer(); });
+// if (navDrawerAdmin) navDrawerAdmin.addEventListener('click', () => { goToPage('admin'); closeDrawer(); });
+// if (navDrawerForm) navDrawerForm.addEventListener('click', () => { goToPage('form'); closeDrawer(); });
 if (adminRows) {
   adminRows.addEventListener('click', evt => {
     const btn = evt.target.closest('[data-approve]');

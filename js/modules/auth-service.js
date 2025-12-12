@@ -18,6 +18,7 @@ import {
   updateDoc,
   deleteDoc,
   collection,
+  addDoc,
   getDocs,
   query,
   where
@@ -224,6 +225,37 @@ function mapFirebaseError(error) {
   return ERRORS[code] || 'No se pudo completar la operación (' + code + ').';
 }
 
+async function saveHistoryRecord(data) {
+  if (!auth.currentUser) throw new Error('Usuario no autenticado');
+  // Referencia a la colección 'history'
+  const colRef = collection(db, 'history');
+  await addDoc(colRef, {
+    ...data,
+    uid: auth.currentUser.uid,
+    userEmail: auth.currentUser.email,
+    timestamp: serverTimestamp()
+  });
+}
+
+async function getHistory(uid) {
+  if (!uid) return [];
+  const colRef = collection(db, 'history');
+  const q = query(colRef, where('uid', '==', uid));
+  // Note: Firestore requires an index for compound queries if we add orderBy('timestamp', 'desc')
+  // For now, we'll sort in client side to avoid index creation requirement immediately
+  const snap = await getDocs(q);
+  const list = [];
+  snap.forEach(doc => {
+    list.push({ id: doc.id, ...doc.data() });
+  });
+  // Sort desc by timestamp
+  return list.sort((a, b) => {
+    const tA = a.timestamp?.seconds || 0;
+    const tB = b.timestamp?.seconds || 0;
+    return tB - tA;
+  });
+}
+
 export {
   auth,
   db,
@@ -242,5 +274,7 @@ export {
   isSuperAdmin,
   isSupervisor,
   canAccessAdmin,
-  mapFirebaseError
+  mapFirebaseError,
+  saveHistoryRecord,
+  getHistory
 };
