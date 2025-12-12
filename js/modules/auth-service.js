@@ -6,7 +6,9 @@ import {
   sendEmailVerification,
   deleteUser,
   onAuthStateChanged,
-  getAuth
+  getAuth,
+  setPersistence,
+  browserLocalPersistence
 } from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-auth.js';
 import {
   doc,
@@ -131,6 +133,7 @@ async function updateUserFields(id, payload) {
 
 async function login(email, password) {
   if (!auth) return null;
+  await setPersistence(auth, browserLocalPersistence);
   return signInWithEmailAndPassword(auth, email, password);
 }
 
