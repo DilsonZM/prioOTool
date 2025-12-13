@@ -53,6 +53,11 @@ service cloud.firestore {
     }
 
     // --- CONFIGURACIÓN GLOBAL ---
+    match /settings/companies {
+      allow read: if true;
+      allow write: if hasRole('admin') || hasRole('superadmin') || hasRole('supervisor');
+    }
+
     match /settings/{docId} {
       allow read: if request.auth != null;
       allow write: if hasRole('admin') || hasRole('superadmin');

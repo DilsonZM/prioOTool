@@ -2029,11 +2029,12 @@ if (auth) {
     }
   }
 
-  watchAuth(user => {
+  watchAuth(async user => {
     if (!user) {
       renderState('auth');
       return;
     }
+    await initCompanies();
     hydrateSession(user);
   });
 }
