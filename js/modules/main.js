@@ -474,11 +474,11 @@ function setDrawerData(profile, roles) {
 
 function updatePendingBadges(count = 0) {
   if (navRequestsBadge) {
-    navRequestsBadge.textContent = count;
+    navRequestsBadge.textContent = count ? count : '';
     navRequestsBadge.classList.toggle('hidden', count === 0);
   }
   if (pendingPill) {
-    pendingPill.textContent = `${count} pendientes`;
+    pendingPill.textContent = count ? `${count}` : '';
     pendingPill.classList.toggle('hidden', count === 0);
   }
 }
