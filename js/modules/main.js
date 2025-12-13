@@ -29,26 +29,41 @@ import {
 } from './auth-service.js';
 import { qs, toggle, setText } from './ui-common.js';
 
-const APP_VERSION = '3.0.1';
+const APP_VERSION = '3.0.2';
 const CERREJON_SECRET = 'PriOTool.Cerrejon.Access.2025!';
 const CONTRACTOR_SECRET = 'PriOTool.Contractor.Access.2025!';
 
+function compareSemver(a, b) {
+  const pa = String(a || '').split('.').map(n => parseInt(n, 10) || 0);
+  const pb = String(b || '').split('.').map(n => parseInt(n, 10) || 0);
+  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+    const na = pa[i] || 0;
+    const nb = pb[i] || 0;
+    if (na > nb) return 1;
+    if (na < nb) return -1;
+  }
+  return 0;
+}
+
 function checkAppVersion() {
   subscribeToVersion((remoteVersion) => {
-    if (remoteVersion && remoteVersion !== APP_VERSION) {
-      Swal.fire({
-        title: 'Nueva versión disponible',
-        text: `Hay una nueva versión (${remoteVersion}). ¿Deseas actualizar ahora?`,
-        icon: 'info',
-        showCancelButton: true,
-        confirmButtonText: 'Actualizar',
-        cancelButtonText: 'Más tarde'
-      }).then((result) => {
-        if (result.isConfirmed) {
-          window.location.reload(true);
-        }
-      });
+    const cmp = compareSemver(remoteVersion, APP_VERSION);
+    if (cmp <= 0) {
+      // Versión remota igual o menor: no molestamos al usuario
+      return;
     }
+    Swal.fire({
+      title: 'Nueva versión disponible',
+      text: `Hay una nueva versión (${remoteVersion}). ¿Deseas actualizar ahora?`,
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonText: 'Actualizar',
+      cancelButtonText: 'Más tarde'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.reload(true);
+      }
+    });
   });
 }
 
