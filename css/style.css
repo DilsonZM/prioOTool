@@ -479,7 +479,8 @@ body{
   font-weight:700;
   text-align:left;
 }
-.drawer-link .drawer-badge{
+.drawer-link .drawer-badge,
+.pending-pill{
   margin-left:auto;
   min-width:24px;
   height:24px;
@@ -492,6 +493,7 @@ body{
   align-items:center;
   justify-content:center;
   box-shadow:0 6px 14px rgba(239,68,68,.35);
+  font-weight:700;
 }
 .drawer-link .drawer-ico{ width:22px; height:22px; display:inline-flex; align-items:center; justify-content:center; color:#fead17; }
 .drawer-link svg{ width:20px; height:20px; }

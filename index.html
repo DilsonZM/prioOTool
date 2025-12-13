@@ -183,7 +183,7 @@
                         <svg viewBox="0 0 24 24" role="img"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 12l2 2 4-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
                     </span>
                     <span>Usuarios</span>
-                    <span id="nav-requests-badge" class="drawer-badge hidden">0</span>
+                    <span id="nav-requests-badge" class="drawer-badge hidden" aria-label="Solicitudes pendientes"></span>
                 </button>
                 <button type="button" id="nav-drawer-create-user" class="drawer-link hidden">
                     <span class="drawer-ico" aria-hidden="true">
@@ -214,7 +214,7 @@
             </div>
             <div class="session-meta">
                 <span id="session-role">Rol: —</span>
-                <span id="session-pending-pill" class="pending-pill hidden">0 pendientes</span>
+                <span id="session-pending-pill" class="pending-pill hidden" aria-label="Solicitudes pendientes"></span>
             </div>
         </div>
 
@@ -385,7 +385,6 @@
                         <div style="display: flex; gap: 1rem;">
                             <label class="checkline" style="cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
                                 <input type="checkbox" id="fStatusPending" checked style="width: 1.2rem; height: 1.2rem;"> 
-                                <span>Pendientes</span>
                             </label>
                             <label class="checkline" style="cursor: pointer; display: flex; align-items: center; gap: 0.5rem;">
                                 <input type="checkbox" id="fStatusApproved" checked style="width: 1.2rem; height: 1.2rem;"> 
