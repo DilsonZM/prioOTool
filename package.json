@@ -2,12 +2,14 @@
   "name": "priotool",
   "version": "3.0.4",
   "devDependencies": {
-    "firebase-tools": "^15.0.0"
+    "firebase-tools": "^15.0.0",
+    "firebase-admin": "^12.0.0"
   },
   "dependencies": {
     "firebase": "^12.6.0"
   },
   "scripts": {
-    "version:sync": "node scripts/sync-version.js"
+    "version:sync": "node scripts/sync-version.js",
+    "version:firestore": "node scripts/update_version_admin.js"
   }
 }
