@@ -72,6 +72,10 @@ async function initCompanies() {
   if (remote && Array.isArray(remote) && remote.length > 0) {
     supervisedCompanyOptions = remote;
   }
+  renderAllCompanyDropdowns();
+}
+
+function renderAllCompanyDropdowns() {
   // Populate registration dropdown
   if (regCompany) {
     const currentVal = regCompany.value;
@@ -82,10 +86,13 @@ async function initCompanies() {
       opt.textContent = c;
       regCompany.appendChild(opt);
     });
-    if (currentVal) regCompany.value = currentVal;
+    if (currentVal && supervisedCompanyOptions.includes(currentVal)) {
+      regCompany.value = currentVal;
+    }
   }
   // Populate new user modal dropdown
   if (newUserCompany) {
+    const currentVal = newUserCompany.value;
     newUserCompany.innerHTML = '<option value="">Seleccionar...</option>';
     supervisedCompanyOptions.forEach(c => {
       const opt = document.createElement('option');
@@ -93,6 +100,13 @@ async function initCompanies() {
       opt.textContent = c;
       newUserCompany.appendChild(opt);
     });
+    if (currentVal && supervisedCompanyOptions.includes(currentVal)) {
+      newUserCompany.value = currentVal;
+    }
+  }
+  // Update checkbox lists
+  if (typeof populateSupervisedCompanies === 'function') {
+    populateSupervisedCompanies();
   }
 }
 // Iniciar carga de empresas
@@ -2122,6 +2136,7 @@ async function handleEditCompany(oldName, newName) {
     supervisedCompanyOptions[idx] = newName;
     supervisedCompanyOptions.sort();
     renderCompaniesList();
+    renderAllCompanyDropdowns();
     
     try {
       await updateCompaniesDoc(supervisedCompanyOptions);
@@ -2152,6 +2167,7 @@ async function handleAddCompany() {
   supervisedCompanyOptions.sort();
   newCompanyInput.value = '';
   renderCompaniesList();
+  renderAllCompanyDropdowns();
   
   try {
     await updateCompaniesDoc(supervisedCompanyOptions);
@@ -2182,6 +2198,7 @@ async function handleDeleteCompany(name) {
   if (result.isConfirmed) {
     supervisedCompanyOptions = supervisedCompanyOptions.filter(c => c !== name);
     renderCompaniesList();
+    renderAllCompanyDropdowns();
     try {
       await updateCompaniesDoc(supervisedCompanyOptions);
       Swal.fire({
