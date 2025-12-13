@@ -209,6 +209,9 @@ const drawerCompany = qs('drawer-company');
 const drawerSupervisedWrap = qs('drawer-supervised-wrap');
 const drawerSupervised = qs('drawer-supervised');
 const drawerEmail = qs('drawer-email');
+const drawerProfile = qs('drawer-user-meta');
+const drawerProfileDetails = qs('drawer-profile-details');
+const drawerCollapseBtn = qs('drawerCollapse');
 const scopeModalEl = qs('editScopeModal');
 const scopeSelect = qs('edit-scope-companies');
 const btnScopeSave = qs('btn-scope-save');
@@ -1926,6 +1929,25 @@ if (pendingClose) pendingClose.addEventListener('click', async () => {
 
 if (drawerToggle) drawerToggle.addEventListener('click', openDrawer);
 if (drawerClose) drawerClose.addEventListener('click', closeDrawer);
+if (drawerCollapseBtn) {
+  const STORAGE_KEY = 'drawer_profile_collapsed';
+  const applyCollapsed = (collapsed) => {
+    if (!drawerProfile) return;
+    drawerProfile.classList.toggle('collapsed', collapsed);
+    if (drawerCollapseBtn) {
+      drawerCollapseBtn.textContent = collapsed ? '▸' : '▾';
+    }
+  };
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) applyCollapsed(saved === 'true');
+  } catch (e) { /* ignore */ }
+  drawerCollapseBtn.addEventListener('click', () => {
+    const next = !drawerProfile.classList.contains('collapsed');
+    applyCollapsed(next);
+    try { localStorage.setItem(STORAGE_KEY, String(next)); } catch (e) { /* ignore */ }
+  });
+}
 if (drawerBackdrop) drawerBackdrop.addEventListener('click', closeDrawer);
 if (drawerLogout) drawerLogout.addEventListener('click', () => logout());
 // if (navDrawerAdmin) navDrawerAdmin.addEventListener('click', () => { goToPage('admin'); closeDrawer(); });
