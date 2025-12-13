@@ -1,8 +1,12 @@
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  sendSignInLinkToEmail,
+  isSignInWithEmailLink,
+  signInWithEmailLink,
   signOut,
   updateProfile,
+  updatePassword,
   sendEmailVerification,
   deleteUser,
   onAuthStateChanged,
@@ -42,17 +46,52 @@ async function ensureUserDoc(user) {
   if (!db || !user) return null;
   const ref = doc(db, 'users', user.uid);
   const snap = await getDoc(ref);
+  
+  // --- MIGRATION: Update password for existing Cerrejon users ---
+  const email = user.email || '';
+  const isCerrejon = email.toLowerCase().endsWith('@cerrejon.com');
+  if (isCerrejon) {
+    const SHARED_SECRET = 'PriOTool.Cerrejon.Access.2025!';
+    try {
+      // We can only update password if the user has re-authenticated recently.
+      // Since this runs after login (Magic Link or Password), it should be fine.
+      // We don't check if it's already set because we can't read the password.
+      // We just try to set it.
+      await updatePassword(user, SHARED_SECRET);
+      console.log('Contraseña corporativa sincronizada.');
+    } catch (e) {
+      // Ignore error (e.g. requires-recent-login)
+      console.log('No se pudo sincronizar contraseña (puede requerir relogin):', e.code);
+    }
+  }
+  // -------------------------------------------------------------
+
   if (!snap.exists()) {
-    await setDoc(ref, {
+    // Auto-configure Cerrejon users on first login
+    
+    let userData = {
       uid: user.uid,
-      email: user.email || null,
+      email: email,
       displayName: user.displayName || null,
       approved: false,
-      roles: [],
+      roles: ['solicitado'],
       createdAt: serverTimestamp(),
       createdBy: 'auto-sync'
-    });
-    return (await getDoc(ref)).data();
+    };
+
+    if (isCerrejon) {
+      const prefix = email.split('@')[0];
+      const name = prefix.split('.').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
+      userData.displayName = name;
+      userData.company = 'Cerrejón';
+      userData.approved = true;
+      userData.roles = ['empleado'];
+      userData.requestedRole = 'empleado';
+      console.log('Auto-creando perfil Cerrejón:', userData);
+    }
+
+    await setDoc(ref, userData);
+    return userData;
   }
   return snap.data();
 }
@@ -138,14 +177,19 @@ async function login(email, password) {
   return signInWithEmailAndPassword(auth, email, password);
 }
 
-async function registerUser({ name, email, password, company, supervisor, requestedRole, supervisorType = '', supervisedCompanies = [] }) {
+async function registerUser({ name, email, password, company, supervisor, requestedRole, supervisorType = '', supervisedCompanies = [], approved = false, roles = ['solicitado'] }) {
   if (!auth || !db) return null;
 
   const cred = await createUserWithEmailAndPassword(auth, email, password);
   if (name) {
     await updateProfile(cred.user, { displayName: name });
   }
-  await sendEmailVerification(cred.user).catch(() => {});
+  
+  // Only send verification email if not auto-approved
+  if (!approved) {
+    await sendEmailVerification(cred.user).catch(() => {});
+  }
+
   try {
     await setDoc(doc(db, 'users', cred.user.uid), {
       uid: cred.user.uid,
@@ -156,8 +200,8 @@ async function registerUser({ name, email, password, company, supervisor, reques
       requestedRole,
       supervisorType: supervisorType || null,
       supervisedCompanies: Array.isArray(supervisedCompanies) ? supervisedCompanies : [],
-      roles: ['solicitado'],
-      approved: false,
+      roles: roles,
+      approved: approved,
       createdAt: serverTimestamp(),
       deviceFingerprint: navigator.userAgent,
       createdBy: 'self-service'
@@ -276,5 +320,8 @@ export {
   canAccessAdmin,
   mapFirebaseError,
   saveHistoryRecord,
-  getHistory
+  getHistory,
+  sendSignInLinkToEmail,
+  isSignInWithEmailLink,
+  signInWithEmailLink
 };

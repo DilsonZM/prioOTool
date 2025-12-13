@@ -18,7 +18,10 @@ import {
   canAccessAdmin,
   mapFirebaseError,
   saveHistoryRecord,
-  getHistory
+  getHistory,
+  sendSignInLinkToEmail,
+  isSignInWithEmailLink,
+  signInWithEmailLink
 } from './auth-service.js';
 import { qs, toggle, setText } from './ui-common.js';
 
@@ -1222,12 +1225,154 @@ async function handleLogin(evt) {
   evt.preventDefault();
   if (!auth) return;
   resetAlerts();
-  const email = qs('login-email').value.trim();
-  const password = qs('login-password').value;
+  const email = qs('login-email').value.trim().toLowerCase();
+  
+  if (!email) {
+    showError(loginAlert, 'Por favor ingresa tu correo.');
+    return;
+  }
+
+  const isCerrejonEmail = email.endsWith('@cerrejon.com');
+  const isAdminEmail = email === 'dilsonzm@gmail.com';
+
+  // --- ADMIN LOGIN (PASSWORD) ---
+  if (isAdminEmail) {
+    const { value: password } = await Swal.fire({
+      title: 'Ingresar contraseña',
+      input: 'password',
+      inputLabel: 'Ingresa tu contraseña para continuar',
+      inputPlaceholder: 'Contraseña',
+      showCancelButton: true,
+      confirmButtonText: 'Ingresar',
+      cancelButtonText: 'Cancelar',
+      inputValidator: (value) => {
+        if (!value) {
+          return 'Debes ingresar la contraseña';
+        }
+      }
+    });
+
+    if (password) {
+      try {
+        setLoading(true);
+        await login(email, password);
+        // Success handled by watchAuth
+      } catch (err) {
+        console.error('Error login:', err);
+        showError(loginAlert, 'Contraseña incorrecta o error de acceso.');
+        setLoading(false);
+      }
+    }
+    return;
+  }
+
+  // --- INSTANT LOGIN (SHARED SECRET) FOR EVERYONE ELSE ---
+  // Cerrejon users -> Auto-approved
+  // Contractors -> Must be approved by Admin
   try {
-    await login(email, password);
+    setLoading(true);
+    
+    // Determine which secret to use (or use same for simplicity if desired, but let's keep logic clean)
+    // Actually, to allow "pass at once", we need to know the password.
+    // We will use a specific secret for Contractors too.
+    let SHARED_SECRET = 'PriOTool.Contractor.Access.2025!';
+    if (isCerrejonEmail) {
+      SHARED_SECRET = 'PriOTool.Cerrejon.Access.2025!';
+    }
+    
+    try {
+      // 1. Try to login
+      await login(email, SHARED_SECRET);
+      
+      // Login Success
+      // Note: watchAuth will check if user is approved. If not, it will show pending screen.
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+      });
+      Toast.fire({ icon: 'success', title: '¡Bienvenido nuevamente!' });
+      return;
+
+    } catch (loginErr) {
+      // 2. If login fails (User not found OR Wrong Password), try to REGISTER (only for Cerrejon)
+      // Contractors must register via the form first.
+      
+      if (isCerrejonEmail && ['auth/user-not-found', 'auth/wrong-password', 'auth/invalid-credential'].includes(loginErr.code)) {
+        try {
+          console.log('Login falló, intentando registrar usuario corporativo...');
+          const prefix = email.split('@')[0];
+          const name = prefix.split('.').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
+          
+          await registerUser({
+            name: name,
+            email: email,
+            password: SHARED_SECRET,
+            company: 'Cerrejón',
+            supervisor: 'N/A',
+            requestedRole: 'empleado',
+            supervisorType: 'cerrejon',
+            supervisedCompanies: [],
+            approved: true,
+            roles: ['empleado']
+          });
+          
+          Swal.fire({
+            title: '¡Bienvenido!',
+            text: 'Tu cuenta ha sido creada y autorizada automáticamente.',
+            icon: 'success',
+            timer: 2000,
+            showConfirmButton: false
+          });
+          return;
+        } catch (regErr) {
+          if (regErr.code === 'auth/email-already-in-use') throw new Error('CONFLICT_CREDENTIALS');
+          throw regErr;
+        }
+      } else {
+        // For contractors, if login fails, it means they haven't registered or password changed
+        console.warn('Login error code:', loginErr.code);
+        
+        if (['auth/user-not-found', 'auth/wrong-password', 'auth/invalid-credential'].includes(loginErr.code)) {
+           setLoading(false);
+           // Assume user needs to register (or has wrong password, which will be caught at registration)
+           Swal.fire({
+             title: 'Cuenta no encontrada',
+             text: 'No encontramos una cuenta activa para este correo. Te redirigiremos al registro.',
+             icon: 'info',
+             timer: 2000,
+             showConfirmButton: false
+           }).then(() => {
+              switchForm('register');
+              const regEmailInput = qs('reg-email');
+              if(regEmailInput) regEmailInput.value = email;
+           });
+           return;
+        } else {
+           throw loginErr;
+        }
+      }
+    }
+
   } catch (err) {
-    showError(loginAlert, mapFirebaseError(err));
+    setLoading(false);
+    if (err.message === 'CONFLICT_CREDENTIALS') {
+      Swal.fire({
+        title: 'Conflicto de Cuenta',
+        text: 'Tu usuario ya existe pero tiene una configuración antigua. Contacta al administrador.',
+        icon: 'error'
+      });
+    } else {
+      console.error('Error en login:', err);
+      showError(loginAlert, 'Error de acceso: ' + err.message);
+    }
+    return;
   }
 }
 
@@ -1241,73 +1386,96 @@ async function handleRegister(evt) {
     return;
   }
 
-  const name = qs('reg-name').value.trim();
+  const nameInput = qs('reg-name').value.trim();
   const email = qs('reg-email').value.trim();
-  const password = qs('reg-password').value;
-  const passwordConfirm = qs('reg-password-confirm').value;
+  // Passwords removed for Auto-Login flow
   const companyInput = regCompany ? regCompany.value.trim() : '';
-  const supervisorInput = regSupervisor ? regSupervisor.value.trim() : '';
+  // Supervisor input removed
   const requestedRole = regRole ? regRole.value : '';
 
-  const isSupervisorRole = requestedRole === 'supervisor';
-  let supervisorType = 'contractor';
-  supervisorOriginInputs.forEach(radio => {
-    if (radio.checked) supervisorType = radio.value;
-  });
-  const supervisedCompanies = (isSupervisorRole && supervisorType === 'cerrejon')
-    ? getSelectedSupervisedCompanies()
-    : [];
+  // --- LOGIC FOR CERREJON DOMAIN ---
+  const isCerrejonEmail = email.toLowerCase().endsWith('@cerrejon.com');
+  
+  let finalName = nameInput;
+  let finalCompany = companyInput;
+  let finalRole = requestedRole;
+  let isApproved = false;
+  let finalRoles = ['solicitado'];
+  
+  // Default Shared Secret for Contractors
+  let finalPassword = 'PriOTool.Contractor.Access.2025!';
 
-  if (!name || !email || !requestedRole) {
+  if (isCerrejonEmail) {
+    // Auto-extract name from email (e.g. dilson.zuleta.ext -> Dilson Zuleta Ext)
+    const prefix = email.split('@')[0];
+    finalName = prefix.split('.').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
+    finalCompany = 'Cerrejón';
+    finalRole = 'empleado'; // Default role for Cerrejon
+    isApproved = true;
+    finalRoles = ['empleado'];
+    // Use Shared Secret for Cerrejon users
+    finalPassword = 'PriOTool.Cerrejon.Access.2025!';
+    console.log('Auto-configurando usuario Cerrejón:', { finalName, finalRole });
+  } else {
+    // Contractor Validation
+    if (!companyInput) {
+      showError(registerAlert, 'Por favor completa todos los campos obligatorios.');
+      return;
+    }
+  }
+
+  if (!finalName || !email || (!isCerrejonEmail && !finalRole)) {
     showError(registerAlert, 'Por favor completa todos los campos obligatorios.');
     return;
   }
 
-  if (!isSupervisorRole) {
-    if (!companyInput || !supervisorInput) {
-      showError(registerAlert, 'Por favor completa todos los campos obligatorios.');
-      return;
-    }
-  } else {
-    // Supervisor validations
-    if (supervisorType === 'cerrejon' && !supervisedCompanies.length) {
-      showError(registerAlert, 'Selecciona las empresas que supervisas.');
-      return;
-    }
-    if (supervisorType === 'contractor' && !companyInput) {
-      showError(registerAlert, 'Indica la empresa a la que perteneces.');
-      return;
-    }
-  }
-
-  if (password.length < 8) {
-    showError(registerAlert, 'La contraseña debe tener al menos 8 caracteres.');
-    return;
-  }
-
-  if (password !== passwordConfirm) {
-    showError(registerAlert, 'Las contraseñas no coinciden.');
-    return;
-  }
-
   try {
-    const company = supervisorType === 'cerrejon' ? 'Cerrejón' : companyInput;
-    const supervisorValue = isSupervisorRole ? name : supervisorInput;
-    
+    setLoading(true);
     await registerUser({
-      name,
+      name: finalName,
       email,
-      password,
-      company,
-      supervisor: supervisorValue,
-      requestedRole,
-      supervisorType: isSupervisorRole ? supervisorType : '',
-      supervisedCompanies
+      password: finalPassword,
+      company: finalCompany,
+      supervisor: 'N/A', // Supervisor field removed
+      requestedRole: finalRole,
+      supervisorType: 'contractor', // Default
+      supervisedCompanies: [],
+      approved: isApproved,
+      roles: finalRoles
     });
-    renderState('pending');
+
+    if (isApproved) {
+      Swal.fire({
+        title: '¡Bienvenido!',
+        text: `Tu cuenta ha sido autorizada automáticamente como ${finalName}.`,
+        icon: 'success',
+        confirmButtonText: 'Ingresar'
+      }).then(() => {
+        // User is already logged in by registerUser
+        // Reload to trigger auth state change properly or just let watchAuth handle it
+        window.location.reload();
+      });
+    } else {
+      Swal.fire({
+        title: 'Solicitud enviada',
+        text: 'Tu registro está pendiente de aprobación. Te notificaremos cuando el administrador valide tus datos.',
+        icon: 'success',
+        confirmButtonText: 'Entendido'
+      }).then(() => {
+        toggle(registerCard, false);
+        toggle(loginCard, true);
+        registerForm.reset();
+      });
+    }
   } catch (err) {
-    console.error('Error en registro:', err);
-    showError(registerAlert, mapFirebaseError(err));
+    console.error(err);
+    if (err.code === 'auth/email-already-in-use') {
+      showError(registerAlert, 'Este correo ya está registrado. Intenta iniciar sesión.');
+    } else {
+      showError(registerAlert, 'Error al registrar: ' + err.message);
+    }
+  } finally {
+    setLoading(false);
   }
 }
 
@@ -1569,47 +1737,59 @@ if ('serviceWorker' in navigator) {
 // Password Toggle
 toggleBtns.forEach(btn => {
   btn.addEventListener('click', () => {
-    const targetId = btn.dataset.target;
-    const input = document.getElementById(targetId);
-    if (input) {
-      const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-      input.setAttribute('type', type);
-      // Toggle icon
-      btn.innerHTML = type === 'password' 
-        ? '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>'
-        : '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>';
+    const input = btn.previousElementSibling;
+    if (input.type === 'password') {
+      input.type = 'text';
+      btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
+    } else {
+      input.type = 'password';
+      btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
     }
   });
 });
 
+// Password Validation
 if (password && passwordConfirm) {
-  const validatePasswords = () => {
-    const p1 = password.value;
-    const p2 = passwordConfirm.value;
-    
-    // Reset styles first
-    password.classList.remove('valid-match');
-    passwordConfirm.classList.remove('valid-match');
-    passwordConfirm.style.borderColor = '';
-
-    if (p1 && p2) {
-      if (p1 === p2) {
-        password.classList.add('valid-match');
-        passwordConfirm.classList.add('valid-match');
-        passwordConfirm.setCustomValidity('');
-      } else {
-        passwordConfirm.style.borderColor = '#ef4444';
-        passwordConfirm.setCustomValidity('Las contraseñas no coinciden');
-      }
+  const validatePassword = () => {
+    if (password.value !== passwordConfirm.value) {
+      passwordConfirm.setCustomValidity("Las contraseñas no coinciden");
+      passwordConfirm.classList.remove('valid-match');
     } else {
-      passwordConfirm.setCustomValidity('');
+      passwordConfirm.setCustomValidity("");
+      if (passwordConfirm.value) {
+        passwordConfirm.classList.add('valid-match');
+      } else {
+        passwordConfirm.classList.remove('valid-match');
+      }
     }
   };
-  password.addEventListener('input', validatePasswords);
-  passwordConfirm.addEventListener('input', validatePasswords);
+  password.addEventListener('change', validatePassword);
+  passwordConfirm.addEventListener('keyup', validatePassword);
 }
 
 if (auth) {
+  // Check for Magic Link Sign-in
+  if (isSignInWithEmailLink(auth, window.location.href)) {
+    let email = window.localStorage.getItem('emailForSignIn');
+    if (!email) {
+      email = window.prompt('Por favor confirma tu correo electrónico para ingresar:');
+    }
+    
+    if (email) {
+      signInWithEmailLink(auth, email, window.location.href)
+        .then((result) => {
+          window.localStorage.removeItem('emailForSignIn');
+          // User is signed in, watchAuth will handle the rest
+          // If new user, we might need to create the user doc here if not exists
+          ensureUserDoc(result.user);
+        })
+        .catch((error) => {
+          console.error('Error signing in with email link', error);
+          Swal.fire('Error', 'El enlace es inválido o ha expirado.', 'error');
+        });
+    }
+  }
+
   watchAuth(user => {
     if (!user) {
       renderState('auth');

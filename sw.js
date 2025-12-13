@@ -1,4 +1,4 @@
-const CACHE_NAME = 'priotool-v1';
+const CACHE_NAME = 'priotool-v2-no-passwords';
 const ASSETS = [
   './',
   './index.html',

@@ -35,12 +35,11 @@
         <div class="auth-panel">
             <article class="auth-card" id="login-card">
             <h2>Acceso seguro</h2>
-            <p class="auth-copy">Ingresa con tu correo corporativo antes de utilizar la matriz de prioridades.</p>
+            <p class="auth-copy">Ingresa con tu correo corporativo.</p>
             <form id="login-form">
                 <label for="login-email">Correo</label>
                 <input type="email" id="login-email" required placeholder="usuario@empresa.com">
-                <label for="login-password">Contraseña</label>
-                <input type="password" id="login-password" required placeholder="••••••••">
+                <!-- Password removed for Magic Link flow -->
                 <div class="auth-actions">
                     <button type="submit" class="btn-primary">Ingresar</button>
                     <button type="button" class="btn-link" data-view="register">Solicitar acceso</button>
@@ -54,40 +53,20 @@
             <p class="auth-copy">Los registros se aprueban manualmente para proteger la información operativa.</p>
             <form id="register-form">
                 <div class="auth-grid">
-                    <div class="field">
+                    <div class="field full-span">
                         <label for="reg-name">Nombre completo</label>
                         <input type="text" id="reg-name" required>
                     </div>
-                    <div class="field">
+                    <div class="field full-span">
                         <label for="reg-email">Correo corporativo</label>
                         <input type="email" id="reg-email" required>
                     </div>
-                    <div class="field">
-                        <label for="reg-password">Contraseña</label>
-                        <div class="input-wrapper">
-                            <input type="password" id="reg-password" required>
-                            <button type="button" class="toggle-password" data-target="reg-password" aria-label="Mostrar contraseña">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label for="reg-password-confirm">Validar contraseña</label>
-                        <div class="input-wrapper">
-                            <input type="password" id="reg-password-confirm" required>
-                            <button type="button" class="toggle-password" data-target="reg-password-confirm" aria-label="Mostrar contraseña">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                            </button>
-                        </div>
-                    </div>
+                    <!-- Passwords removed for Auto-Login flow -->
                     <div class="field full-span" id="reg-company-wrapper">
                         <label for="reg-company">Empresa</label>
                         <input type="text" id="reg-company" required>
                     </div>
-                    <div class="field full-span" id="reg-supervisor-wrapper">
-                        <label for="reg-supervisor">Supervisor responsable</label>
-                        <input type="text" id="reg-supervisor" required>
-                    </div>
+                    <!-- Supervisor removed -->
                     <div class="field full-span">
                         <label for="reg-role">Rol solicitado</label>
                         <select id="reg-role" required>
@@ -100,24 +79,6 @@
                     </div>
                 </div>
 
-                <div id="supervisor-extras" class="hidden supervisor-card">
-                    <p class="supervisor-hint">Si eres supervisor, indícanos de dónde:</p>
-                    <div class="supervisor-options">
-                        <label>
-                            <input type="radio" name="supervisor-origin" value="cerrejon"> Supervisor de Cerrejón
-                        </label>
-                        <label>
-                            <input type="radio" name="supervisor-origin" value="contratista"> Supervisor de mi contratista
-                        </label>
-                    </div>
-                    <div id="supervisor-companies-wrapper" class="hidden">
-                        <label for="reg-supervised-companies">Empresas que supervisas</label>
-                        <select id="reg-supervised-companies" multiple size="4">
-                            <option value="">Selecciona empresas</option>
-                        </select>
-                        <p class="auth-copy" style="margin-top: 0.5rem;">Selecciona todas las empresas que podrás aprobar/gestionar.</p>
-                    </div>
-                </div>
                 <div class="auth-actions">
                     <button type="submit" class="btn-primary">Enviar solicitud</button>
                     <button type="button" class="btn-link" data-view="login">Ya tengo cuenta</button>
