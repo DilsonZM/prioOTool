@@ -24,9 +24,31 @@ import {
   signInWithEmailLink,
   getCompaniesDoc,
   updateCompaniesDoc,
-  subscribeToCompanies
+  subscribeToCompanies,
+  subscribeToVersion
 } from './auth-service.js';
 import { qs, toggle, setText } from './ui-common.js';
+
+const APP_VERSION = '2.0.7';
+
+function checkAppVersion() {
+  subscribeToVersion((remoteVersion) => {
+    if (remoteVersion && remoteVersion !== APP_VERSION) {
+      Swal.fire({
+        title: 'Nueva versión disponible',
+        text: `Hay una nueva versión (${remoteVersion}). ¿Deseas actualizar ahora?`,
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonText: 'Actualizar',
+        cancelButtonText: 'Más tarde'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.reload(true);
+        }
+      });
+    }
+  });
+}
 
 // Exponer función de guardado para script.js (no módulo)
 window.prioSaveResult = async (data) => {
@@ -69,6 +91,9 @@ let supervisedCompanyOptions = [
 ];
 
 function initCompanies() {
+  // Iniciar chequeo de versión
+  checkAppVersion();
+  
   // Suscribirse a cambios en tiempo real
   subscribeToCompanies((list) => {
     if (list && Array.isArray(list) && list.length > 0) {
@@ -1379,7 +1404,7 @@ function updateCreateUserButtonVisibility() {
   toggle(adminCreateUserBtn, canCreate);
   toggle(navDrawerCreateUser, canCreate);
 
-  const canManageCompanies = isSuperAdmin(currentRoles) || currentRoles.includes('admin');
+  const canManageCompanies = isSuperAdmin(currentRoles) || currentRoles.includes('admin') || isSupervisor(currentRoles);
   toggle(adminManageCompaniesBtn, canManageCompanies);
 }
 

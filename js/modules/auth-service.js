@@ -332,6 +332,17 @@ function subscribeToCompanies(callback) {
   });
 }
 
+function subscribeToVersion(callback) {
+  if (!db) return () => {};
+  return onSnapshot(doc(db, 'settings', 'app'), (snap) => {
+    if (snap.exists()) {
+      callback(snap.data().version);
+    }
+  }, (error) => {
+    console.warn('Error subscribing to version:', error);
+  });
+}
+
 export {
   auth,
   db,
@@ -358,5 +369,6 @@ export {
   signInWithEmailLink,
   getCompaniesDoc,
   updateCompaniesDoc,
-  subscribeToCompanies
+  subscribeToCompanies,
+  subscribeToVersion
 };
