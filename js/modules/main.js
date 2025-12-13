@@ -271,6 +271,19 @@ let currentProfile = null;
 let currentRoles = [];
 let sortState = { key: 'createdAt', dir: 'desc' };
 
+// Roles permitidos según el nivel del usuario actual
+const SUPERVISOR_ALLOWED_ROLES = ['tecnico', 'analista', 'planeador', 'programador'];
+
+function getAllowedRolesForCurrentUser() {
+  if (isSuperAdmin(currentRoles) || currentRoles.includes('admin')) {
+    return ['tecnico', 'analista', 'planeador', 'programador', 'supervisor', 'admin'];
+  }
+  if (isSupervisor(currentRoles)) {
+    return SUPERVISOR_ALLOWED_ROLES;
+  }
+  return [];
+}
+
 /* ===== Registro: helpers para supervisores ===== */
 function renderMultiSelect(container, options, selectedValues = []) {
   if (!container) return;
@@ -814,6 +827,17 @@ async function autoSave(id, field, value) {
 
   const payload = { [field]: value };
   if (field === 'requestedRole') {
+    const isSupervisorUser = isSupervisor(currentRoles) && !isSuperAdmin(currentRoles) && !currentRoles.includes('admin');
+    if (isSupervisorUser && !SUPERVISOR_ALLOWED_ROLES.includes(value)) {
+      // Revertir selección si no está permitido
+      const currentRole = lastRequests.find(r => r.id === id)?.requestedRole || (lastRequests.find(r => r.id === id)?.roles || [])[0] || '';
+      if (input) {
+        input.value = currentRole;
+        input.style.borderColor = '#ef4444';
+      }
+      Swal.fire('No permitido', 'Un supervisor no puede asignar roles de supervisor o admin.', 'warning');
+      return;
+    }
     payload.roles = [value];
   }
 
@@ -863,7 +887,7 @@ function createRequestRow(r, forceEdit = false) {
 
   if (isEditable && puedeAprobar) {
     const currentRole = r.requestedRole || (Array.isArray(r.roles) ? r.roles[0] : '');
-    const roleOptions = ['tecnico', 'analista', 'planeador', 'programador', 'supervisor', 'admin']
+    const roleOptions = getAllowedRolesForCurrentUser()
       .map(opt => `<option value=\"${opt}\" ${opt === currentRole ? 'selected' : ''}>${opt}</option>`)
       .join('');
 
@@ -872,13 +896,8 @@ function createRequestRow(r, forceEdit = false) {
     const autoSaveAttr = isBulk ? `onblur=\"autoSave('${r.id}', 'FIELD', this.value)\"` : '';
     const autoSaveSelect = isBulk ? `onchange=\"autoSave('${r.id}', 'requestedRole', this.value)\"` : '';
 
-    const isSupervisorUser = isSupervisor(currentRoles) && !isSuperAdmin(currentRoles);
-    const companyReadOnly = isSupervisorUser ? 'readonly disabled style="background-color: #f3f4f6; color: #6b7280;"' : '';
-
     const nameInput = `<input type=\"text\" class=\"admin-input\" value=\"${r.displayName || ''}\" data-field=\"displayName\" ${isBulk ? autoSaveAttr.replace('FIELD','displayName') : ''}>`;
-    const companyInput = isSupervisorUser 
-      ? `<input type=\"text\" class=\"admin-input\" value=\"${r.company || ''}\" data-field=\"company\" readonly disabled style=\"background-color: #f3f4f6; color: #6b7280;\">`
-      : `<select class=\"admin-input\" data-field=\"company\" ${isBulk ? autoSaveAttr.replace('FIELD','company') : ''}>
+    const companyInput = `<select class=\"admin-input\" data-field=\"company\" ${isBulk ? autoSaveAttr.replace('FIELD','company') : ''}>
            <option value=\"\">Seleccionar...</option>
            ${supervisedCompanyOptions.map(c => `<option value=\"${c}\" ${c === r.company ? 'selected' : ''}>${c}</option>`).join('')}
          </select>`;
@@ -1509,13 +1528,7 @@ function openCreateUserModal() {
   };
 
   // Definir roles permitidos según jerarquía
-  let allowedRoles = [];
-  if (isSuperAdmin(currentRoles) || currentRoles.includes('admin')) {
-    allowedRoles = ['tecnico', 'analista', 'planeador', 'programador', 'supervisor', 'admin'];
-  } else if (isSupervisor(currentRoles)) {
-    allowedRoles = ['tecnico', 'analista', 'planeador', 'programador'];
-  }
-
+  const allowedRoles = getAllowedRolesForCurrentUser();
   roleSelect.innerHTML = '<option value=\"\">Seleccionar...</option>' + 
     allowedRoles.map(r => `<option value=\"${r}\">${r}</option>`).join('');
 
