@@ -16,9 +16,9 @@ const db = getFirestore(app);
 
 async function updateVersion() {
   try {
-    console.log('Actualizando versión en Firestore a 2.0.9...');
+    console.log('Actualizando versión en Firestore a 3.0.0...');
     await setDoc(doc(db, 'settings', 'app'), {
-      version: '2.0.9',
+      version: '3.0.0',
       forceUpdate: false,
       lastUpdated: new Date()
     }, { merge: true });

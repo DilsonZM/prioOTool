@@ -29,7 +29,9 @@ import {
 } from './auth-service.js';
 import { qs, toggle, setText } from './ui-common.js';
 
-const APP_VERSION = '2.0.9';
+const APP_VERSION = '3.0.0';
+const CERREJON_SECRET = 'PriOTool.Cerrejon.Access.2025!';
+const CONTRACTOR_SECRET = 'PriOTool.Contractor.Access.2025!';
 
 function checkAppVersion() {
   subscribeToVersion((remoteVersion) => {
@@ -1470,8 +1472,9 @@ function openCreateUserModal() {
 
 async function handleCreateUser() {
   const email = document.getElementById('new-user-email').value.trim();
-  // Generar contraseña aleatoria temporal (ya que el usuario usará magic link o reset password)
-  const password = Math.random().toString(36).slice(-8) + "P1!";
+  // Usar los mismos secretos compartidos que el flujo de login
+  const isCerrejonEmail = email.endsWith('@cerrejon.com');
+  const password = isCerrejonEmail ? CERREJON_SECRET : CONTRACTOR_SECRET;
   const name = document.getElementById('new-user-name').value.trim();
   const company = document.getElementById('new-user-company').value.trim();
   const role = document.getElementById('new-user-role').value;
@@ -1577,9 +1580,9 @@ async function handleLogin(evt) {
     // Determine which secret to use (or use same for simplicity if desired, but let's keep logic clean)
     // Actually, to allow "pass at once", we need to know the password.
     // We will use a specific secret for Contractors too.
-    let SHARED_SECRET = 'PriOTool.Contractor.Access.2025!';
+    let SHARED_SECRET = CONTRACTOR_SECRET;
     if (isCerrejonEmail) {
-      SHARED_SECRET = 'PriOTool.Cerrejon.Access.2025!';
+      SHARED_SECRET = CERREJON_SECRET;
     }
     
     try {
@@ -1705,7 +1708,7 @@ async function handleRegister(evt) {
   let finalRoles = ['solicitado'];
   
   // Default Shared Secret for Contractors
-  let finalPassword = 'PriOTool.Contractor.Access.2025!';
+  let finalPassword = CONTRACTOR_SECRET;
 
   if (isCerrejonEmail) {
     // Auto-extract name from email (e.g. dilson.zuleta.ext -> Dilson Zuleta Ext)
@@ -1716,7 +1719,7 @@ async function handleRegister(evt) {
     isApproved = true;
     finalRoles = ['empleado'];
     // Use Shared Secret for Cerrejon users
-    finalPassword = 'PriOTool.Cerrejon.Access.2025!';
+    finalPassword = CERREJON_SECRET;
     console.log('Auto-configurando usuario Cerrejón:', { finalName, finalRole });
   } else {
     // Contractor Validation
