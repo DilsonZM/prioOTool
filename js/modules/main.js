@@ -147,6 +147,15 @@ const shells = {
   pending: qs('pending-card'),
   app: qs('app-shell')
 };
+
+// Optimistic UI Load: Show last known state blurred behind loader
+try {
+  const lastState = localStorage.getItem('prio_last_state');
+  if (lastState && shells[lastState]) {
+    toggle(shells[lastState], true);
+  }
+} catch (e) { console.warn('Optimistic load failed', e); }
+
 const loader = qs('loading-overlay');
 const loginCard = qs('login-card');
 const registerCard = qs('register-card');
@@ -394,6 +403,7 @@ function renderState(state) {
   if (state !== 'app') {
     closeDrawer();
   }
+  localStorage.setItem('prio_last_state', state);
 }
 
 function setLoading(on) {
