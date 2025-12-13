@@ -51,5 +51,11 @@ service cloud.firestore {
         hasRole('superadmin')
       );
     }
+
+    // --- CONFIGURACIÓN GLOBAL ---
+    match /settings/{docId} {
+      allow read: if request.auth != null;
+      allow write: if hasRole('admin') || hasRole('superadmin');
+    }
   }
 }

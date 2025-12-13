@@ -178,6 +178,12 @@
                     </span>
                     <span>Crear Usuario</span>
                 </button>
+                <button type="button" id="nav-drawer-companies" class="drawer-link hidden">
+                    <span class="drawer-ico" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" role="img" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l8-4 8 4v14"/><path d="M17 21v-8H7v8"/><path d="M9 9h1"/><path d="M9 13h1"/><path d="M9 17h1"/><path d="M14 9h1"/><path d="M14 13h1"/><path d="M14 17h1"/></svg>
+                    </span>
+                    <span>Gestionar Empresas</span>
+                </button>
             </nav>
             <div class="drawer-actions">
                 <button type="button" id="logoutDrawer" class="drawer-btn drawer-btn--ghost">Cerrar sesión</button>
@@ -325,6 +331,7 @@
                                 <button type="button" id="adminFilterOpen" class="pill">Filtrar</button>
                                 <button type="button" id="adminBulkEdit" class="pill pill-ghost">Edición rápida</button>
                                 <button type="button" id="adminCreateUserBtn" class="pill pill-primary hidden">Crear Usuario</button>
+                                <button type="button" id="adminManageCompaniesBtn" class="pill pill-ghost hidden">Empresas</button>
                             </div>
                             <div class="admin-chips" id="admin-active-filters"></div>
                         </div>
@@ -449,9 +456,6 @@
                                 <label for="new-user-email">Correo Electrónico</label>
                                 <input type="email" id="new-user-email" required placeholder="usuario@empresa.com">
                                 
-                                <label for="new-user-password">Contraseña Temporal</label>
-                                <input type="password" id="new-user-password" required minlength="6" placeholder="••••••••">
-                                
                                 <label for="new-user-company">Empresa</label>
                                 <input type="text" id="new-user-company" required placeholder="Empresa contratista">
                                 
@@ -461,7 +465,13 @@
                                     <!-- Opciones se llenan dinámicamente -->
                                 </select>
 
-                                <div class="auth-actions" style="margin-top: 1rem;">
+                                <div id="new-user-supervised-wrapper" class="hidden" style="margin-top: 0.5rem;">
+                                    <label for="new-user-supervised">Empresas a Supervisar</label>
+                                    <select id="new-user-supervised" multiple size="5" style="width: 100%; padding: 8px; border-radius: 12px; border: 1px solid #d8dfec;"></select>
+                                    <small style="color: #64748b; display: block; margin-top: 4px;">Mantén presionado Ctrl (o Cmd) para seleccionar varias.</small>
+                                </div>
+
+                                <div class="auth-actions create-user-actions" style="margin-top: 1rem;">
                                     <button type="button" class="btn-link" data-bs-dismiss="modal">Cancelar</button>
                                     <button type="button" class="btn-primary" id="btn-create-user-submit">Crear Usuario</button>
                                 </div>
@@ -526,6 +536,33 @@
                 </div>
             </div>
         </div>
+        </div>
+
+        <!-- Modal Gestionar Empresas -->
+        <div class="modal fade" id="manageCompaniesModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content scope-modal">
+                    <div class="scope-head">
+                        <div>
+                            <p class="scope-eyebrow">Configuración</p>
+                            <h5 class="modal-title">Gestionar Empresas</h5>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="scope-body">
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="new-company-input" class="scope-select" style="min-height: auto;" placeholder="Nombre de la empresa">
+                            <button type="button" id="btn-add-company" class="btn-scope primary" style="white-space: nowrap;">Agregar</button>
+                        </div>
+                        <ul id="companies-list" style="list-style: none; padding: 0; margin: 0; max-height: 300px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 12px;">
+                            <!-- Lista dinámica -->
+                        </ul>
+                    </div>
+                    <div class="scope-footer">
+                        <button type="button" class="btn-scope ghost" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>

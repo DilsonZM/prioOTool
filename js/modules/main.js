@@ -21,7 +21,9 @@ import {
   getHistory,
   sendSignInLinkToEmail,
   isSignInWithEmailLink,
-  signInWithEmailLink
+  signInWithEmailLink,
+  getCompaniesDoc,
+  updateCompaniesDoc
 } from './auth-service.js';
 import { qs, toggle, setText } from './ui-common.js';
 
@@ -56,15 +58,23 @@ window.prioAutoSaveLocal = (data) => {
   }
 };
 
-// Catálogo editable de empresas supervisables (puedes sobrescribir con window.PRIO_SUPERVISED_COMPANIES)
-const SUPERVISED_COMPANY_OPTIONS = Array.isArray(window.PRIO_SUPERVISED_COMPANIES)
-  ? window.PRIO_SUPERVISED_COMPANIES
-  : [
-      'Cerrejón',
-      'Contratista A',
-      'Contratista B',
-      'Contratista C'
-    ];
+// Catálogo editable de empresas supervisables
+let supervisedCompanyOptions = [
+  'Cerrejón',
+  'CHM Minería S.A.S.',
+  'MASSA – Mantenimiento y Servicios S.A.S.',
+  'Magnex S.A.S.',
+  'Relianz S.A.S.'
+];
+
+async function initCompanies() {
+  const remote = await getCompaniesDoc();
+  if (remote && Array.isArray(remote) && remote.length > 0) {
+    supervisedCompanyOptions = remote;
+  }
+}
+// Iniciar carga de empresas
+initCompanies();
 
 /* ===== DOM helpers ===== */
 const shells = {
@@ -118,6 +128,11 @@ const navRequestsBadge = qs('nav-requests-badge');
 const pendingPill = qs('session-pending-pill');
 const adminFilterOpen = qs('adminFilterOpen');
 const adminFilterClose = qs('adminFilterClose');
+const adminManageCompaniesBtn = qs('adminManageCompaniesBtn');
+const manageCompaniesModalEl = qs('manageCompaniesModal');
+const newCompanyInput = qs('new-company-input');
+const btnAddCompany = qs('btn-add-company');
+const companiesListEl = qs('companies-list');
 const btnExportHistory = qs('btn-export-history');
 const adminFilterApply = qs('adminFilterApply');
 const adminFilterClear = qs('adminFilterClear');
@@ -126,6 +141,7 @@ const adminActiveFilters = qs('admin-active-filters');
 const adminBulkEdit = qs('adminBulkEdit');
 const adminCreateUserBtn = qs('adminCreateUserBtn');
 const navDrawerCreateUser = qs('nav-drawer-create-user');
+const navDrawerCompanies = qs('nav-drawer-companies');
 const btnCreateUserSubmit = qs('btn-create-user-submit');
 const drawerEditProfile = qs('drawerEditProfile');
 const profileCompanyInput = qs('profile-company');
@@ -158,7 +174,7 @@ let sortState = { key: 'createdAt', dir: 'desc' };
 function populateSupervisedCompanies(selectEl = regSupervisedCompanies) {
   if (!selectEl) return;
   selectEl.innerHTML = '';
-  SUPERVISED_COMPANY_OPTIONS.forEach(c => {
+  supervisedCompanyOptions.forEach(c => {
     const opt = document.createElement('option');
     opt.value = c;
     opt.textContent = c;
@@ -353,6 +369,10 @@ function syncAdminVisibility(roles, approved) {
   const allowed = canAccessAdmin(roles, approved);
   if (navDrawerAdmin) {
     toggle(navDrawerAdmin, allowed);
+  }
+  if (navDrawerCompanies) {
+    const canManageCompanies = isSuperAdmin(roles) || roles.includes('admin');
+    toggle(navDrawerCompanies, canManageCompanies);
   }
   if (drawerEditProfile) {
     const canEditProfile = isSupervisor(roles) || isSuperAdmin(roles) || roles.includes('admin');
@@ -1241,6 +1261,12 @@ function showPage(pageId) {
 navDrawerForm.addEventListener('click', () => { showPage('form'); closeDrawer(); });
 if (navDrawerAdmin) navDrawerAdmin.addEventListener('click', () => { showPage('admin'); closeDrawer(); });
 if (navDrawerHistory) navDrawerHistory.addEventListener('click', () => { showPage('history'); closeDrawer(); });
+if (navDrawerCompanies) {
+  navDrawerCompanies.addEventListener('click', () => {
+    openManageCompaniesModal();
+    closeDrawer();
+  });
+}
 
 async function loadAdminPage() {
   const allowed = canAccessAdmin(currentRoles, currentProfile?.approved);
@@ -1283,21 +1309,50 @@ function updateCreateUserButtonVisibility() {
   const canCreate = isSuperAdmin(currentRoles) || currentRoles.includes('admin') || isSupervisor(currentRoles);
   toggle(adminCreateUserBtn, canCreate);
   toggle(navDrawerCreateUser, canCreate);
+
+  const canManageCompanies = isSuperAdmin(currentRoles) || currentRoles.includes('admin');
+  toggle(adminManageCompaniesBtn, canManageCompanies);
 }
 
 function openCreateUserModal() {
   const modalEl = document.getElementById('createUserModal');
   const roleSelect = document.getElementById('new-user-role');
+  const supervisedWrapper = document.getElementById('new-user-supervised-wrapper');
+  const supervisedSelect = document.getElementById('new-user-supervised');
+
   if (!modalEl || !roleSelect) return;
 
   document.getElementById('create-user-form').reset();
+  if (supervisedWrapper) supervisedWrapper.classList.add('hidden');
+
+  // Populate supervised companies
+  if (supervisedSelect) {
+      supervisedSelect.innerHTML = '';
+      supervisedCompanyOptions.forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c;
+          opt.textContent = c;
+          supervisedSelect.appendChild(opt);
+      });
+  }
+
+  // Role change listener
+  roleSelect.onchange = () => {
+      if (supervisedWrapper) {
+          if (roleSelect.value === 'supervisor') {
+              supervisedWrapper.classList.remove('hidden');
+          } else {
+              supervisedWrapper.classList.add('hidden');
+          }
+      }
+  };
 
   // Definir roles permitidos según jerarquía
   let allowedRoles = [];
   if (isSuperAdmin(currentRoles) || currentRoles.includes('admin')) {
-    allowedRoles = ['tecnico', 'inspector', 'planeador', 'programador', 'supervisor', 'admin'];
+    allowedRoles = ['tecnico', 'analista', 'planeador', 'programador', 'supervisor', 'admin'];
   } else if (isSupervisor(currentRoles)) {
-    allowedRoles = ['tecnico', 'inspector', 'planeador', 'programador'];
+    allowedRoles = ['tecnico', 'analista', 'planeador', 'programador'];
   }
 
   roleSelect.innerHTML = '<option value=\"\">Seleccionar...</option>' + 
@@ -1309,14 +1364,27 @@ function openCreateUserModal() {
 
 async function handleCreateUser() {
   const email = document.getElementById('new-user-email').value.trim();
-  const password = document.getElementById('new-user-password').value;
+  // Generar contraseña aleatoria temporal (ya que el usuario usará magic link o reset password)
+  const password = Math.random().toString(36).slice(-8) + "P1!";
   const name = document.getElementById('new-user-name').value.trim();
   const company = document.getElementById('new-user-company').value.trim();
   const role = document.getElementById('new-user-role').value;
 
-  if (!email || !password || !name || !company || !role) {
+  if (!email || !name || !company || !role) {
     Swal.fire('Error', 'Por favor completa todos los campos.', 'warning');
     return;
+  }
+
+  let supervisedCompanies = [];
+  if (role === 'supervisor') {
+      const supervisedSelect = document.getElementById('new-user-supervised');
+      if (supervisedSelect) {
+          supervisedCompanies = Array.from(supervisedSelect.selectedOptions).map(o => o.value);
+      }
+      if (supervisedCompanies.length === 0) {
+           Swal.fire('Atención', 'Debes seleccionar al menos una empresa para supervisar.', 'warning');
+           return;
+      }
   }
 
   try {
@@ -1328,7 +1396,8 @@ async function handleCreateUser() {
       company,
       role,
       supervisor: currentProfile?.displayName || currentProfile?.email,
-      currentUserEmail: currentProfile?.email
+      currentUserEmail: currentProfile?.email,
+      supervisedCompanies
     });
 
     const modalEl = document.getElementById('createUserModal');
@@ -1927,4 +1996,99 @@ if (auth) {
     }
     hydrateSession(user);
   });
+}
+
+/* ===== Gestión de Empresas ===== */
+if (adminManageCompaniesBtn) {
+  adminManageCompaniesBtn.addEventListener('click', openManageCompaniesModal);
+}
+
+if (btnAddCompany) {
+  btnAddCompany.addEventListener('click', handleAddCompany);
+}
+
+function openManageCompaniesModal() {
+  renderCompaniesList();
+  if (window.bootstrap && manageCompaniesModalEl) {
+    const modal = new bootstrap.Modal(manageCompaniesModalEl);
+    modal.show();
+  }
+}
+
+function renderCompaniesList() {
+  if (!companiesListEl) return;
+  companiesListEl.innerHTML = '';
+  supervisedCompanyOptions.forEach(c => {
+    const li = document.createElement('li');
+    li.style.cssText = 'padding: 10px 12px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center;';
+    li.innerHTML = `
+      <span>${c}</span>
+      <button type="button" class="btn-delete-company" data-company="${c}" style="background: none; border: none; color: #ef4444; cursor: pointer;">🗑️</button>
+    `;
+    companiesListEl.appendChild(li);
+  });
+
+  // Attach delete handlers
+  companiesListEl.querySelectorAll('.btn-delete-company').forEach(btn => {
+    btn.addEventListener('click', () => handleDeleteCompany(btn.dataset.company));
+  });
+}
+
+async function handleAddCompany() {
+  const name = newCompanyInput.value.trim();
+  if (!name) return;
+  if (supervisedCompanyOptions.includes(name)) {
+    Swal.fire('Error', 'La empresa ya existe.', 'warning');
+    return;
+  }
+  
+  supervisedCompanyOptions.push(name);
+  supervisedCompanyOptions.sort();
+  newCompanyInput.value = '';
+  renderCompaniesList();
+  
+  try {
+    await updateCompaniesDoc(supervisedCompanyOptions);
+    Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon: 'success',
+      title: 'Empresa agregada',
+      showConfirmButton: false,
+      timer: 1500
+    });
+  } catch (e) {
+    console.error(e);
+    Swal.fire('Error', 'No se pudo guardar.', 'error');
+  }
+}
+
+async function handleDeleteCompany(name) {
+  const result = await Swal.fire({
+    title: '¿Eliminar empresa?',
+    text: name,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar'
+  });
+
+  if (result.isConfirmed) {
+    supervisedCompanyOptions = supervisedCompanyOptions.filter(c => c !== name);
+    renderCompaniesList();
+    try {
+      await updateCompaniesDoc(supervisedCompanyOptions);
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: 'Empresa eliminada',
+        showConfirmButton: false,
+        timer: 1500
+      });
+    } catch (e) {
+      console.error(e);
+      Swal.fire('Error', 'No se pudo guardar.', 'error');
+    }
+  }
 }

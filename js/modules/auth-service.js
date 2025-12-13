@@ -300,6 +300,24 @@ async function getHistory(uid) {
   });
 }
 
+async function getCompaniesDoc() {
+  if (!db) return null;
+  try {
+    const snap = await getDoc(doc(db, 'settings', 'companies'));
+    if (snap.exists()) {
+      return snap.data().list || [];
+    }
+  } catch (e) {
+    console.warn('Error fetching companies:', e);
+  }
+  return null;
+}
+
+async function updateCompaniesDoc(list) {
+  if (!db) return;
+  await setDoc(doc(db, 'settings', 'companies'), { list }, { merge: true });
+}
+
 export {
   auth,
   db,
@@ -323,5 +341,7 @@ export {
   getHistory,
   sendSignInLinkToEmail,
   isSignInWithEmailLink,
-  signInWithEmailLink
+  signInWithEmailLink,
+  getCompaniesDoc,
+  updateCompaniesDoc
 };

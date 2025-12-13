@@ -342,19 +342,20 @@ body{
   align-items:center;
   justify-content:space-between;
   padding:14px 16px;
-  background:#0f172a;
-  color:#fff;
+  background:#fff;
+  color:#0f172a;
+  border-bottom: 1px solid #e5e7eb;
 }
 .scope-head .btn-close{
-  filter: invert(1);
-  opacity:1;
+  filter: none;
+  opacity: 0.5;
 }
 .scope-eyebrow{
   margin:0;
   text-transform:uppercase;
   letter-spacing:.18em;
   font-size:10px;
-  color:#cbd5e1;
+  color:#64748b;
 }
 .scope-body{
   padding:16px;
@@ -1396,5 +1397,16 @@ footer .matriz{ width:100%; height:auto; }
 @media (min-width: 768px) {
   .swal2-popup-custom-select {
     width: 620px !important;
+  }
+}
+
+/* Create User Modal Mobile Actions */
+@media (max-width: 768px) {
+  .create-user-actions {
+    flex-direction: column-reverse;
+    gap: 12px;
+  }
+  .create-user-actions button {
+    width: 100%;
   }
 }
