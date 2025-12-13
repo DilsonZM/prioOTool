@@ -1,4 +1,4 @@
-const CACHE_NAME = 'priotool-v9-severity-fix-real';
+const CACHE_NAME = 'priotool-v11-autosave-local';
 const ASSETS = [
   './',
   './index.html',

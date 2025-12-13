@@ -190,6 +190,20 @@ procesarBtn.addEventListener('click', () => {
     // Texto oscuro para colores claros (Amarillo P3, Naranja P2, Verde P4, Azul P5)
     const textColor = ['p3', 'p2', 'p4', 'p5'].includes(code) ? '#1f1301' : '#fff';
     
+    // AUTO-GUARDADO LOCAL (Sin preguntar)
+    if (window.prioAutoSaveLocal) {
+      window.prioAutoSaveLocal({
+        priorityCode: code,
+        deadline: plazo,
+        assetNumber: '', // No disponible aún
+        comment: 'Cálculo rápido',
+        inputs: {
+            time: row,
+            consequences: niveles
+        }
+      });
+    }
+
     if (typeof Swal === 'undefined') {
       console.error('SweetAlert2 no está cargado');
       alert(`Prioridad: ${code.toUpperCase()}\nPlazo: ${plazo}`);

@@ -27,12 +27,32 @@ import { qs, toggle, setText } from './ui-common.js';
 
 // Exponer función de guardado para script.js (no módulo)
 window.prioSaveResult = async (data) => {
+  // 2. Guardar en Firebase
   try {
     await saveHistoryRecord(data);
     return { success: true };
   } catch (error) {
     console.error('Error guardando historial:', error);
     return { success: false, error };
+  }
+};
+
+// Función para auto-guardado local (sin preguntar)
+window.prioAutoSaveLocal = (data) => {
+  try {
+    const localHistory = JSON.parse(localStorage.getItem('priotool_history') || '[]');
+    localHistory.unshift({
+      ...data,
+      id: 'local_' + Date.now(),
+      timestamp: { seconds: Date.now() / 1000 },
+      source: 'local'
+    });
+    // Limitar historial local a 50 items
+    if (localHistory.length > 50) localHistory.pop();
+    localStorage.setItem('priotool_history', JSON.stringify(localHistory));
+    console.log('Auto-guardado local exitoso');
+  } catch (e) {
+    console.warn('No se pudo guardar en local:', e);
   }
 };
 
@@ -1033,33 +1053,67 @@ async function loadHistoryPage() {
   list.innerHTML = '';
   
   try {
-    const data = await getHistory(auth.currentUser.uid);
+    // 1. Obtener Local
+    let localData = [];
+    try {
+      localData = JSON.parse(localStorage.getItem('priotool_history') || '[]').map(item => ({
+        ...item,
+        source: 'local'
+      }));
+    } catch (e) {
+      console.warn('Error leyendo historial local', e);
+    }
+
+    // 2. Obtener Cloud
+    let cloudData = [];
+    try {
+      cloudData = await getHistory(auth.currentUser.uid);
+      cloudData = cloudData.map(item => ({ ...item, source: 'cloud' }));
+    } catch (e) {
+      console.error('Error fetching cloud history', e);
+    }
+
+    // 3. Mezclar y Ordenar
+    const allData = [...cloudData, ...localData];
+    
+    // Ordenar por fecha descendente
+    allData.sort((a, b) => {
+      const tA = a.timestamp?.seconds || (new Date(a.timestamp).getTime() / 1000);
+      const tB = b.timestamp?.seconds || (new Date(b.timestamp).getTime() / 1000);
+      return tB - tA;
+    });
+    
     toggle(loader, false);
     
-    if (!data || data.length === 0) {
+    if (allData.length === 0) {
       toggle(empty, true);
       return;
     }
     
-    data.forEach(item => {
+    allData.forEach(item => {
       const card = document.createElement('div');
       card.className = 'history-card';
       
       // Format date
       let dateStr = '—';
-      if (item.timestamp) {
-        const d = item.timestamp.toDate ? item.timestamp.toDate() : new Date(item.timestamp.seconds * 1000);
+      let ts = item.timestamp;
+      if (ts) {
+        const d = ts.toDate ? ts.toDate() : (ts.seconds ? new Date(ts.seconds * 1000) : new Date(ts));
         dateStr = d.toLocaleString();
       }
       
       // Color class
-      const colorClass = `priority-${item.priorityCode || 'pl'}`;
+      const colorClass = `priority-${(item.priorityCode || 'pl').toLowerCase()}`;
       
+      // Icono de fuente
+      const sourceIcon = item.source === 'cloud' ? '☁️' : '📱';
+      const sourceTitle = item.source === 'cloud' ? 'Nube' : 'Local';
+
       card.innerHTML = `
         <div class="history-header">
           <div class="history-badge ${colorClass}">${(item.priorityCode || 'PL').toUpperCase()}</div>
           <div class="history-meta">
-            <span class="history-date">${dateStr}</span>
+            <span class="history-date">${dateStr} <span title="${sourceTitle}">${sourceIcon}</span></span>
             <span class="history-asset">Activo: ${item.assetNumber || 'N/A'}</span>
           </div>
         </div>
