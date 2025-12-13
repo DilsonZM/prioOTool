@@ -23,7 +23,8 @@ import {
   isSignInWithEmailLink,
   signInWithEmailLink,
   getCompaniesDoc,
-  updateCompaniesDoc
+  updateCompaniesDoc,
+  subscribeToCompanies
 } from './auth-service.js';
 import { qs, toggle, setText } from './ui-common.js';
 
@@ -67,12 +68,15 @@ let supervisedCompanyOptions = [
   'Relianz S.A.S.'
 ];
 
-async function initCompanies() {
-  const remote = await getCompaniesDoc();
-  if (remote && Array.isArray(remote) && remote.length > 0) {
-    supervisedCompanyOptions = remote;
-  }
-  renderAllCompanyDropdowns();
+function initCompanies() {
+  // Suscribirse a cambios en tiempo real
+  subscribeToCompanies((list) => {
+    if (list && Array.isArray(list) && list.length > 0) {
+      supervisedCompanyOptions = list;
+      renderAllCompanyDropdowns();
+      renderCompaniesList(); // Actualizar lista de gestión si está abierta
+    }
+  });
 }
 
 function renderAllCompanyDropdowns() {
@@ -2048,7 +2052,7 @@ if (auth) {
       renderState('auth');
       return;
     }
-    await initCompanies();
+    // initCompanies ya se llama al inicio y mantiene la suscripción activa
     hydrateSession(user);
   });
 }

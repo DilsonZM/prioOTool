@@ -25,7 +25,8 @@ import {
   addDoc,
   getDocs,
   query,
-  where
+  where,
+  onSnapshot
 } from 'https://www.gstatic.com/firebasejs/11.0.0/firebase-firestore.js';
 import { auth, db, cfg, initializeApp, deleteApp } from './firebase-init.js';
 
@@ -318,6 +319,19 @@ async function updateCompaniesDoc(list) {
   await setDoc(doc(db, 'settings', 'companies'), { list }, { merge: true });
 }
 
+function subscribeToCompanies(callback) {
+  if (!db) return () => {};
+  return onSnapshot(doc(db, 'settings', 'companies'), (snap) => {
+    if (snap.exists()) {
+      callback(snap.data().list || []);
+    } else {
+      callback([]);
+    }
+  }, (error) => {
+    console.warn('Error subscribing to companies:', error);
+  });
+}
+
 export {
   auth,
   db,
@@ -343,5 +357,6 @@ export {
   isSignInWithEmailLink,
   signInWithEmailLink,
   getCompaniesDoc,
-  updateCompaniesDoc
+  updateCompaniesDoc,
+  subscribeToCompanies
 };
