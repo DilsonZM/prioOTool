@@ -1,0 +1,54 @@
+
+/* Severity Colors for Custom Select Options (Pastel/Light) */
+
+/* Level 1: Low / Gray / Safe */
+.select-option-btn.sev-lvl-1 {
+  background-color: #f9fafb; /* Gray 50 */
+  border-color: #e5e7eb;
+  border-left: 4px solid #9ca3af; /* Gray 400 */
+}
+
+/* Level 2: Low-Medium / Greenish */
+.select-option-btn.sev-lvl-2 {
+  background-color: #f0fdf4; /* Green 50 */
+  border-color: #dcfce7;
+  border-left: 4px solid #4ade80; /* Green 400 */
+}
+
+/* Level 3: Medium / Yellowish */
+.select-option-btn.sev-lvl-3 {
+  background-color: #fefce8; /* Yellow 50 */
+  border-color: #fef9c3;
+  border-left: 4px solid #facc15; /* Yellow 400 */
+}
+
+/* Level 4: Medium-High / Orange */
+.select-option-btn.sev-lvl-4 {
+  background-color: #fff7ed; /* Orange 50 */
+  border-color: #ffedd5;
+  border-left: 4px solid #fb923c; /* Orange 400 */
+}
+
+/* Level 5: High / Red-Orange */
+.select-option-btn.sev-lvl-5 {
+  background-color: #fef2f2; /* Red 50 */
+  border-color: #fee2e2;
+  border-left: 4px solid #f87171; /* Red 400 */
+}
+
+/* Level 6: Critical / Red */
+.select-option-btn.sev-lvl-6 {
+  background-color: #fff1f2; /* Rose 50 */
+  border-color: #ffe4e6;
+  border-left: 4px solid #f43f5e; /* Rose 500 */
+}
+
+/* Selected state override to keep blue tint but maybe mix? 
+   Actually, let's keep the severity color but make it darker/stronger when selected 
+*/
+.select-option-btn.selected.sev-lvl-1 { background-color: #e5e7eb; border-color: #6b7280; color: #111827; }
+.select-option-btn.selected.sev-lvl-2 { background-color: #dcfce7; border-color: #16a34a; color: #14532d; }
+.select-option-btn.selected.sev-lvl-3 { background-color: #fef9c3; border-color: #ca8a04; color: #713f12; }
+.select-option-btn.selected.sev-lvl-4 { background-color: #ffedd5; border-color: #ea580c; color: #7c2d12; }
+.select-option-btn.selected.sev-lvl-5 { background-color: #fee2e2; border-color: #dc2626; color: #7f1d1d; }
+.select-option-btn.selected.sev-lvl-6 { background-color: #ffe4e6; border-color: #e11d48; color: #881337; }

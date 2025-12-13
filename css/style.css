@@ -261,10 +261,10 @@ body{
   box-shadow:0 30px 70px rgba(0,0,0,.18);
 }
 .hero-logo-top{
-  width:140px;
+  width:170px;
   height:auto;
   display:block;
-  filter:drop-shadow(0 12px 26px rgba(0,0,0,.24));
+  filter:drop-shadow(0 4px 4px rgba(0,0,0,0.5));
   margin-bottom:12px;
 }
 .hero-text{
@@ -299,14 +299,20 @@ body{
 }
 .hero-signature small{ font-size:10px; letter-spacing:.28em; color:#b97705; }
 
-.app-shell{ display:flex; flex-direction:column; min-height:100vh; }
+.app-shell{ display:flex; flex-direction:column; min-height:100vh; padding-top: 70px; }
 .session-bar{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
   display:flex;
   justify-content:space-between;
   align-items:center;
   padding:12px 20px;
   background:#111827;
   color:#fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 .session-left{ display:flex; align-items:center; gap:12px; }
 .session-eyebrow{ margin:0; font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:#9ca3af; }
@@ -1038,7 +1044,7 @@ footer .matriz{ width:100%; height:auto; }
     width:100%;
     max-width:440px;
   }
-  .mobile-hero-head img{ height:64px; width:auto; filter:drop-shadow(0 10px 20px rgba(0,0,0,.22)); }
+  .mobile-hero-head img{ height:74px; width:auto; filter:drop-shadow(0 4px 4px rgba(0,0,0,0.5)); }
   .mobile-hero-copy{ display:flex; flex-direction:column; gap:6px; text-align:center; }
   .mobile-hero-eyebrow{ margin:0; font-size:12px; letter-spacing:.24em; text-transform:uppercase; color:#7a5200; }
   .mobile-hero-title{ margin:0; font-size:18px; font-weight:800; color:#0f172a; line-height:1.32; }
@@ -1063,6 +1069,7 @@ footer .matriz{ width:100%; height:auto; }
   .hero-text .hero-list{ display:none; }
   .hero-signature{ display:none; }
   .sub-container{ padding:18px; }
+  .eventos h3 { font-size: 16px; line-height: 1.4; margin-bottom: 10px; }
   .resultados{ grid-template-columns:1fr; }
 }
 
@@ -1149,3 +1156,228 @@ footer .matriz{ width:100%; height:auto; }
   select{ font-size:15px; }
   .resultados h1{ font-size:30px; }
 }
+/* Custom Select Styles */
+.custom-select-trigger {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 6px;
+  font-size: 16px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #1f2937;
+  min-height: 48px;
+}
+
+.custom-select-trigger:disabled,
+.custom-select-trigger.disabled {
+  background-color: #e5e7eb;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.custom-select-trigger::after {
+  content: '';
+  width: 0.8em;
+  height: 0.5em;
+  background-color: #6b7280;
+  clip-path: polygon(100% 0%, 0 0%, 50% 100%);
+  margin-left: 10px;
+}
+
+/* Custom Modal Options */
+.select-option-btn {
+  width: 100%;
+  text-align: left;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  color: #374151;
+  font-size: 15px;
+  line-height: 1.4;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.select-option-btn:hover,
+.select-option-btn:focus {
+  background-color: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.select-option-btn.selected {
+  background-color: #eff6ff;
+  border-color: #3b82f6;
+  color: #1d4ed8;
+  font-weight: 600;
+}
+
+/* Severity Colors for Custom Select Options (Pastel/Light) */
+
+/* Level 1: Low / Gray / Safe */
+.select-option-btn.sev-lvl-1 {
+  background-color: #f9fafb; /* Gray 50 */
+  border-color: #e5e7eb;
+  border-left: 4px solid #9ca3af; /* Gray 400 */
+}
+
+/* Level 2: Low-Medium / Greenish */
+.select-option-btn.sev-lvl-2 {
+  background-color: #f0fdf4; /* Green 50 */
+  border-color: #dcfce7;
+  border-left: 4px solid #4ade80; /* Green 400 */
+}
+
+/* Level 3: Medium / Yellowish */
+.select-option-btn.sev-lvl-3 {
+  background-color: #fefce8; /* Yellow 50 */
+  border-color: #fef9c3;
+  border-left: 4px solid #facc15; /* Yellow 400 */
+}
+
+/* Level 4: Medium-High / Orange */
+.select-option-btn.sev-lvl-4 {
+  background-color: #fff7ed; /* Orange 50 */
+  border-color: #ffedd5;
+  border-left: 4px solid #fb923c; /* Orange 400 */
+}
+
+/* Level 5: High / Red-Orange */
+.select-option-btn.sev-lvl-5 {
+  background-color: #fef2f2; /* Red 50 */
+  border-color: #fee2e2;
+  border-left: 4px solid #f87171; /* Red 400 */
+}
+
+/* Level 6: Critical / Red */
+.select-option-btn.sev-lvl-6 {
+  background-color: #fff1f2; /* Rose 50 */
+  border-color: #ffe4e6;
+  border-left: 4px solid #f43f5e; /* Rose 500 */
+}
+
+/* Selected state override to keep blue tint but maybe mix? 
+   Actually, let's keep the severity color but make it darker/stronger when selected 
+*/
+.select-option-btn.selected.sev-lvl-1 { background-color: #e5e7eb; border-color: #6b7280; color: #111827; }
+.select-option-btn.selected.sev-lvl-2 { background-color: #dcfce7; border-color: #16a34a; color: #14532d; }
+.select-option-btn.selected.sev-lvl-3 { background-color: #fef9c3; border-color: #ca8a04; color: #713f12; }
+.select-option-btn.selected.sev-lvl-4 { background-color: #ffedd5; border-color: #ea580c; color: #7c2d12; }
+.select-option-btn.selected.sev-lvl-5 { background-color: #fee2e2; border-color: #dc2626; color: #7f1d1d; }
+.select-option-btn.selected.sev-lvl-6 { background-color: #ffe4e6; border-color: #e11d48; color: #881337; }
+
+/* Severity Colors for Custom Select Options (Pastel/Light) */
+
+/* Level 1: Low / Gray / Safe */
+.select-option-btn.sev-lvl-1 {
+  background-color: #f9fafb; /* Gray 50 */
+  border-color: #e5e7eb;
+  border-left: 4px solid #9ca3af; /* Gray 400 */
+}
+
+/* Level 2: Low-Medium / Greenish */
+.select-option-btn.sev-lvl-2 {
+  background-color: #f0fdf4; /* Green 50 */
+  border-color: #dcfce7;
+  border-left: 4px solid #4ade80; /* Green 400 */
+}
+
+/* Level 3: Medium / Yellowish */
+.select-option-btn.sev-lvl-3 {
+  background-color: #fefce8; /* Yellow 50 */
+  border-color: #fef9c3;
+  border-left: 4px solid #facc15; /* Yellow 400 */
+}
+
+/* Level 4: Medium-High / Orange */
+.select-option-btn.sev-lvl-4 {
+  background-color: #fff7ed; /* Orange 50 */
+  border-color: #ffedd5;
+  border-left: 4px solid #fb923c; /* Orange 400 */
+}
+
+/* Level 5: High / Red-Orange */
+.select-option-btn.sev-lvl-5 {
+  background-color: #fef2f2; /* Red 50 */
+  border-color: #fee2e2;
+  border-left: 4px solid #f87171; /* Red 400 */
+}
+
+/* Level 6: Critical / Red */
+.select-option-btn.sev-lvl-6 {
+  background-color: #fff1f2; /* Rose 50 */
+  border-color: #ffe4e6;
+  border-left: 4px solid #f43f5e; /* Rose 500 */
+}
+
+/* Selected state override to keep blue tint but maybe mix? 
+   Actually, let's keep the severity color but make it darker/stronger when selected 
+*/
+.select-option-btn.selected.sev-lvl-1 { background-color: #e5e7eb; border-color: #6b7280; color: #111827; }
+.select-option-btn.selected.sev-lvl-2 { background-color: #dcfce7; border-color: #16a34a; color: #14532d; }
+.select-option-btn.selected.sev-lvl-3 { background-color: #fef9c3; border-color: #ca8a04; color: #713f12; }
+.select-option-btn.selected.sev-lvl-4 { background-color: #ffedd5; border-color: #ea580c; color: #7c2d12; }
+.select-option-btn.selected.sev-lvl-5 { background-color: #fee2e2; border-color: #dc2626; color: #7f1d1d; }
+.select-option-btn.selected.sev-lvl-6 { background-color: #ffe4e6; border-color: #e11d48; color: #881337; }
+
+/* Severity Colors for Custom Select Options (Pastel/Light) */
+
+/* Level 1: Low / Gray / Safe */
+.select-option-btn.sev-lvl-1 {
+  background-color: #f9fafb; /* Gray 50 */
+  border-color: #e5e7eb;
+  border-left: 4px solid #9ca3af; /* Gray 400 */
+}
+
+/* Level 2: Low-Medium / Greenish */
+.select-option-btn.sev-lvl-2 {
+  background-color: #f0fdf4; /* Green 50 */
+  border-color: #dcfce7;
+  border-left: 4px solid #4ade80; /* Green 400 */
+}
+
+/* Level 3: Medium / Yellowish */
+.select-option-btn.sev-lvl-3 {
+  background-color: #fefce8; /* Yellow 50 */
+  border-color: #fef9c3;
+  border-left: 4px solid #facc15; /* Yellow 400 */
+}
+
+/* Level 4: Medium-High / Orange */
+.select-option-btn.sev-lvl-4 {
+  background-color: #fff7ed; /* Orange 50 */
+  border-color: #ffedd5;
+  border-left: 4px solid #fb923c; /* Orange 400 */
+}
+
+/* Level 5: High / Red-Orange */
+.select-option-btn.sev-lvl-5 {
+  background-color: #fef2f2; /* Red 50 */
+  border-color: #fee2e2;
+  border-left: 4px solid #f87171; /* Red 400 */
+}
+
+/* Level 6: Critical / Red */
+.select-option-btn.sev-lvl-6 {
+  background-color: #fff1f2; /* Rose 50 */
+  border-color: #ffe4e6;
+  border-left: 4px solid #f43f5e; /* Rose 500 */
+}
+
+/* Selected state override to keep blue tint but maybe mix? 
+   Actually, let's keep the severity color but make it darker/stronger when selected 
+*/
+.select-option-btn.selected.sev-lvl-1 { background-color: #e5e7eb; border-color: #6b7280; color: #111827; }
+.select-option-btn.selected.sev-lvl-2 { background-color: #dcfce7; border-color: #16a34a; color: #14532d; }
+.select-option-btn.selected.sev-lvl-3 { background-color: #fef9c3; border-color: #ca8a04; color: #713f12; }
+.select-option-btn.selected.sev-lvl-4 { background-color: #ffedd5; border-color: #ea580c; color: #7c2d12; }
+.select-option-btn.selected.sev-lvl-5 { background-color: #fee2e2; border-color: #dc2626; color: #7f1d1d; }
+.select-option-btn.selected.sev-lvl-6 { background-color: #ffe4e6; border-color: #e11d48; color: #881337; }

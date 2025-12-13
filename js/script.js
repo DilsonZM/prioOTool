@@ -256,12 +256,19 @@ procesarBtn.addEventListener('click', () => {
         Swal.fire({
           title: 'Guardar Resultado',
           html: `
-            <input type="text" id="assetNumber" class="swal2-input" placeholder="Número de Activo (Obligatorio)">
-            <textarea id="comment" class="swal2-textarea" placeholder="Comentario (Opcional)"></textarea>
+            <div style="text-align: left;">
+              <label for="assetNumber" style="display:block; margin-bottom:5px; font-weight:600; color:#333;">Número de Activo</label>
+              <input type="text" id="assetNumber" class="swal2-input" placeholder="Ej: 12345" style="margin: 0 0 15px 0; width: 100%; box-sizing: border-box;">
+              
+              <label for="comment" style="display:block; margin-bottom:5px; font-weight:600; color:#333;">Comentario</label>
+              <textarea id="comment" class="swal2-textarea" placeholder="Opcional" style="margin: 0; width: 100%; box-sizing: border-box;"></textarea>
+            </div>
           `,
-          confirmButtonText: 'Guardar',
+          confirmButtonText: '<span style="color:#000; font-weight:bold;">Guardar</span>',
+          confirmButtonColor: '#fcc328',
           showCancelButton: true,
           cancelButtonText: 'Cancelar',
+          reverseButtons: true,
           preConfirm: () => {
             const assetNumber = Swal.getPopup().querySelector('#assetNumber').value;
             const comment = Swal.getPopup().querySelector('#comment').value;
@@ -346,3 +353,136 @@ if (introModalEl && window.bootstrap) {
 
   window.prioShowIntro = launchIntroModal;
 }
+/* =====================================================
+ * CUSTOM SELECT LOGIC (Replaces native selects with Swal)
+ * ==================================================== */
+document.addEventListener('DOMContentLoaded', () => {
+  const selectMap = {
+    'tiempoprobable': { data: DATA.tiempo, key: 'row', title: 'Tiempo Probable de Falla' },
+    'selSeguridad':   { data: DATA.seguridad, key: 'lvl', title: 'Seguridad y Salud' },
+    'selAmbiente':    { data: DATA.ambiente, key: 'lvl', title: 'Ambiente' },
+    'selClientes':    { data: DATA.clientes, key: 'lvl', title: 'Clientes' },
+    'selCostos':      { data: DATA.costos, key: 'lvl', title: 'Costos' }
+  };
+
+  Object.keys(selectMap).forEach(id => {
+    const originalSelect = document.getElementById(id);
+    if (!originalSelect) return;
+
+    // Hide original
+    originalSelect.style.display = 'none';
+
+    // Create fake trigger
+    const trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.className = 'custom-select-trigger';
+    trigger.id = `trigger-${id}`;
+    trigger.textContent = 'Selecciona...';
+    
+    // Insert after original
+    originalSelect.parentNode.insertBefore(trigger, originalSelect.nextSibling);
+
+    // Sync initial state
+    if (originalSelect.disabled) {
+        trigger.disabled = true;
+        trigger.classList.add('disabled');
+    }
+
+    // Click handler
+    trigger.addEventListener('click', () => {
+      if (originalSelect.disabled) return;
+
+      const config = selectMap[id];
+      const currentVal = originalSelect.value;
+
+      // Generate HTML for options
+      const optionsHtml = config.data.map(item => {
+        const val = item[config.key];
+        const isSelected = currentVal == val ? 'selected' : '';
+        // Escape single quotes in text for the onclick handler
+        const safeText = item.txt.replace(/'/g, "\\'");
+        
+        let severityClass = '';
+        if (id === 'tiempoprobable') {
+            // Time: 0 (Inminente) -> 4 (Largo)
+            const timeMap = {
+                0: 'sev-lvl-6', // Inminente (Critical - Red)
+                1: 'sev-lvl-5', // Prontamente (High - Red/Orange)
+                2: 'sev-lvl-4', // Corto plazo (Med/High - Orange)
+                3: 'sev-lvl-3', // Mediano plazo (Med - Yellow)
+                4: 'sev-lvl-2'  // Largo plazo (Low - Green)
+            };
+            severityClass = timeMap[val] || 'sev-lvl-1';
+        } else {
+            // Consequences: 1 (Sin efecto) -> 6 (Fatalidad)
+            const consMap = {
+                1: 'sev-lvl-1', // Grey
+                2: 'sev-lvl-2', // Green
+                3: 'sev-lvl-3', // Yellow
+                4: 'sev-lvl-4', // Orange
+                5: 'sev-lvl-5', // Red/Orange
+                6: 'sev-lvl-6'  // Red
+            };
+            severityClass = consMap[val] || 'sev-lvl-1';
+        }
+
+        return `<button type="button" class="select-option-btn ${isSelected} ${severityClass}" onclick="selectOption('${id}', '${val}', '${safeText}')">${item.txt}</button>`;
+      }).join('');
+
+      Swal.fire({
+        title: config.title,
+        html: `<div style="max-height: 60vh; overflow-y: auto; padding: 4px;">${optionsHtml}</div>`,
+        showConfirmButton: false,
+        showCloseButton: true,
+        width: '90%',
+        customClass: {
+          popup: 'swal2-popup-custom-select'
+        }
+      });
+    });
+  });
+
+  // Observer to sync disabled state
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.attributeName === 'disabled') {
+        const id = mutation.target.id;
+        const trigger = document.getElementById(`trigger-${id}`);
+        if (trigger) {
+          trigger.disabled = mutation.target.disabled;
+          trigger.classList.toggle('disabled', mutation.target.disabled);
+        }
+      }
+    });
+  });
+
+  Object.keys(selectMap).forEach(id => {
+    const el = document.getElementById(id);
+    if(el) observer.observe(el, { attributes: true });
+  });
+
+  // Reset triggers on "Borrar"
+  const btnBorrar = document.getElementById('borrar');
+  if(btnBorrar) {
+      btnBorrar.addEventListener('click', () => {
+          document.querySelectorAll('.custom-select-trigger').forEach(t => t.textContent = 'Selecciona...');
+      });
+  }
+});
+
+// Global function for option selection
+window.selectOption = function(selectId, value, text) {
+  const originalSelect = document.getElementById(selectId);
+  const trigger = document.getElementById(`trigger-${selectId}`);
+  
+  if(originalSelect && trigger) {
+      originalSelect.value = value;
+      trigger.textContent = text;
+      
+      // Trigger change event
+      const event = new Event('change', { bubbles: true });
+      originalSelect.dispatchEvent(event);
+  }
+  
+  Swal.close();
+};
