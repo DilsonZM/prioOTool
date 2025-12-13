@@ -2079,6 +2079,7 @@ if (auth) {
   watchAuth(async user => {
     if (!user) {
       renderState('auth');
+      setLoading(false);
       return;
     }
     // initCompanies ya se llama al inicio y mantiene la suscripción activa
