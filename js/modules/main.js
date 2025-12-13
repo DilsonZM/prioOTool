@@ -29,7 +29,7 @@ import {
 } from './auth-service.js';
 import { qs, toggle, setText } from './ui-common.js';
 
-const APP_VERSION = '2.0.7';
+const APP_VERSION = '2.0.8';
 
 function checkAppVersion() {
   subscribeToVersion((remoteVersion) => {
