@@ -40,7 +40,7 @@
 .select-option-btn.sev-lvl-6 {
   background-color: #fff1f2; /* Rose 50 */
   border-color: #ffe4e6;
-  border-left: 4px solid #f43f5e; /* Rose 500 */
+  border-left: 4px solid #85021e; /* Rose 500 */
 }
 
 /* Selected state override to keep blue tint but maybe mix? 
@@ -51,4 +51,4 @@
 .select-option-btn.selected.sev-lvl-3 { background-color: #fef9c3; border-color: #ca8a04; color: #713f12; }
 .select-option-btn.selected.sev-lvl-4 { background-color: #ffedd5; border-color: #ea580c; color: #7c2d12; }
 .select-option-btn.selected.sev-lvl-5 { background-color: #fee2e2; border-color: #dc2626; color: #7f1d1d; }
-.select-option-btn.selected.sev-lvl-6 { background-color: #ffe4e6; border-color: #e11d48; color: #881337; }
+.select-option-btn.selected.sev-lvl-6 { background-color: #ffe4e6; border-color: #85021e; color: #881337; }

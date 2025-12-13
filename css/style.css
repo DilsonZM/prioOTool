@@ -699,6 +699,9 @@ body{
 
 /* ====== Header ====== */
 header{ display:flex; justify-content:center; margin:32px 0 8px; }
+@media (max-width: 768px) {
+  header { margin: 4px 0 0; }
+}
 figure{ margin:0; }
 header img{ max-width:220px; height:auto; display:block; }
 
@@ -709,6 +712,9 @@ header img{ max-width:220px; height:auto; display:block; }
   justify-content:center;
   align-items:flex-start;          /* evita centrar vertical y “huecos” */
   padding:24px 16px 56px;          /* espacio de respiración sobre el footer */
+}
+@media (max-width: 768px) {
+  .containers { padding-top: 0; }
 }
 
 /* Panel principal */
@@ -1381,3 +1387,14 @@ footer .matriz{ width:100%; height:auto; }
 .select-option-btn.selected.sev-lvl-4 { background-color: #ffedd5; border-color: #ea580c; color: #7c2d12; }
 .select-option-btn.selected.sev-lvl-5 { background-color: #fee2e2; border-color: #dc2626; color: #7f1d1d; }
 .select-option-btn.selected.sev-lvl-6 { background-color: #ffe4e6; border-color: #e11d48; color: #881337; }
+
+/* Custom Select Modal Width */
+.swal2-popup-custom-select {
+  width: 90% !important;
+}
+
+@media (min-width: 768px) {
+  .swal2-popup-custom-select {
+    width: 620px !important;
+  }
+}

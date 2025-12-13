@@ -448,7 +448,6 @@ document.addEventListener('DOMContentLoaded', () => {
         html: `<div style="max-height: 60vh; overflow-y: auto; padding: 4px;">${optionsHtml}</div>`,
         showConfirmButton: false,
         showCloseButton: true,
-        width: '90%',
         customClass: {
           popup: 'swal2-popup-custom-select'
         }
