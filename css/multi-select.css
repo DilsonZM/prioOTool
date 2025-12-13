@@ -1,0 +1,57 @@
+/* Multi-select container styles */
+.multi-select-container {
+    border: 1px solid #d8dfec;
+    border-radius: 12px;
+    padding: 0.5rem;
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: #fff;
+}
+
+.multi-select-item {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.multi-select-item:hover {
+    background-color: #f8fafc;
+}
+
+.multi-select-item input[type="checkbox"] {
+    width: 1.2rem;
+    height: 1.2rem;
+    margin-right: 0.75rem;
+    accent-color: #f59e0b;
+    cursor: pointer;
+}
+
+.multi-select-item span {
+    font-size: 0.9rem;
+    color: #334155;
+}
+
+/* Company List Edit Styles */
+.company-item-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.company-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.company-edit-input {
+    padding: 4px 8px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    flex: 1;
+    margin-right: 8px;
+}

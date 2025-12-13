@@ -72,6 +72,28 @@ async function initCompanies() {
   if (remote && Array.isArray(remote) && remote.length > 0) {
     supervisedCompanyOptions = remote;
   }
+  // Populate registration dropdown
+  if (regCompany) {
+    const currentVal = regCompany.value;
+    regCompany.innerHTML = '<option value="">Selecciona una empresa...</option>';
+    supervisedCompanyOptions.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c;
+      opt.textContent = c;
+      regCompany.appendChild(opt);
+    });
+    if (currentVal) regCompany.value = currentVal;
+  }
+  // Populate new user modal dropdown
+  if (newUserCompany) {
+    newUserCompany.innerHTML = '<option value="">Seleccionar...</option>';
+    supervisedCompanyOptions.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c;
+      opt.textContent = c;
+      newUserCompany.appendChild(opt);
+    });
+  }
 }
 // Iniciar carga de empresas
 initCompanies();
@@ -147,6 +169,10 @@ const drawerEditProfile = qs('drawerEditProfile');
 const profileCompanyInput = qs('profile-company');
 const profileSupervisedSelect = qs('profile-supervised-companies');
 const btnProfileSave = qs('btn-profile-save');
+const newUserCompany = qs('new-user-company');
+const newUserSupervisedContainer = qs('new-user-supervised-container');
+const editScopeContainer = qs('edit-scope-companies-container');
+const profileSupervisedContainer = qs('profile-supervised-companies-container');
 const fStatusPending = qs('fStatusPending');
 const fStatusApproved = qs('fStatusApproved');
 const fArea = qs('fArea');
@@ -171,29 +197,50 @@ let currentRoles = [];
 let sortState = { key: 'createdAt', dir: 'desc' };
 
 /* ===== Registro: helpers para supervisores ===== */
-function populateSupervisedCompanies(selectEl = regSupervisedCompanies) {
-  if (!selectEl) return;
-  selectEl.innerHTML = '';
-  supervisedCompanyOptions.forEach(c => {
-    const opt = document.createElement('option');
-    opt.value = c;
-    opt.textContent = c;
-    selectEl.appendChild(opt);
+function renderMultiSelect(container, options, selectedValues = []) {
+  if (!container) return;
+  container.innerHTML = '';
+  
+  if (!options || options.length === 0) {
+    container.innerHTML = '<div style="padding: 0.5rem; color: #64748b; font-size: 0.9rem;">No hay empresas disponibles</div>';
+    return;
+  }
+
+  options.forEach(opt => {
+    const isSelected = selectedValues.includes(opt);
+    const div = document.createElement('div');
+    div.className = 'multi-select-item';
+    div.innerHTML = `
+      <label style="display: flex; align-items: center; width: 100%; cursor: pointer; margin: 0;">
+        <input type="checkbox" value="${opt}" ${isSelected ? 'checked' : ''}>
+        <span>${opt}</span>
+      </label>
+    `;
+    container.appendChild(div);
   });
 }
 
-function getSelectedSupervisedCompanies() {
-  if (!regSupervisedCompanies) return [];
-  return Array.from(regSupervisedCompanies.selectedOptions)
-    .map(o => o.value)
-    .filter(Boolean);
+function populateSupervisedCompanies(containerEl = null, selectedValues = []) {
+  // Si no se pasa contenedor, intentamos usar los conocidos si existen
+  if (containerEl) {
+    renderMultiSelect(containerEl, supervisedCompanyOptions, selectedValues);
+  } else {
+    // Por defecto actualizamos todos los contenedores conocidos
+    if (newUserSupervisedContainer) renderMultiSelect(newUserSupervisedContainer, supervisedCompanyOptions);
+    if (editScopeContainer) renderMultiSelect(editScopeContainer, supervisedCompanyOptions);
+    if (profileSupervisedContainer) renderMultiSelect(profileSupervisedContainer, supervisedCompanyOptions);
+  }
 }
 
-function getSelectedSupervisedCompaniesFrom(selectEl) {
-  if (!selectEl) return [];
-  return Array.from(selectEl.selectedOptions)
-    .map(o => o.value)
-    .filter(Boolean);
+function getSelectedSupervisedCompaniesFrom(containerEl) {
+  if (!containerEl) return [];
+  const checkboxes = containerEl.querySelectorAll('input[type="checkbox"]:checked');
+  return Array.from(checkboxes).map(cb => cb.value);
+}
+
+// Deprecated but kept for compatibility if needed (though we replaced usages)
+function getSelectedSupervisedCompanies() {
+  return []; 
 }
 
 function syncUserFields() {
@@ -208,13 +255,19 @@ function syncUserFields() {
 
   // Empresa base: si supervisor Cerrejón, se bloquea en Cerrejón
   if (regCompany) {
+    // regCompany is now a SELECT
     if (isSupervisorRole && supervisorType === 'cerrejon') {
       regCompany.value = 'Cerrejón';
-      regCompany.readOnly = true;
-      regCompany.parentElement.classList.add('locked-input');
+      // Selects don't have readonly, but we can disable options or just set value
+      // For UX, we can disable it
+      regCompany.disabled = true; 
+      // But disabled inputs don't submit value, so we might need to enable on submit or use a hidden input
+      // Or just let it be selectable but reset if changed? 
+      // Let's just set value. If user changes it, we might validate later.
+      // Actually, for Cerrejon supervisor, company MUST be Cerrejon.
+      // Let's keep it simple: set value.
     } else {
-      regCompany.readOnly = false;
-      regCompany.parentElement.classList.remove('locked-input');
+      regCompany.disabled = false;
       if (regCompany.value === 'Cerrejón' && supervisorType !== 'cerrejon') {
         regCompany.value = '';
       }
@@ -244,13 +297,9 @@ function openScopeModal(userId) {
   const target = lastRequests.find(r => r.id === userId);
   if (!target) return;
   scopeTargetId = userId;
-  populateSupervisedCompanies(scopeSelect);
   const current = Array.isArray(target.supervisedCompanies) ? target.supervisedCompanies : [];
-  if (scopeSelect) {
-    Array.from(scopeSelect.options).forEach(opt => {
-      opt.selected = current.some(c => (c || '').toLowerCase() === opt.value.toLowerCase());
-    });
-  }
+  populateSupervisedCompanies(editScopeContainer, current);
+  
   if (scopeModalEl && window.bootstrap) {
     const modal = new bootstrap.Modal(scopeModalEl);
     modal.show();
@@ -258,8 +307,8 @@ function openScopeModal(userId) {
 }
 
 async function saveScopeModal() {
-  if (!scopeTargetId || !scopeSelect) return;
-  const selected = getSelectedSupervisedCompaniesFrom(scopeSelect);
+  if (!scopeTargetId) return;
+  const selected = getSelectedSupervisedCompaniesFrom(editScopeContainer);
   try {
     setLoading(true);
     await updateUserFields(scopeTargetId, { supervisedCompanies: selected });
@@ -606,7 +655,6 @@ function applySort(rows) {
 function openProfileEditor() {
   const allowed = isSupervisor(currentRoles) || isSuperAdmin(currentRoles) || currentRoles.includes('admin');
   if (!allowed) return;
-  populateSupervisedCompanies(profileSupervisedSelect);
 
   const company = currentProfile?.company || '';
   const supervised = Array.isArray(currentProfile?.supervisedCompanies)
@@ -619,11 +667,8 @@ function openProfileEditor() {
     profileCompanyInput.readOnly = isCerrejon;
     profileCompanyInput.placeholder = isCerrejon ? 'Cerrejón' : 'Contratista';
   }
-  if (profileSupervisedSelect) {
-    Array.from(profileSupervisedSelect.options).forEach(opt => {
-      opt.selected = supervised.some(val => val.toLowerCase() === opt.value.toLowerCase());
-    });
-  }
+  
+  populateSupervisedCompanies(profileSupervisedContainer, supervised);
 
   const modalEl = document.getElementById('editProfileModal');
   if (modalEl && window.bootstrap) {
@@ -636,7 +681,7 @@ async function saveProfileEdits() {
   if (!currentProfile?.uid) return;
   const isCerrejon = (currentProfile.company || '').trim().toLowerCase() === 'cerrejón';
   const companyVal = profileCompanyInput ? profileCompanyInput.value.trim() : '';
-  const supervised = getSelectedSupervisedCompaniesFrom(profileSupervisedSelect);
+  const supervised = getSelectedSupervisedCompaniesFrom(profileSupervisedContainer);
 
   const finalCompany = isCerrejon ? 'Cerrejón' : companyVal;
   if (!finalCompany) {
@@ -751,7 +796,13 @@ function createRequestRow(r, forceEdit = false) {
     const companyReadOnly = isSupervisorUser ? 'readonly disabled style="background-color: #f3f4f6; color: #6b7280;"' : '';
 
     const nameInput = `<input type=\"text\" class=\"admin-input\" value=\"${r.displayName || ''}\" data-field=\"displayName\" ${isBulk ? autoSaveAttr.replace('FIELD','displayName') : ''}>`;
-    const companyInput = `<input type=\"text\" class=\"admin-input\" value=\"${r.company || ''}\" data-field=\"company\" ${companyReadOnly} ${isBulk && !isSupervisorUser ? autoSaveAttr.replace('FIELD','company') : ''}>`;
+    const companyInput = isSupervisorUser 
+      ? `<input type=\"text\" class=\"admin-input\" value=\"${r.company || ''}\" data-field=\"company\" readonly disabled style=\"background-color: #f3f4f6; color: #6b7280;\">`
+      : `<select class=\"admin-input\" data-field=\"company\" ${isBulk ? autoSaveAttr.replace('FIELD','company') : ''}>
+           <option value=\"\">Seleccionar...</option>
+           ${supervisedCompanyOptions.map(c => `<option value=\"${c}\" ${c === r.company ? 'selected' : ''}>${c}</option>`).join('')}
+         </select>`;
+    
     const supervisorInput = `<input type=\"text\" class=\"admin-input\" value=\"${r.supervisor || ''}\" data-field=\"supervisor\" ${isBulk ? autoSaveAttr.replace('FIELD','supervisor') : ''}>`;
     
     let actions = '';
@@ -1326,15 +1377,7 @@ function openCreateUserModal() {
   if (supervisedWrapper) supervisedWrapper.classList.add('hidden');
 
   // Populate supervised companies
-  if (supervisedSelect) {
-      supervisedSelect.innerHTML = '';
-      supervisedCompanyOptions.forEach(c => {
-          const opt = document.createElement('option');
-          opt.value = c;
-          opt.textContent = c;
-          supervisedSelect.appendChild(opt);
-      });
-  }
+  populateSupervisedCompanies(newUserSupervisedContainer);
 
   // Role change listener
   roleSelect.onchange = () => {
@@ -1377,10 +1420,7 @@ async function handleCreateUser() {
 
   let supervisedCompanies = [];
   if (role === 'supervisor') {
-      const supervisedSelect = document.getElementById('new-user-supervised');
-      if (supervisedSelect) {
-          supervisedCompanies = Array.from(supervisedSelect.selectedOptions).map(o => o.value);
-      }
+      supervisedCompanies = getSelectedSupervisedCompaniesFrom(newUserSupervisedContainer);
       if (supervisedCompanies.length === 0) {
            Swal.fire('Atención', 'Debes seleccionar al menos una empresa para supervisar.', 'warning');
            return;
@@ -2022,16 +2062,81 @@ function renderCompaniesList() {
     const li = document.createElement('li');
     li.style.cssText = 'padding: 10px 12px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center;';
     li.innerHTML = `
-      <span>${c}</span>
-      <button type="button" class="btn-delete-company" data-company="${c}" style="background: none; border: none; color: #ef4444; cursor: pointer;">🗑️</button>
+      <span class="company-name-text">${c}</span>
+      <input type="text" class="company-name-input hidden" value="${c}" style="padding: 4px 8px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 0.9rem;">
+      <div style="display: flex; gap: 8px;">
+        <button type="button" class="btn-edit-company" data-company="${c}" style="background: none; border: none; color: #3b82f6; cursor: pointer;">✎</button>
+        <button type="button" class="btn-save-company hidden" data-original="${c}" style="background: none; border: none; color: #10b981; cursor: pointer;">💾</button>
+        <button type="button" class="btn-delete-company" data-company="${c}" style="background: none; border: none; color: #ef4444; cursor: pointer;">🗑️</button>
+      </div>
     `;
     companiesListEl.appendChild(li);
   });
 
-  // Attach delete handlers
+  // Attach handlers
   companiesListEl.querySelectorAll('.btn-delete-company').forEach(btn => {
     btn.addEventListener('click', () => handleDeleteCompany(btn.dataset.company));
   });
+
+  companiesListEl.querySelectorAll('.btn-edit-company').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const li = e.target.closest('li');
+      const span = li.querySelector('.company-name-text');
+      const input = li.querySelector('.company-name-input');
+      const saveBtn = li.querySelector('.btn-save-company');
+      const editBtn = li.querySelector('.btn-edit-company');
+      
+      toggle(span, false);
+      toggle(input, true);
+      toggle(saveBtn, true);
+      toggle(editBtn, false);
+      input.focus();
+    });
+  });
+
+  companiesListEl.querySelectorAll('.btn-save-company').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const li = e.target.closest('li');
+      const input = li.querySelector('.company-name-input');
+      const originalName = btn.dataset.original;
+      const newName = input.value.trim();
+      handleEditCompany(originalName, newName);
+    });
+  });
+}
+
+async function handleEditCompany(oldName, newName) {
+  if (!newName || newName === oldName) {
+    renderCompaniesList(); // Reset view
+    return;
+  }
+  
+  if (supervisedCompanyOptions.includes(newName)) {
+    Swal.fire('Error', 'Ya existe una empresa con ese nombre.', 'warning');
+    return;
+  }
+
+  const idx = supervisedCompanyOptions.indexOf(oldName);
+  if (idx !== -1) {
+    supervisedCompanyOptions[idx] = newName;
+    supervisedCompanyOptions.sort();
+    renderCompaniesList();
+    
+    try {
+      await updateCompaniesDoc(supervisedCompanyOptions);
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: 'Empresa actualizada',
+        showConfirmButton: false,
+        timer: 1500
+      });
+    } catch (e) {
+      console.error(e);
+      Swal.fire('Error', 'No se pudo actualizar.', 'error');
+    }
+  }
 }
 
 async function handleAddCompany() {
