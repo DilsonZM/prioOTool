@@ -1,6 +1,6 @@
 {
   "name": "priotool",
-  "version": "2.0.2",
+  "version": "2.0.7",
   "devDependencies": {
     "firebase-tools": "^15.0.0"
   }

@@ -384,6 +384,10 @@ function switchForm(view) {
 }
 
 function renderState(state) {
+  // Si vamos a 'auth', aseguramos que el loader se oculte
+  if (state === 'auth') {
+    setLoading(false);
+  }
   toggle(shells.auth, state === 'auth');
   toggle(shells.pending, state === 'pending');
   toggle(shells.app, state === 'app');
