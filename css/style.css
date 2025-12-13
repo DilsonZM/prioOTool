@@ -785,14 +785,14 @@ button:hover{ filter:brightness(1.05); }
 .resultados h6{ margin:0 0 6px; font-weight:800; color:#0f172a; }
 .resultados h1{ margin:0; font-size:40px; }
 
-/* ====== Colores por prioridad ====== */
-.priority-p0 { background-color:#ff4d4d !important; color:#fff; }
-.priority-p1 { background-color:#ff8c00 !important; color:#111; }
-.priority-p2 { background-color:yellow !important;   color:#111; }
-.priority-p3 { background-color:#43a047 !important;  color:#fff; }
-.priority-p4 { background-color:#2196f3 !important;  color:#fff; }
-.priority-p5 { background-color:#12b5ea !important;  color:#111; } /* nuevo P5 */
-.priority-pl { background-color:#9e9e9e !important;  color:#111; }
+/* ====== Colores por prioridad (Ajustados a Tabla Oficial) ====== */
+.priority-p0 { background-color:#C00000 !important; color:#fff !important; }   /* Dark Red */
+.priority-p1 { background-color:#FF0000 !important; color:#fff !important; }   /* Red */
+.priority-p2 { background-color:#FFC000 !important; color:#111 !important; }   /* Orange */
+.priority-p3 { background-color:#FFFF00 !important; color:#111 !important; }   /* Yellow */
+.priority-p4 { background-color:#92D050 !important; color:#111 !important; }   /* Green */
+.priority-p5 { background-color:#00B0F0 !important; color:#111 !important; }   /* Blue */
+.priority-pl { background-color:#A0A0A0 !important; color:#fff !important; }   /* Grey */
 
 .resultados h5{ margin:5px; }
 
