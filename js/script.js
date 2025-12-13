@@ -147,6 +147,30 @@ try {
   console.warn('Audio not supported', e);
 }
 
+// Elimina un borrador local auto-guardado (si existe) cuando se guarda en la nube
+function removeDraftLocal(entry) {
+  const isDefaultDraft = (item) =>
+    (item.comment || '') === 'Cálculo rápido' &&
+    (item.assetNumber || '') === '' &&
+    (item.priorityCode || '') === (entry.priorityCode || '') &&
+    (item.deadline || '') === (entry.deadline || '') &&
+    JSON.stringify(item.inputs || {}) === JSON.stringify(entry.inputs || {});
+
+  try {
+    const localHistory = JSON.parse(localStorage.getItem('priotool_history') || '[]');
+    // Eliminar solo un borrador (el más reciente) que coincida con el cálculo
+    for (let i = localHistory.length - 1; i >= 0; i--) {
+      if (isDefaultDraft(localHistory[i])) {
+        localHistory.splice(i, 1);
+        localStorage.setItem('priotool_history', JSON.stringify(localHistory));
+        break;
+      }
+    }
+  } catch (err) {
+    console.warn('No se pudo limpiar borrador local', err);
+  }
+}
+
 /* =====================================================
  * 6. BOTÓN «PROCESAR»
  *    Regla especial: si Clientes = "Mínima" (lvl 2) → P5
@@ -190,19 +214,18 @@ procesarBtn.addEventListener('click', () => {
     // Texto oscuro para colores claros (Amarillo P3, Naranja P2, Verde P4, Azul P5)
     const textColor = ['p3', 'p2', 'p4', 'p5'].includes(code) ? '#1f1301' : '#fff';
     
-    // AUTO-GUARDADO LOCAL (Sin preguntar)
-    if (window.prioAutoSaveLocal) {
-      window.prioAutoSaveLocal({
-        priorityCode: code,
-        deadline: plazo,
-        assetNumber: '', // No disponible aún
-        comment: 'Cálculo rápido',
-        inputs: {
-            time: row,
-            consequences: niveles
-        }
-      });
-    }
+    // Datos base para guardar (local o nube)
+    const baseDataToSave = {
+      priorityCode: code,
+      deadline: plazo,
+      assetNumber: '', // Se completa solo si se guarda en la nube
+      comment: 'Cálculo rápido',
+      inputs: {
+          time: row,
+          consequences: niveles
+      }
+    };
+    let savedToCloud = false;
 
     if (typeof Swal === 'undefined') {
       console.error('SweetAlert2 no está cargado');
@@ -265,9 +288,9 @@ procesarBtn.addEventListener('click', () => {
           popup.style.border = `4px solid ${color}`;
         }
       }
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isDenied) {
-        Swal.fire({
+        await Swal.fire({
           title: 'Guardar Resultado',
           html: `
             <div style="text-align: left;">
@@ -292,34 +315,34 @@ procesarBtn.addEventListener('click', () => {
             return { assetNumber, comment };
           }
         }).then(async (inputResult) => {
-          if (inputResult.isConfirmed) {
-            const { assetNumber, comment } = inputResult.value;
-            
-            const dataToSave = {
-              priorityCode: code,
-              deadline: plazo,
-              assetNumber,
-              comment,
-              inputs: {
-                  time: row,
-                  consequences: niveles
-              }
-            };
+          if (!inputResult.isConfirmed) return;
 
-            if (window.prioSaveResult) {
-               Swal.fire({ title: 'Guardando...', didOpen: () => Swal.showLoading() });
-               const saveResponse = await window.prioSaveResult(dataToSave);
-               if (saveResponse.success) {
-                   Swal.fire('Guardado', 'El registro se ha guardado correctamente', 'success');
-               } else {
-                   console.error(saveResponse.error);
-                   Swal.fire('Error', `No se pudo guardar: ${saveResponse.error.message || saveResponse.error}`, 'error');
-               }
-            } else {
-               Swal.fire('Error', 'Función de guardado no disponible', 'error');
-            }
+          const { assetNumber, comment } = inputResult.value;
+          const dataToSave = {
+            ...baseDataToSave,
+            assetNumber,
+            comment
+          };
+
+          if (window.prioSaveResult) {
+             Swal.fire({ title: 'Guardando...', didOpen: () => Swal.showLoading() });
+             const saveResponse = await window.prioSaveResult(dataToSave);
+             if (saveResponse.success) {
+                 savedToCloud = true;
+                 removeDraftLocal(baseDataToSave);
+                 Swal.fire('Guardado', 'El registro se ha guardado correctamente', 'success');
+             } else {
+                 console.error(saveResponse.error);
+                 Swal.fire('Error', `No se pudo guardar: ${saveResponse.error.message || saveResponse.error}`, 'error');
+             }
+          } else {
+             Swal.fire('Error', 'Función de guardado no disponible', 'error');
           }
         });
+      }
+      // Si no se guardó en la nube, persistimos en local para evitar duplicados
+      if (!savedToCloud && window.prioAutoSaveLocal) {
+        window.prioAutoSaveLocal(baseDataToSave);
       }
     });
   } catch (error) {

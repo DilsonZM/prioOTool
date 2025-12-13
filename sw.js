@@ -1,11 +1,11 @@
-const CACHE_NAME = 'priotool-v3.0.0';
+const CACHE_NAME = 'priotool-v3.0.1';
 const ASSETS = [
   './',
   './index.html',
   './css/style.css',
-  './js/script.js?v=3.0.0',
-  './js/auth.js?v=3.0.0',
-  './js/firebase-config.js?v=3.0.0',
+  './js/script.js?v=3.0.1',
+  './js/auth.js?v=3.0.1',
+  './js/firebase-config.js?v=3.0.1',
   './js/modules/auth-service.js',
   './js/modules/firebase-init.js',
   './js/modules/main.js',

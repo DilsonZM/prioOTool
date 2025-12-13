@@ -29,7 +29,7 @@ import {
 } from './auth-service.js';
 import { qs, toggle, setText } from './ui-common.js';
 
-const APP_VERSION = '3.0.0';
+const APP_VERSION = '3.0.1';
 const CERREJON_SECRET = 'PriOTool.Cerrejon.Access.2025!';
 const CONTRACTOR_SECRET = 'PriOTool.Contractor.Access.2025!';
 
@@ -1193,6 +1193,14 @@ async function loadHistoryPage() {
   list.innerHTML = '';
   
   try {
+    const getSeconds = (ts) => {
+      if (!ts) return 0;
+      if (ts.seconds) return ts.seconds;
+      if (ts.toDate) return ts.toDate().getTime() / 1000;
+      return new Date(ts).getTime() / 1000;
+    };
+    const buildKey = (item) => `${item.priorityCode || ''}|${item.deadline || ''}|${item.assetNumber || ''}|${item.comment || ''}`;
+
     // 1. Obtener Local
     let localData = [];
     try {
@@ -1213,13 +1221,24 @@ async function loadHistoryPage() {
       console.error('Error fetching cloud history', e);
     }
 
-    // 3. Mezclar y Ordenar
-    const allData = [...cloudData, ...localData];
+    // 3. De-duplicar: si hay un registro en nube similar (mismo key y ±5 min), omitir local
+    const cloudIndex = cloudData.map(item => ({
+      key: buildKey(item),
+      ts: getSeconds(item.timestamp)
+    }));
+    const filteredLocal = localData.filter(loc => {
+      const key = buildKey(loc);
+      const ts = getSeconds(loc.timestamp);
+      return !cloudIndex.some(c => c.key === key && Math.abs(c.ts - ts) <= 300);
+    });
+
+    // 4. Mezclar y Ordenar
+    const allData = [...cloudData, ...filteredLocal];
     
     // Ordenar por fecha descendente
     allData.sort((a, b) => {
-      const tA = a.timestamp?.seconds || (new Date(a.timestamp).getTime() / 1000);
-      const tB = b.timestamp?.seconds || (new Date(b.timestamp).getTime() / 1000);
+      const tA = getSeconds(a.timestamp);
+      const tB = getSeconds(b.timestamp);
       return tB - tA;
     });
     
@@ -1294,11 +1313,30 @@ if (btnExportHistory) {
         } catch (e) { console.error(e); }
       }
 
-      // 3. Mezclar y Ordenar
-      const allData = [...cloudData, ...localData];
+      // 3. De-duplicar local vs nube (mismo key y ±5 min)
+      const getSeconds = (ts) => {
+        if (!ts) return 0;
+        if (ts.seconds) return ts.seconds;
+        if (ts.toDate) return ts.toDate().getTime() / 1000;
+        return new Date(ts).getTime() / 1000;
+      };
+      const buildKey = (item) => `${item.priorityCode || ''}|${item.deadline || ''}|${item.assetNumber || ''}|${item.comment || ''}`;
+
+      const cloudIndex = cloudData.map(item => ({
+        key: buildKey(item),
+        ts: getSeconds(item.timestamp)
+      }));
+      const filteredLocal = localData.filter(loc => {
+        const key = buildKey(loc);
+        const ts = getSeconds(loc.timestamp);
+        return !cloudIndex.some(c => c.key === key && Math.abs(c.ts - ts) <= 300);
+      });
+
+      // 4. Mezclar y Ordenar
+      const allData = [...cloudData, ...filteredLocal];
       allData.sort((a, b) => {
-        const tA = a.timestamp?.seconds || (new Date(a.timestamp).getTime() / 1000);
-        const tB = b.timestamp?.seconds || (new Date(b.timestamp).getTime() / 1000);
+        const tA = getSeconds(a.timestamp);
+        const tB = getSeconds(b.timestamp);
         return tB - tA;
       });
 
