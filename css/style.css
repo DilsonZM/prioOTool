@@ -500,6 +500,35 @@ body{
 .drawer-link.is-active{ background:#fead17; color:#1f1301; border-color:#f3a300; box-shadow:0 10px 24px rgba(254,173,23,.26); }
 .drawer-link.is-active .drawer-ico{ color:#1f1301; }
 .drawer-actions{ display:flex; flex-direction:column; gap:8px; }
+.drawer-icon-btn--ghost{
+  width:28px; height:28px;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,.15);
+  background:rgba(255,255,255,.06);
+  color:#e2e8f0;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:14px;
+  cursor:pointer;
+  padding:0;
+}
+.drawer-user-meta.collapsed #drawer-profile-details{
+  display:none;
+}
+.drawer-collapse-btn{
+  position:absolute;
+  right:10px;
+  bottom:8px;
+  opacity:0.7;
+  transition:opacity .2s ease, transform .2s ease;
+}
+.drawer-collapse-btn:hover{
+  opacity:1;
+}
+.drawer-user-meta.collapsed .drawer-collapse-btn{
+  transform:rotate(-90deg);
+}
 .drawer-btn{
   width:100%;
   border-radius:12px;
