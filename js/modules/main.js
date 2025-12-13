@@ -530,9 +530,12 @@ function matchesSelect(val, term) {
 function companyMatchesScope(company) {
   const target = (company || '').trim().toLowerCase();
   if (!target) return false;
+  
+  // Filter out empty strings to ensure fallback works if the array is effectively empty
   const scoped = Array.isArray(currentProfile?.supervisedCompanies)
-    ? currentProfile.supervisedCompanies
+    ? currentProfile.supervisedCompanies.filter(c => c && c.trim())
     : [];
+
   if (scoped.length) {
     return scoped.some(c => (c || '').trim().toLowerCase() === target);
   }

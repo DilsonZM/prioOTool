@@ -31,11 +31,12 @@ service cloud.firestore {
       allow update: if request.auth != null && (
         hasRole('admin') || 
         hasRole('superadmin') || 
+        hasRole('supervisor') ||
         request.auth.uid == userId
       );
 
       // 4. ELIMINAR (DELETE):
-      allow delete: if hasRole('admin') || hasRole('superadmin');
+      allow delete: if hasRole('admin') || hasRole('superadmin') || hasRole('supervisor');
     }
 
     // --- NUEVA REGLA PARA HISTORIAL ---
