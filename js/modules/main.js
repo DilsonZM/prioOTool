@@ -531,11 +531,10 @@ function goToPage(page) {
   const toAdmin = page === 'admin';
   const allowed = canAccessAdmin(currentRoles, currentProfile?.approved);
   if (toAdmin && !allowed) return;
-  toggle(pageForm, !toAdmin);
-  toggle(pageAdmin, toAdmin);
-  setActiveTab(toAdmin);
   if (toAdmin) {
-    loadAdminPage();
+    showPage('admin');
+  } else {
+    showPage('form');
   }
 }
 
