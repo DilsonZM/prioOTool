@@ -91,6 +91,12 @@ let supervisedCompanyOptions = [
 ];
 
 function initCompanies() {
+  // Mostrar versión en el menú
+  const versionEl = qs('app-version');
+  if (versionEl) {
+    versionEl.textContent = `v${APP_VERSION}`;
+  }
+
   // Iniciar chequeo de versión
   checkAppVersion();
   

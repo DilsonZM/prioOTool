@@ -1410,3 +1410,11 @@ footer .matriz{ width:100%; height:auto; }
     width: 100%;
   }
 }
+
+.drawer-version {
+  text-align: center;
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 8px;
+  opacity: 0.6;
+}
