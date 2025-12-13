@@ -118,6 +118,7 @@ const navRequestsBadge = qs('nav-requests-badge');
 const pendingPill = qs('session-pending-pill');
 const adminFilterOpen = qs('adminFilterOpen');
 const adminFilterClose = qs('adminFilterClose');
+const btnExportHistory = qs('btn-export-history');
 const adminFilterApply = qs('adminFilterApply');
 const adminFilterClear = qs('adminFilterClear');
 const adminFilterPanel = qs('admin-filter-panel');
@@ -1130,6 +1131,78 @@ async function loadHistoryPage() {
     toggle(loader, false);
     list.innerHTML = '<p class="error-msg">Error al cargar el historial.</p>';
   }
+}
+
+// Exportar Historial a CSV
+if (btnExportHistory) {
+  btnExportHistory.addEventListener('click', async () => {
+    try {
+      // 1. Obtener Local
+      let localData = [];
+      try {
+        localData = JSON.parse(localStorage.getItem('priotool_history') || '[]').map(item => ({
+          ...item,
+          source: 'local'
+        }));
+      } catch (e) { console.warn(e); }
+
+      // 2. Obtener Cloud (si hay usuario)
+      let cloudData = [];
+      if (auth.currentUser) {
+        try {
+          cloudData = await getHistory(auth.currentUser.uid);
+          cloudData = cloudData.map(item => ({ ...item, source: 'cloud' }));
+        } catch (e) { console.error(e); }
+      }
+
+      // 3. Mezclar y Ordenar
+      const allData = [...cloudData, ...localData];
+      allData.sort((a, b) => {
+        const tA = a.timestamp?.seconds || (new Date(a.timestamp).getTime() / 1000);
+        const tB = b.timestamp?.seconds || (new Date(b.timestamp).getTime() / 1000);
+        return tB - tA;
+      });
+
+      if (allData.length === 0) {
+        alert('No hay datos para exportar.');
+        return;
+      }
+
+      // 4. Generar CSV
+      const headers = ['Fecha', 'Prioridad', 'Activo', 'Plazo', 'Comentario', 'Fuente'];
+      const rows = allData.map(item => {
+        let dateStr = '';
+        let ts = item.timestamp;
+        if (ts) {
+          const d = ts.toDate ? ts.toDate() : (ts.seconds ? new Date(ts.seconds * 1000) : new Date(ts));
+          dateStr = d.toLocaleString().replace(/,/g, ''); // Evitar comas en CSV
+        }
+        
+        return [
+          dateStr,
+          (item.priorityCode || '').toUpperCase(),
+          (item.assetNumber || '').replace(/,/g, ' '),
+          (item.deadline || '').replace(/,/g, ' '),
+          (item.comment || '').replace(/(\r\n|\n|\r)/gm, " ").replace(/,/g, ' '),
+          item.source === 'cloud' ? 'Nube' : 'Local'
+        ].join(',');
+      });
+
+      const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\n'); // BOM para Excel
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `historial_priotool_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+    } catch (error) {
+      console.error('Error exportando:', error);
+      alert('Error al exportar datos.');
+    }
+  });
 }
 
 /* ===== NAVIGATION ===== */
