@@ -50,12 +50,12 @@ const DATA = {
  *    Nota: ajustada para incluir P5 según la guía nueva.
  * ==================================================== */
 const PRIORITY_MATRIX = [
-  /* sev:   1     2     3     4     5     6  */
-  /* 0 Inminente  <1d */ ['pl', 'p2', 'p0', 'p0', 'p0', 'p0'],
-  /* 1 Pronto     <7d */ ['pl', 'p2', 'p1', 'p0', 'p0', 'p0'],
-  /* 2 Corto  7–30d   */ ['pl', 'p4', 'p2', 'p2', 'p1', 'p0'],
-  /* 3 Mediano30–90d  */ ['pl', 'p5', 'p4', 'p3', 'p2', 'p1'],
-  /* 4 Largo   >90d   */ ['pl', 'p5', 'p5', 'p4', 'p2', 'p1'],
+  // MINIMA, PRIMEROS_AUX, TRATAMIENTO, PERDIDA_TIEMPO, FATALIDAD
+  ["P2",   "P1",          "P0",        "P0",           "P0"], // &lt;1 día
+  ["P3",   "P2",          "P1",        "P0",           "P0"], // &lt;7 días
+  ["P4",   "P3",          "P2",        "P1",           "P0"], // 7–30 días
+  ["P5",   "P4",          "P3",        "P2",           "P1"], // 30–90 días
+  ["P5",   "P5",          "P4",        "P3",           "P2"], // &gt;90 días
 ];
 
 /* =====================================================
@@ -199,9 +199,17 @@ procesarBtn.addEventListener('click', () => {
       return;
     }
 
-    // Cálculo por matriz con severidad máxima
-    const col  = Math.max(...niveles) - 1;         // 0..5
-    let code   = PRIORITY_MATRIX[row][col];        // p0..pl
+    // Cálculo con la nueva matriz y lógica
+    const maxLvl = Math.max(...niveles);
+    let code;
+
+    if (maxLvl === 1) {
+      code = 'pl'; // Caso especial para "Sin efecto"
+    } else {
+      const col = maxLvl - 2; // Mapea nivel 2-6 a columna 0-4
+      // Se convierte a minúsculas para que coincida con las claves de los mapas de colores/texto.
+      code = PRIORITY_MATRIX[row][col].toLowerCase();
+    }
 
     // Reproducir sonido
     if (SUCCESS_AUDIO) {
