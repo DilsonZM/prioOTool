@@ -1,1 +1,1492 @@
-<svg width="1280" height="720" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" overflow="hidden"><defs><image width="904" height="31" xlink:href="data:image/png;base64,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" preserveAspectRatio="none" id="img0"></image><clipPath id="clip1"><rect x="327.567" y="456.202" width="903" height="31"/></clipPath><clipPath id="clip2"><rect x="1076" y="394" width="155" height="337"/></clipPath><clipPath id="clip3"><rect x="468" y="394" width="129" height="337"/></clipPath><clipPath id="clip4"><rect x="0" y="0" width="1104900" height="514350"/></clipPath><image width="116" height="54" xlink:href="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wAARCAA2AHQDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9U6TNLXO+OPF1t4N0eS9nwz42xR/32/w9axrVqeHpyq1XaMdWy4QlUkoRV2zoA6sSAQSOtLXx38Kf2ol1b4natbTmWWB3G5m+7MAOWQdtvYdxX19aXUd5ax3ELB4pFDow7gjINebl+ZRx3NFxcJrXle9ns/mvueh0V8O6NmnzJ9V/X9KzJtwHWsq+8XaJpkwhu9XsbaU9EmuEU/kTXyB8WPir8Qv2mvjJrHwd+EGsf8It4e0DanivxtEu+SF2/wCXa35+/wBQTkHIPK7STzWofsg/sh+A9WOi/EPxbb614wucGW58TeKGS9dz/EQsi4yemQfxr2DkPvaC4iuollhkWWNhlXQ5B+hqSvO/C6/D/wCAHw98L+HbXV7DQfDqsmn6Sb+9UfaJHJZUV2Pzux3EAcmls/2iPhffwRTW/wAQPDcsMstxDHIupw7XeBFknCndyY0ZWbH3QQTQB6HRXAXnx++G2n+DbPxZdeOdBt/DV4zJbapJqES287KxVgjlsMQVYcehrd8H/ETwz8RNF/tbwtr2neIdO5AudNuUmjyOo3KSM0AdFRXkPwX/AGgrX4lfDfVPGOv2dr4PsLC/urSRrnUoZohHC5XzTKp2qCBnB6e4wTQ+Ev7S2jfGL4neKNE0DVPD2oaBpcMP2O9sNYhubm8kbJkbyUJKRrwuWwSc8YoA9torkfiD8XPBXwosobvxj4p0rw3BM22JtSu0h8w+ihiM/hV3wT8QvDPxI0ZNW8La9p/iDTWO0XWnXCzR5HUZUnmgDoaKKKACsbxXoFl4k0ieyvgBCy5EneNh0YH2rZrivi1Y6vf+ErhNJfDDmZFUlnjxyB/UdxXn5hKMMJVlKnzpJ+738jfDpyqxSlbXfsfP/wAH/g34Tt/iZqkqSRs8shfarHbLg/dT+6D9419Sao50/Qb17ddphtnMaqMAYU4A/KvgP4MeE/Hf/C2NWld7gGWYBZC5KSsBlWjH8IUd+w4+n6BWcMp02OG8ZZpvLCysowGOMHivl+G7RdWD99+6+darVaRu/wCX8t7M9PMdeV7eWnlrp93k1bY+FP2QNQv/AAb/AME9fGnjzRVa58YagNa1qeZvnkku1aQKTnqRsXj6+teT/D3wILP4ReHbrQ/2bbX48/8ACV6Qmqaz40v9WiW5e9mLedEGdGeMxtxlSOeevNev/CfxZafsRfGLxN8JvHu3Tfhl4s1CXVfCev3QIsoml/1tlK5O1MHGM49T97jsr/8A4J5eGJry9k8E/E3x34E8K6rK1xdeHfDeseXYSb+W8oYOwN+IwcDA4r7g8U+L/Fnwx8f/APCivAfw6+JHh/UfC/hy6+Ktha6Ha3l8l1PbWFwkytAsqn5hHngkD7x47V9A/tZ/s4/D+4/aH/ZW+G1l4ds9H8HXV9q73Om6fGIUuBFBbOQ5HLFxEqsxO4jvnmvo2+/Yu8AP4H+H/hPTRf6LpPgzXrfxFafZZVaW6uosnM7urF9xPOMHgAEAAV2XxC+BGifEX4r/AA68fX97fQap4He8ksLe3ZBDMbmJY380FSTgKMbSOeuaAPg7/hErXU/j78YLmH4RWPxI1HwNqdponhv4c+ZHZ2Wn6bJHI7XiRMpjbzHAb7p5kJ9K3/2f/BXxQ8O/tX2HiTSPgdcfB7wTq1lNa+I9Nt9ViuLGVgjNFOsShfLYMFX5RjDHpk5+ofjj+x34Z+MPi+38Z6fr/iDwB45hg+zHxD4VvPs088QxhJhgiQDHsegyQAB8mfCD4yfC39k3xV49HxIsvHA+MavJaLd+IpJtXuNXgA/dG1mSJUVHIHUDtliBwAeK/AHT7f4peJvhP8LfF9xLD8OtS8Q67qVxaCYxRaldRyny4XIxkDA4zzuPevqX9vT4JfDz4F/C3SviX8P9I07wH4+8PapZjR5tFiW2a9ZpQrW7omBIChYnIJIUg8EirH7Nv7F+nfEn9kjR9F+JulX+ha3c6tdeILCa1kNtqOktLJuQo2CVYqFJUj0yMgY9D+H/AOwHoOg+NtJ8T+NvHvi/4q3uiyebpNt4qvzNbWbggq4j7uMDknGQDjIFAHmv7MPwz0H9p742/GP4ifFDSrfxVqWh683hzStN1SMTWlhBCgJ2RNldxLckjrk9Sa0U8CaR+zR/wUE+H+l+AbUaD4b+Imk366vodsStp59shkSaOPoh4AwOBk4619EfAT4Bw/A/UfiHdRay+rf8Jd4iuNfZWtxF9mMuP3Q+Y7gMfe4+leMfHv8A5SHfs2f9eGt/+kzUAfYdFFFABTG9KfXmHxe8QeJvDGtaHfaRZajqGjtaX8F3BpluJ5PtLIhtWK9cbg4yOAWBbA5AB2Wj+EdK0PUr2/tLdYri6OXbsPUL6AnmttWHrXyjputfHzwzqiTara3Wt6L/AGlYJcRW0MRubeOLToHuGTA/exSzmZTj5ldRj5WO3ofD+rfGKL4XfEa112xvk8WNp0mpaJcReS/lTSxN/ocZQYbyZF+UtyyyLnOCaxpUadCPLSiory8y5TlN3k7ntPxC+G/hf4reGbrw94u0Sz1/RrkYktL2MOuezKeqsOzAgjsa+bI/+CcfhTQmkh8H/E/4o+BNJZi6aRoXiZktYs9kV0YgfUmtiz1n4yQyeHJ/DcF1qsQsLxNTttcjkiU3DNAsDh5UVh5eXcgcMqyAZOKo+E9P+PmpXFlLd6hc2xs7Kya7uLuVI1ncNMblFthCwdnAQA+YmzIIzyDsQQ/8O/T/ANHB/Gn/AMKkf/GqP+Hfp/6OD+NJ/wC5pH/xqsWxvPjxZadoq6y2t20BubBrxYXN3KUaxumnk8yKBXVTP9nUxBWKMn3trV12oeIvinpuv+KLXRbTXdebULDy9KvLiH7NFpkkht44i8ci7JSgeecuGB+RkdMlaAMv/h38f+jg/jT/AOFSP/jVMf8A4J7pI6s/x/8AjMzr0ZvE6kj6fuq7mbU/iT/wqjRLbUbbWLbVdP1cWOu3enrFJfXGnoJNtzDgbWdx5BfyxkZlCDcBWTa+NPiBaWfii2Om+J1a48OEaA11aieT7Yst4FeR0QBHaMWrbXAxkA5IY0ASTfsbyS+G4dIHxn+KKeVYtZfbV18faGzcef5pfy/9YP8AVhv7ny+9Qj9i2UHxB/xev4qf8Te0S0/5D4/0Ta8b+ZB+7+Rz5e0nnIdx3rGbUvjRHpeh3vhv+0tQltrDUJdT0/VIWjN3LtgEUaPMqlJBmVkP3CVKk4ORftbz4rSaXqv2l/FMfjH7LnTYbeK2/s1ovso5ZnG3zfM3cOQ3mbf+WWaAI9Y/YZk1nSdEsf8Ahe/xcsv7Lt3t/tFr4iVJbrdK8m+Y+V8zDftB4+VVHatbwF+xXo3gvx14J8W33j3xp4v1rwnJetZXHiPUI7ppFuYhG6SN5YYqoGVAIwSc5rndZm+Ltw0SeE4/E+o6F9thKrrdzHYXzkWd2Z183ynKxeaLXbvTl9wBEZU10HwUvfiTJ8RBH43utXngNpZ+UzWskVu7/YITMSFXy1Pn+dkEg7ugxigD6RooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD//2Q==" preserveAspectRatio="none" id="img5"></image><clipPath id="clip6"><path d="M-0.015625 0 1104900 0 1104900 514350 0 514350Z" fill-rule="evenodd" clip-rule="evenodd"/></clipPath><clipPath id="clip7"><rect x="0" y="-9.31323e-10" width="1114425" height="371475"/></clipPath><image width="117" height="32" xlink:href="data:image/jpeg;base64,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" preserveAspectRatio="none" id="img8"></image><clipPath id="clip9"><rect x="0" y="0" width="1114425" height="304800"/></clipPath></defs><g><rect x="0" y="0" width="1280" height="720" fill="#FFFFFF"/><text fill="#898989" font-family="Verdana,Verdana_MSFontService,sans-serif" font-weight="400" font-size="8" transform="translate(637.417 709)">3</text><path d="M327.071 266.286 468.35 266.286 468.35 297.98 327.071 297.98Z" fill="#BFBFBF" fill-rule="evenodd"/><path d="M468.35 266.286 596.82 266.286 596.82 297.98 468.35 297.98Z" fill="#FFC000" fill-rule="evenodd"/><path d="M596.82 266.286 760.585 266.286 760.585 297.98 596.82 297.98Z" fill="#FF4747" fill-rule="evenodd"/><path d="M760.585 266.286 932.821 266.286 932.821 297.98 760.585 297.98Z" fill="#C00000" fill-rule="evenodd"/><path d="M932.821 266.286 1076.82 266.286 1076.82 297.98 932.821 297.98Z" fill="#C00000" fill-rule="evenodd"/><path d="M1076.82 266.286 1230.7 266.286 1230.7 297.98 1076.82 297.98Z" fill="#C00000" fill-rule="evenodd"/><path d="M327.071 297.98 468.35 297.98 468.35 329.674 327.071 329.674Z" fill="#BFBFBF" fill-rule="evenodd"/><path d="M468.35 297.98 596.82 297.98 596.82 329.674 468.35 329.674Z" fill="#FFFF00" fill-rule="evenodd"/><path d="M596.82 297.98 760.585 297.98 760.585 329.674 596.82 329.674Z" fill="#FFC000" fill-rule="evenodd"/><path d="M760.585 297.98 932.821 297.98 932.821 329.674 760.585 329.674Z" fill="#FF4747" fill-rule="evenodd"/><path d="M932.821 297.98 1076.82 297.98 1076.82 329.674 932.821 329.674Z" fill="#C00000" fill-rule="evenodd"/><path d="M1076.82 297.98 1230.7 297.98 1230.7 329.674 1076.82 329.674Z" fill="#C00000" fill-rule="evenodd"/><path d="M327.071 329.674 468.35 329.674 468.35 361.368 327.071 361.368Z" fill="#BFBFBF" fill-rule="evenodd"/><path d="M468.35 329.674 596.82 329.674 596.82 361.368 468.35 361.368Z" fill="#92D050" fill-rule="evenodd"/><path d="M596.82 329.674 760.585 329.674 760.585 361.368 596.82 361.368Z" fill="#FFFF00" fill-rule="evenodd"/><path d="M760.585 329.674 932.821 329.674 932.821 361.368 760.585 361.368Z" fill="#FFC000" fill-rule="evenodd"/><path d="M932.821 329.674 1076.82 329.674 1076.82 361.368 932.821 361.368Z" fill="#FF4747" fill-rule="evenodd"/><path d="M1076.82 329.674 1230.7 329.674 1230.7 361.368 1076.82 361.368Z" fill="#C00000" fill-rule="evenodd"/><path d="M327.071 361.368 468.35 361.368 468.35 393.062 327.071 393.062Z" fill="#BFBFBF" fill-rule="evenodd"/><path d="M468.35 361.368 596.82 361.368 596.82 393.062 468.35 393.062Z" fill="#00B0F0" fill-rule="evenodd"/><path d="M596.82 361.368 760.585 361.368 760.585 393.062 596.82 393.062Z" fill="#92D050" fill-rule="evenodd"/><path d="M760.585 361.368 932.821 361.368 932.821 393.062 760.585 393.062Z" fill="#FFFF00" fill-rule="evenodd"/><path d="M932.821 361.368 1076.82 361.368 1076.82 393.062 932.821 393.062Z" fill="#FFC000" fill-rule="evenodd"/><path d="M1076.82 361.368 1230.7 361.368 1230.7 393.062 1076.82 393.062Z" fill="#FF4747" fill-rule="evenodd"/><path d="M327.071 393.062 468.35 393.062 468.35 424.755 327.071 424.755Z" fill="#BFBFBF" fill-rule="evenodd"/><path d="M468.35 393.062 596.82 393.062 596.82 424.755 468.35 424.755Z" fill="#00B0F0" fill-rule="evenodd"/><path d="M596.82 393.062 760.585 393.062 760.585 424.755 596.82 424.755Z" fill="#00B0F0" fill-rule="evenodd"/><path d="M760.585 393.062 932.821 393.062 932.821 424.755 760.585 424.755Z" fill="#92D050" fill-rule="evenodd"/><path d="M932.821 393.062 1076.82 393.062 1076.82 424.755 932.821 424.755Z" fill="#FFFF00" fill-rule="evenodd"/><path d="M1076.82 393.062 1230.7 393.062 1230.7 424.755 1076.82 424.755Z" fill="#FFC000" fill-rule="evenodd"/><g clip-path="url(#clip1)"><use width="100%" height="100%" xlink:href="#img0" transform="translate(327.567 456.202)"></use></g><path d="M327.071 487.554 468.35 487.554 468.35 537.967 327.071 537.967Z" fill="#D9D9D9" fill-rule="evenodd"/><path d="M468.35 487.554 596.82 487.554 596.82 537.967 468.35 537.967Z" fill="#D9D9D9" fill-rule="evenodd"/><path d="M596.82 487.554 760.585 487.554 760.585 537.967 596.82 537.967Z" fill="#D9D9D9" fill-rule="evenodd"/><path d="M760.585 487.554 932.821 487.554 932.821 537.967 760.585 537.967Z" fill="#D9D9D9" fill-rule="evenodd"/><path d="M932.821 487.554 1076.82 487.554 1076.82 537.967 932.821 537.967Z" fill="#D9D9D9" fill-rule="evenodd"/><path d="M1076.82 487.554 1230.7 487.554 1230.7 537.967 1076.82 537.967Z" fill="#D9D9D9" fill-rule="evenodd"/><path d="M327.071 537.967 468.35 537.967 468.35 586.967 327.071 586.967Z" fill="#D9D9D9" fill-rule="evenodd"/><path d="M468.35 537.967 596.82 537.967 596.82 586.967 468.35 586.967Z" fill="#D9D9D9" fill-rule="evenodd"/><path d="M596.82 537.967 760.585 537.967 760.585 586.967 596.82 586.967Z" fill="#D9D9D9" fill-rule="evenodd"/><path d="M760.585 537.967 932.821 537.967 932.821 586.967 760.585 586.967Z" fill="#D9D9D9" fill-rule="evenodd"/><path d="M932.821 537.967 1076.82 537.967 1076.82 586.967 932.821 586.967Z" fill="#D9D9D9" fill-rule="evenodd"/><path d="M1076.82 537.967 1230.7 537.967 1230.7 586.967 1076.82 586.967Z" fill="#D9D9D9" fill-rule="evenodd"/><path d="M327.071 586.967 468.35 586.967 468.35 635.967 327.071 635.967Z" fill="#D9D9D9" fill-rule="evenodd"/><path d="M468.35 586.967 596.82 586.967 596.82 635.967 468.35 635.967Z" fill="#D9D9D9" fill-rule="evenodd"/><path d="M596.82 586.967 760.585 586.967 760.585 635.967 596.82 635.967Z" fill="#D9D9D9" fill-rule="evenodd"/><path d="M760.585 586.967 932.821 586.967 932.821 635.967 760.585 635.967Z" fill="#D9D9D9" fill-rule="evenodd"/><path d="M932.821 586.967 1076.82 586.967 1076.82 635.967 932.821 635.967Z" fill="#D9D9D9" fill-rule="evenodd"/><path d="M1076.82 586.967 1230.7 586.967 1230.7 635.967 1076.82 635.967Z" fill="#D9D9D9" fill-rule="evenodd"/><path d="M327.071 635.967 468.35 635.967 468.35 657.251 327.071 657.251Z" fill="#D9D9D9" fill-rule="evenodd"/><path d="M468.35 635.967 596.82 635.967 596.82 657.251 468.35 657.251Z" fill="#D9D9D9" fill-rule="evenodd"/><path d="M596.82 635.967 760.585 635.967 760.585 657.251 596.82 657.251Z" fill="#D9D9D9" fill-rule="evenodd"/><path d="M760.585 635.967 932.821 635.967 932.821 657.251 760.585 657.251Z" fill="#D9D9D9" fill-rule="evenodd"/><path d="M932.821 635.967 1076.82 635.967 1076.82 657.251 932.821 657.251Z" fill="#D9D9D9" fill-rule="evenodd"/><path d="M1076.82 635.967 1230.7 635.967 1230.7 657.251 1076.82 657.251Z" fill="#D9D9D9" fill-rule="evenodd"/><path d="M327.071 224.461 327.071 657.417" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M468.35 266.119 468.35 456.616" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M468.35 487.387 468.35 657.417" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M596.82 266.119 596.82 456.616" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M596.82 487.387 596.82 657.417" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M760.585 266.119 760.585 456.616" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M760.585 487.387 760.585 657.417" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M932.821 266.119 932.821 456.616" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M932.821 487.387 932.821 657.417" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M1076.82 266.119 1076.82 456.616" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M1076.82 487.387 1076.82 657.417" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M55.4006 224.628 1230.87 224.628" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M55.4006 266.286 1230.87 266.286" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M55.4006 297.98 1230.87 297.98" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M55.4006 329.674 1230.87 329.674" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M55.4006 361.368 1230.87 361.368" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M55.4006 393.062 1230.87 393.062" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M55.4006 424.755 1230.87 424.755" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M55.4006 456.449 1230.87 456.449" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M55.4006 487.554 1230.87 487.554" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M55.4006 537.967 1230.87 537.967" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M55.4006 586.967 1230.87 586.967" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M55.4006 635.967 1230.87 635.967" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M55.5672 180.035 55.5672 657.417" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M1230.7 180.035 1230.7 657.417" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M55.4006 180.202 1230.87 180.202" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M55.4006 657.251 1230.87 657.251" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="700" font-size="14.6667" transform="translate(438.469 208)">GUIA PARA LA ASIGNACIÓN DE PRIORIDADES EN MANTENIMIENTO</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="16" transform="translate(712.804 251)">Tipos de Prioridades</text><text fill="#0070C0" font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="700" font-size="18.6667" transform="translate(84.4993 252)">A: Tiempo probable de falla</text><text fill="#0070C0" font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="14.6667" transform="translate(136.486 288)">Inminente &lt; 1 días</text><text fill="#0070C0" font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="14.6667" transform="translate(127.736 320)">Prontamente &lt; 7 días</text><text fill="#0070C0" font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="14.6667" transform="translate(119.653 351)">Corto Plazo (7 a 30 días)</text><text fill="#0070C0" font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="14.6667" transform="translate(110.403 383)">Mediano Plazo 30 a 90 días</text><text fill="#0070C0" font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="14.6667" transform="translate(129.569 415)">Largo Plazo &gt; 90 días</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="700" font-size="18.6667" transform="translate(124.903 479)">B: Consecuencias</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(1090.26 509)">Fatalidad o incapacidad</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(1120.18 525)">permanente</text><g><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(938.904 509)">Lesión/ Enfermedad con</text></g><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(954.738 525)">pérdida de tiempo</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(778.286 501)">Lesión o enfermedad con</text><g><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(767.786 517)">restricción o con tratamiento</text></g><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(826.7 533)">médico</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(632.703 517)">Primeros auxilios</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(511.918 517)">Mínima</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(370.877 517)">Sin efecto</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="14.6667" transform="translate(137.153 534)">Salud &amp; Seguridad</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(1106.01 551)">Efectos masivos e</text><g clip-path="url(#clip2)"><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(1079.35 567)">irreversibles, &gt;10 años para</text></g><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(1128.93 583)">remediar</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(947.734 551)">Efectos masivos pero</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(941.488 567)">reversibles, 2</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(1016.32 567)">–</text><g><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(1025.99 567)">10 años</text></g><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(966.321 583)">para remediar</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(786.533 551)">Impacto limitado pero</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(785.286 567)">reversible &lt;2años para</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(821.866 583)">remediar</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(616.539 551)">Preocupación, impacto</text><g><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(604.286 567)">limitado pero reversible &lt; 3</text></g><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(625.873 583)">mes. Para remediar</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(483.668 551)">Impacto mínimo y</text><g><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(469.668 567)">reversible , 1</text></g><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(542.335 567)">sem</text><g clip-path="url(#clip3)"><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(564.835 567)">. para</text></g><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(507.755 583)">remediar</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(370.877 567)">Sin efecto</text><g><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="14.6667" transform="translate(62.8193 583)">Ambiente (Ecosistemas, hábitat o especies)</text></g><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(1107.09 600)">Grave pérdida de</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(1089.43 616)">reputación con impacto</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(1089.18 632)">nacional e internacional</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(944.821 600)">Pérdida de reputación</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(952.901 616)">con impacto local y</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(981.321 632)">Nacional</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(775.37 608)">Pérdida de reputación con</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(810.623 624)">impacto local</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(641.786 616)">Preocupación</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(511.918 616)">Mínima</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(370.877 616)">Sin efecto</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="14.6667" transform="translate(167.653 632)">Clientes</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(1113.85 651)">&gt; 500.000 USD</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(954.154 651)">300.000</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(1001.49 651)">–</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(1011.15 651)">500.000</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(796.036 651)">100.000</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(843.37 651)">–</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(853.036 651)">300.000</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(631.453 651)">10.000</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(671.953 651)">–</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(681.62 651)">100.000</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(496.085 651)">&lt; 10.000 USD</text><g><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="13.3333" transform="translate(332.211 651)">Sin costos considerables</text></g><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="14.6667" transform="translate(171.653 654)">Costos</text><path d="M316 451.5 316 445.25 56.5 445.25 56.5 432.75 316 432.75 316 426.5 328.5 439Z" stroke="#000000" stroke-width="1.33333" stroke-miterlimit="8" fill-rule="evenodd"/><path d="M20 420.5 27.2501 420.5 27.2501 199 41.7501 199 41.7501 420.5 49 420.5 34.5 435Z" fill="#0070C0" fill-rule="evenodd"/><path d="M327.549 34.7466 462.697 34.7466 462.697 70.3415 327.549 70.3415Z" fill="#BFBFBF" fill-rule="evenodd"/><path d="M462.697 34.7466 587.004 34.7466 587.004 70.3415 462.697 70.3415Z" fill="#00B0F0" fill-rule="evenodd"/><path d="M587.004 34.7466 714.925 34.7466 714.925 70.3415 587.004 70.3415Z" fill="#92D050" fill-rule="evenodd"/><path d="M714.925 34.7466 847.182 34.7466 847.182 70.3415 714.925 70.3415Z" fill="#FFFF00" fill-rule="evenodd"/><path d="M847.182 34.7466 975.826 34.7466 975.826 70.3415 847.182 70.3415Z" fill="#FFC000" fill-rule="evenodd"/><path d="M975.826 34.7466 1105.19 34.7466 1105.19 70.3415 975.826 70.3415Z" fill="#FF4747" fill-rule="evenodd"/><path d="M1105.19 34.7466 1230.7 34.7466 1230.7 70.3415 1105.19 70.3415Z" fill="#C00000" fill-rule="evenodd"/><path d="M327.549 34.5799 327.549 172.208" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M462.697 34.5799 462.697 172.208" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M587.004 34.5799 587.004 172.208" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M714.925 34.5799 714.925 172.208" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M847.182 34.5799 847.182 172.208" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M975.826 34.5799 975.826 172.208" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M1105.19 34.5799 1105.19 172.208" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M55.4005 70.3415 1230.87 70.3415" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M55.4005 95.7665 1230.87 95.7665" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M55.5671 34.5799 55.5671 172.208" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M1230.7 34.5799 1230.7 172.208" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M55.4005 34.7466 1230.87 34.7466" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><path d="M55.4005 172.042 1230.87 172.042" stroke="#000000" stroke-width="0.333333" stroke-linejoin="round" stroke-miterlimit="10" fill="none" fill-rule="evenodd"/><text fill="#FFFFFF" font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="700" font-size="21.3333" transform="translate(1156.86 65)">P0</text><text fill="#FFFFFF" font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="700" font-size="21.3333" transform="translate(1029.43 65)">P1</text><text fill="#FFFFFF" font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="700" font-size="21.3333" transform="translate(900.42 65)">P2</text><text fill="#BFBFBF" font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="700" font-size="21.3333" transform="translate(769.97 65)">P3</text><text fill="#FFFFFF" font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="700" font-size="21.3333" transform="translate(639.881 65)">P4</text><text fill="#FFFFFF" font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="700" font-size="21.3333" transform="translate(513.767 65)">P5</text><text fill="#FFFFFF" font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="700" font-size="21.3333" transform="translate(384.956 65)">PL</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="700" font-size="18.6667" transform="translate(124.891 66)">Tipo de Prioridad</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="14.6667" transform="translate(1137.53 92)">Inmediato</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="14.6667" transform="translate(1024.93 92)">7dias</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="14.6667" transform="translate(874.587 92)">1 mes (30 d)</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="14.6667" transform="translate(737.637 92)">2 meses (60 d)</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="14.6667" transform="translate(607.548 92)">3 meses (90 d)</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="14.6667" transform="translate(477.684 92)">6 meses (180 d)</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="14.6667" transform="translate(351.206 92)">1 Año (&gt;360 d)</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="700" font-size="14.6667" transform="translate(93.1415 92)">Plazo para ejecutar la OT, Hasta:</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="14.6667" transform="translate(1137.7 140)">inmediato</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="14.6667" transform="translate(1016.18 131)">Durante</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="14.6667" transform="translate(1017.34 148)">semana</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="14.6667" transform="translate(859.17 140)">Siguiente Servicio</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="14.6667" transform="translate(730.137 140)">En 1 o 2 servicios</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="14.6667" transform="translate(602.131 122)">Por oportunidad</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="14.6667" transform="translate(604.131 139)">Cuando recurso</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="14.6667" transform="translate(620.298 157)">disponible</text><g><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="14.6667" transform="translate(468.267 140)">Diferible a 6 meses</text></g><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="400" font-size="14.6667" transform="translate(364.373 140)">Plan anual</text><text font-family="Calibri,Calibri_MSFontService,sans-serif" font-weight="700" font-size="14.6667" transform="translate(160.391 140)">Detención</text><g clip-path="url(#clip4)" transform="matrix(0.000104987 0 0 0.000104987 19 665)"><g clip-path="url(#clip6)"><use width="100%" height="100%" xlink:href="#img5" transform="matrix(9525 0 0 9525 -0.015625 0)"></use></g></g><g clip-path="url(#clip7)" transform="matrix(0.000104987 0 0 0.000104987 1110 676)"><g clip-path="url(#clip9)" transform="matrix(1 0 0 1.21875 -1 0)"><use width="100%" height="100%" xlink:href="#img8" transform="scale(9525 9525)"></use></g></g></g></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="1280"
+   height="720"
+   overflow="hidden"
+   version="1.1"
+   id="svg203"
+   sodipodi:docname="CriterioparaAsignacióndePrioridad.svg"
+   inkscape:version="1.4.3 (fcd0343856, 2026-01-01)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview203"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.70710678"
+     inkscape:cx="705.69256"
+     inkscape:cy="420.72853"
+     inkscape:window-width="1920"
+     inkscape:window-height="1011"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g203" />
+  <defs
+     id="defs6">
+    <image
+       width="904"
+       height="31"
+       xlink:href="data:image/png;base64,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"
+       preserveAspectRatio="none"
+       id="img0" />
+    <clipPath
+       id="clip1">
+      <rect
+         x="327.567"
+         y="456.202"
+         width="903"
+         height="31"
+         id="rect1" />
+    </clipPath>
+    <clipPath
+       id="clip2">
+      <rect
+         x="1076"
+         y="394"
+         width="155"
+         height="337"
+         id="rect2" />
+    </clipPath>
+    <clipPath
+       id="clip3">
+      <rect
+         x="468"
+         y="394"
+         width="129"
+         height="337"
+         id="rect3" />
+    </clipPath>
+    <clipPath
+       id="clip4">
+      <rect
+         x="0"
+         y="0"
+         width="1104900"
+         height="514350"
+         id="rect4" />
+    </clipPath>
+    <image
+       width="116"
+       height="54"
+       xlink:href="data:image/jpeg;base64,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"
+       preserveAspectRatio="none"
+       id="img5" />
+    <clipPath
+       id="clip6">
+      <path
+         d="M-0.015625 0 1104900 0 1104900 514350 0 514350Z"
+         fill-rule="evenodd"
+         clip-rule="evenodd"
+         id="path4" />
+    </clipPath>
+    <clipPath
+       id="clip7">
+      <rect
+         x="0"
+         y="-9.31323e-10"
+         width="1114425"
+         height="371475"
+         id="rect5" />
+    </clipPath>
+    <image
+       width="117"
+       height="32"
+       xlink:href="data:image/jpeg;base64,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"
+       preserveAspectRatio="none"
+       id="img8" />
+    <clipPath
+       id="clip9">
+      <rect
+         x="0"
+         y="0"
+         width="1114425"
+         height="304800"
+         id="rect6" />
+    </clipPath>
+  </defs>
+  <g
+     id="g203">
+    <rect
+       x="21.775148"
+       y="0"
+       width="1257.3726"
+       height="721.41418"
+       fill="#ffffff"
+       id="rect7" />
+    <text
+       fill="#898989"
+       font-family="Verdana,Verdana_MSFontService,sans-serif"
+       font-weight="400"
+       font-size="8"
+       transform="translate(637.417 709)"
+       id="text7">3</text>
+    <path
+       d="M327.071 266.286 468.35 266.286 468.35 297.98 327.071 297.98Z"
+       fill="#BFBFBF"
+       fill-rule="evenodd"
+       id="path7" />
+    <path
+       d="M468.35 266.286 596.82 266.286 596.82 297.98 468.35 297.98Z"
+       fill="#FFC000"
+       fill-rule="evenodd"
+       id="path8" />
+    <path
+       d="M596.82 266.286 760.585 266.286 760.585 297.98 596.82 297.98Z"
+       fill="#FF4747"
+       fill-rule="evenodd"
+       id="path9" />
+    <path
+       d="M760.585 266.286 932.821 266.286 932.821 297.98 760.585 297.98Z"
+       fill="#C00000"
+       fill-rule="evenodd"
+       id="path10" />
+    <path
+       d="M932.821 266.286 1076.82 266.286 1076.82 297.98 932.821 297.98Z"
+       fill="#C00000"
+       fill-rule="evenodd"
+       id="path11" />
+    <path
+       d="M1076.82 266.286 1230.7 266.286 1230.7 297.98 1076.82 297.98Z"
+       fill="#C00000"
+       fill-rule="evenodd"
+       id="path12" />
+    <path
+       d="M327.071 297.98 468.35 297.98 468.35 329.674 327.071 329.674Z"
+       fill="#BFBFBF"
+       fill-rule="evenodd"
+       id="path13" />
+    <path
+       d="M468.35 297.98 596.82 297.98 596.82 329.674 468.35 329.674Z"
+       fill="#FFFF00"
+       fill-rule="evenodd"
+       id="path14" />
+    <path
+       d="M596.82 297.98 760.585 297.98 760.585 329.674 596.82 329.674Z"
+       fill="#FFC000"
+       fill-rule="evenodd"
+       id="path15" />
+    <path
+       d="M760.585 297.98 932.821 297.98 932.821 329.674 760.585 329.674Z"
+       fill="#FF4747"
+       fill-rule="evenodd"
+       id="path16" />
+    <path
+       d="M932.821 297.98 1076.82 297.98 1076.82 329.674 932.821 329.674Z"
+       fill="#C00000"
+       fill-rule="evenodd"
+       id="path17" />
+    <path
+       d="M1076.82 297.98 1230.7 297.98 1230.7 329.674 1076.82 329.674Z"
+       fill="#C00000"
+       fill-rule="evenodd"
+       id="path18" />
+    <path
+       d="M327.071 329.674 468.35 329.674 468.35 361.368 327.071 361.368Z"
+       fill="#BFBFBF"
+       fill-rule="evenodd"
+       id="path19" />
+    <path
+       d="M468.35 329.674 596.82 329.674 596.82 361.368 468.35 361.368Z"
+       fill="#92D050"
+       fill-rule="evenodd"
+       id="path20" />
+    <path
+       d="M596.82 329.674 760.585 329.674 760.585 361.368 596.82 361.368Z"
+       fill="#FFFF00"
+       fill-rule="evenodd"
+       id="path21" />
+    <path
+       d="M760.585 329.674 932.821 329.674 932.821 361.368 760.585 361.368Z"
+       fill="#FFC000"
+       fill-rule="evenodd"
+       id="path22" />
+    <path
+       d="M932.821 329.674 1076.82 329.674 1076.82 361.368 932.821 361.368Z"
+       fill="#FF4747"
+       fill-rule="evenodd"
+       id="path23" />
+    <path
+       d="M1076.82 329.674 1230.7 329.674 1230.7 361.368 1076.82 361.368Z"
+       fill="#C00000"
+       fill-rule="evenodd"
+       id="path24" />
+    <path
+       d="M327.071 361.368 468.35 361.368 468.35 393.062 327.071 393.062Z"
+       fill="#BFBFBF"
+       fill-rule="evenodd"
+       id="path25" />
+    <path
+       d="M468.35 361.368 596.82 361.368 596.82 393.062 468.35 393.062Z"
+       fill="#00B0F0"
+       fill-rule="evenodd"
+       id="path26" />
+    <path
+       d="M596.82 361.368 760.585 361.368 760.585 393.062 596.82 393.062Z"
+       fill="#92D050"
+       fill-rule="evenodd"
+       id="path27" />
+    <path
+       d="M760.585 361.368 932.821 361.368 932.821 393.062 760.585 393.062Z"
+       fill="#FFFF00"
+       fill-rule="evenodd"
+       id="path28" />
+    <path
+       d="M932.821 361.368 1076.82 361.368 1076.82 393.062 932.821 393.062Z"
+       fill="#FFC000"
+       fill-rule="evenodd"
+       id="path29" />
+    <path
+       d="M1076.82 361.368 1230.7 361.368 1230.7 393.062 1076.82 393.062Z"
+       fill="#FF4747"
+       fill-rule="evenodd"
+       id="path30" />
+    <path
+       d="M327.071 393.062 468.35 393.062 468.35 424.755 327.071 424.755Z"
+       fill="#BFBFBF"
+       fill-rule="evenodd"
+       id="path31" />
+    <path
+       d="M468.35 393.062 596.82 393.062 596.82 424.755 468.35 424.755Z"
+       fill="#00B0F0"
+       fill-rule="evenodd"
+       id="path32" />
+    <path
+       d="M596.82 393.062 760.585 393.062 760.585 424.755 596.82 424.755Z"
+       fill="#00B0F0"
+       fill-rule="evenodd"
+       id="path33" />
+    <path
+       d="M760.585 393.062 932.821 393.062 932.821 424.755 760.585 424.755Z"
+       fill="#92D050"
+       fill-rule="evenodd"
+       id="path34" />
+    <path
+       d="M932.821 393.062 1076.82 393.062 1076.82 424.755 932.821 424.755Z"
+       fill="#FFFF00"
+       fill-rule="evenodd"
+       id="path35" />
+    <path
+       d="M1076.82 393.062 1230.7 393.062 1230.7 424.755 1076.82 424.755Z"
+       fill="#FFC000"
+       fill-rule="evenodd"
+       id="path36" />
+    <g
+       clip-path="url(#clip1)"
+       id="g36">
+      <use
+         width="100%"
+         height="100%"
+         xlink:href="#img0"
+         transform="translate(327.567 456.202)"
+         id="use36" />
+    </g>
+    <path
+       d="M327.071 487.554 468.35 487.554 468.35 537.967 327.071 537.967Z"
+       fill="#D9D9D9"
+       fill-rule="evenodd"
+       id="path37" />
+    <path
+       d="M468.35 487.554 596.82 487.554 596.82 537.967 468.35 537.967Z"
+       fill="#D9D9D9"
+       fill-rule="evenodd"
+       id="path38" />
+    <path
+       d="M596.82 487.554 760.585 487.554 760.585 537.967 596.82 537.967Z"
+       fill="#D9D9D9"
+       fill-rule="evenodd"
+       id="path39" />
+    <path
+       d="M760.585 487.554 932.821 487.554 932.821 537.967 760.585 537.967Z"
+       fill="#D9D9D9"
+       fill-rule="evenodd"
+       id="path40" />
+    <path
+       d="M932.821 487.554 1076.82 487.554 1076.82 537.967 932.821 537.967Z"
+       fill="#D9D9D9"
+       fill-rule="evenodd"
+       id="path41" />
+    <path
+       d="M1076.82 487.554 1230.7 487.554 1230.7 537.967 1076.82 537.967Z"
+       fill="#D9D9D9"
+       fill-rule="evenodd"
+       id="path42" />
+    <path
+       d="M327.071 537.967 468.35 537.967 468.35 586.967 327.071 586.967Z"
+       fill="#D9D9D9"
+       fill-rule="evenodd"
+       id="path43" />
+    <path
+       d="M468.35 537.967 596.82 537.967 596.82 586.967 468.35 586.967Z"
+       fill="#D9D9D9"
+       fill-rule="evenodd"
+       id="path44" />
+    <path
+       d="M596.82 537.967 760.585 537.967 760.585 586.967 596.82 586.967Z"
+       fill="#D9D9D9"
+       fill-rule="evenodd"
+       id="path45" />
+    <path
+       d="M760.585 537.967 932.821 537.967 932.821 586.967 760.585 586.967Z"
+       fill="#D9D9D9"
+       fill-rule="evenodd"
+       id="path46" />
+    <path
+       d="M932.821 537.967 1076.82 537.967 1076.82 586.967 932.821 586.967Z"
+       fill="#D9D9D9"
+       fill-rule="evenodd"
+       id="path47" />
+    <path
+       d="M1076.82 537.967 1230.7 537.967 1230.7 586.967 1076.82 586.967Z"
+       fill="#D9D9D9"
+       fill-rule="evenodd"
+       id="path48" />
+    <path
+       d="M327.071 586.967 468.35 586.967 468.35 635.967 327.071 635.967Z"
+       fill="#D9D9D9"
+       fill-rule="evenodd"
+       id="path49" />
+    <path
+       d="M468.35 586.967 596.82 586.967 596.82 635.967 468.35 635.967Z"
+       fill="#D9D9D9"
+       fill-rule="evenodd"
+       id="path50" />
+    <path
+       d="M596.82 586.967 760.585 586.967 760.585 635.967 596.82 635.967Z"
+       fill="#D9D9D9"
+       fill-rule="evenodd"
+       id="path51" />
+    <path
+       d="M760.585 586.967 932.821 586.967 932.821 635.967 760.585 635.967Z"
+       fill="#D9D9D9"
+       fill-rule="evenodd"
+       id="path52" />
+    <path
+       d="M932.821 586.967 1076.82 586.967 1076.82 635.967 932.821 635.967Z"
+       fill="#D9D9D9"
+       fill-rule="evenodd"
+       id="path53" />
+    <path
+       d="M1076.82 586.967 1230.7 586.967 1230.7 635.967 1076.82 635.967Z"
+       fill="#D9D9D9"
+       fill-rule="evenodd"
+       id="path54" />
+    <path
+       d="M 327.071,635.967 H 468.35 v 30.784 H 327.071 Z"
+       fill="#d9d9d9"
+       fill-rule="evenodd"
+       id="path55"
+       style="stroke-width:1.20264" />
+    <path
+       d="m 468.35,635.967 h 128.47 v 30.284 H 468.35 Z"
+       fill="#d9d9d9"
+       fill-rule="evenodd"
+       id="path56"
+       style="stroke-width:1.19283" />
+    <path
+       d="m 596.82,635.967 h 163.765 v 30.284 H 596.82 Z"
+       fill="#d9d9d9"
+       fill-rule="evenodd"
+       id="path57"
+       style="stroke-width:1.19283" />
+    <path
+       d="m 760.585,635.967 h 172.236 v 30.284 H 760.585 Z"
+       fill="#d9d9d9"
+       fill-rule="evenodd"
+       id="path58"
+       style="stroke-width:1.19283" />
+    <path
+       d="m 932.821,635.967 h 143.999 v 30.784 H 932.821 Z"
+       fill="#d9d9d9"
+       fill-rule="evenodd"
+       id="path59"
+       style="stroke-width:1.20264" />
+    <path
+       d="m 1076.82,635.967 h 153.88 v 30.784 h -153.88 z"
+       fill="#d9d9d9"
+       fill-rule="evenodd"
+       id="path60"
+       style="stroke-width:1.20264" />
+    <path
+       d="M 327.321,224.461 V 667.417"
+       stroke="#000000"
+       stroke-width="0.33716"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path61" />
+    <path
+       d="M468.35 266.119 468.35 456.616"
+       stroke="#000000"
+       stroke-width="0.333333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path62" />
+    <path
+       d="m 468.35,487.387 v 179.03"
+       stroke="#000000"
+       stroke-width="0.342041"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path63" />
+    <path
+       d="M596.82 266.119 596.82 456.616"
+       stroke="#000000"
+       stroke-width="0.333333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path64" />
+    <path
+       d="m 596.82,487.387 v 179.53"
+       stroke="#000000"
+       stroke-width="0.342519"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path65" />
+    <path
+       d="M760.585 266.119 760.585 456.616"
+       stroke="#000000"
+       stroke-width="0.333333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path66" />
+    <path
+       d="m 761.335,487.387 v 180.03"
+       stroke="#000000"
+       stroke-width="0.342995"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path67" />
+    <path
+       d="M932.821 266.119 932.821 456.616"
+       stroke="#000000"
+       stroke-width="0.333333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path68" />
+    <path
+       d="m 933.321,487.387 v 180.03"
+       stroke="#000000"
+       stroke-width="0.342995"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path69" />
+    <path
+       d="M1076.82 266.119 1076.82 456.616"
+       stroke="#000000"
+       stroke-width="0.333333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path70" />
+    <path
+       d="m 1076.82,487.387 v 179.53"
+       stroke="#000000"
+       stroke-width="0.342519"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path71" />
+    <path
+       d="M55.4006 224.628 1230.87 224.628"
+       stroke="#000000"
+       stroke-width="0.333333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path72" />
+    <path
+       d="M55.4006 266.286 1230.87 266.286"
+       stroke="#000000"
+       stroke-width="0.333333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path73" />
+    <path
+       d="M55.4006 297.98 1230.87 297.98"
+       stroke="#000000"
+       stroke-width="0.333333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path74" />
+    <path
+       d="M55.4006 329.674 1230.87 329.674"
+       stroke="#000000"
+       stroke-width="0.333333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path75" />
+    <path
+       d="M55.4006 361.368 1230.87 361.368"
+       stroke="#000000"
+       stroke-width="0.333333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path76" />
+    <path
+       d="M55.4006 393.062 1230.87 393.062"
+       stroke="#000000"
+       stroke-width="0.333333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path77" />
+    <path
+       d="M55.4006 424.755 1230.87 424.755"
+       stroke="#000000"
+       stroke-width="0.333333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path78" />
+    <path
+       d="M55.4006 456.449 1230.87 456.449"
+       stroke="#000000"
+       stroke-width="0.333333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path79" />
+    <path
+       d="M55.4006 487.554 1230.87 487.554"
+       stroke="#000000"
+       stroke-width="0.333333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path80" />
+    <path
+       d="M55.4006 537.967 1230.87 537.967"
+       stroke="#000000"
+       stroke-width="0.333333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path81" />
+    <path
+       d="M55.4006 586.967 1230.87 586.967"
+       stroke="#000000"
+       stroke-width="0.333333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path82" />
+    <path
+       d="M55.4006 635.967 1230.87 635.967"
+       stroke="#000000"
+       stroke-width="0.333333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path83" />
+    <path
+       d="M 55.5672,180.035 V 665.917"
+       stroke="#000000"
+       stroke-width="0.336287"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path84" />
+    <path
+       d="M 1230.7,180.035 V 667.917"
+       stroke="#000000"
+       stroke-width="0.336979"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path85" />
+    <path
+       d="M55.4006 180.202 1230.87 180.202"
+       stroke="#000000"
+       stroke-width="0.333333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path86" />
+    <path
+       d="M 55.4006,667.001 H 1230.87"
+       stroke="#000000"
+       stroke-width="0.333333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path87" />
+    <text
+       font-family="Calibri,Calibri_MSFontService,sans-serif"
+       font-weight="700"
+       font-size="14.6667"
+       id="text87"
+       transform="translate(438.469 208)">GUIA PARA LA ASIGNACIÓN DE PRIORIDADES EN MANTENIMIENTO</text>
+    <text
+       font-family="Calibri,Calibri_MSFontService,sans-serif"
+       font-weight="400"
+       font-size="16"
+       id="text88"
+       transform="translate(712.804 251)">Tipos de Prioridades</text>
+    <text
+       fill="#0070c0"
+       font-family="Calibri, Calibri_MSFontService, sans-serif"
+       font-weight="700"
+       font-size="17.844px"
+       id="text89"
+       x="60.158375"
+       y="241.37218"
+       transform="scale(0.95592939,1.0461024)"
+       style="stroke-width:0.955929">A: Tiempo probable de falla</text>
+    <text
+       fill="#0070C0"
+       font-family="Calibri,Calibri_MSFontService,sans-serif"
+       font-weight="400"
+       font-size="14.6667"
+       id="text90"
+       transform="translate(136.486 288)">Inminente &lt; 1 días</text>
+    <text
+       fill="#0070C0"
+       font-family="Calibri,Calibri_MSFontService,sans-serif"
+       font-weight="400"
+       font-size="14.6667"
+       id="text91"
+       transform="translate(127.736 320)">Prontamente &lt; 7 días</text>
+    <text
+       fill="#0070C0"
+       font-family="Calibri,Calibri_MSFontService,sans-serif"
+       font-weight="400"
+       font-size="14.6667"
+       id="text92"
+       transform="translate(119.653 351)">Corto Plazo (7 a 30 días)</text>
+    <text
+       fill="#0070C0"
+       font-family="Calibri,Calibri_MSFontService,sans-serif"
+       font-weight="400"
+       font-size="14.6667"
+       id="text93"
+       transform="translate(110.403 383)">Mediano Plazo 30 a 90 días</text>
+    <text
+       fill="#0070C0"
+       font-family="Calibri,Calibri_MSFontService,sans-serif"
+       font-weight="400"
+       font-size="14.6667"
+       id="text94"
+       transform="translate(129.569 415)">Largo Plazo &gt; 90 días</text>
+    <text
+       font-family="Calibri, Calibri_MSFontService, sans-serif"
+       font-weight="700"
+       font-size="18.6667px"
+       id="text95"
+       x="112.403"
+       y="480">B: Consecuencias</text>
+    <text
+       font-family="Calibri,Calibri_MSFontService,sans-serif"
+       font-weight="400"
+       font-size="13.3333"
+       id="text105"
+       transform="translate(370.877 517)">Sin efecto</text>
+    <text
+       font-family="Calibri, Calibri_MSFontService, sans-serif"
+       font-weight="400"
+       font-size="14.6667px"
+       id="text106"
+       x="126.7388"
+       y="522.63904">Salud &amp; Seguridad</text>
+    <text
+       font-family="Calibri,Calibri_MSFontService,sans-serif"
+       font-weight="400"
+       font-size="13.3333"
+       id="text126"
+       transform="translate(370.877 567)">Sin efecto</text>
+    <g
+       id="g127">
+      <text
+         font-family="Calibri, Calibri_MSFontService, sans-serif"
+         font-weight="400"
+         font-size="14.6667px"
+         id="text127"
+         x="110.15658"
+         y="561.22485"><tspan
+           sodipodi:role="line"
+           id="tspan209"
+           x="110.15658"
+           y="561.22485">Ambiente (Ecosistemas,</tspan><tspan
+           sodipodi:role="line"
+           id="tspan210"
+           x="110.15658"
+           y="579.55823">hábitat o especies)</tspan></text>
+    </g>
+    <text
+       font-family="Calibri,Calibri_MSFontService,sans-serif"
+       font-weight="400"
+       font-size="13.3333"
+       id="text138"
+       transform="translate(370.877 616)">Sin efecto</text>
+    <text
+       font-family="Calibri, Calibri_MSFontService, sans-serif"
+       font-weight="400"
+       font-size="14.6667px"
+       id="text139"
+       x="164.81276"
+       y="619.69232">Clientes</text>
+    <text
+       font-family="Calibri, Calibri_MSFontService, sans-serif"
+       font-weight="400"
+       font-size="13.3333px"
+       id="text150"
+       x="488.58499"
+       y="656.5">&lt; 10.000 USD</text>
+    <text
+       font-family="Calibri, Calibri_MSFontService, sans-serif"
+       font-weight="400"
+       font-size="14.6667px"
+       id="text152"
+       x="169.75951"
+       y="653.05328">Costos</text>
+    <path
+       d="M316 451.5 316 445.25 56.5 445.25 56.5 432.75 316 432.75 316 426.5 328.5 439Z"
+       stroke="#000000"
+       stroke-width="1.33333"
+       stroke-miterlimit="8"
+       fill-rule="evenodd"
+       id="path152" />
+    <path
+       d="M20 420.5 27.2501 420.5 27.2501 199 41.7501 199 41.7501 420.5 49 420.5 34.5 435Z"
+       fill="#0070C0"
+       fill-rule="evenodd"
+       id="path153" />
+    <path
+       d="M327.549 34.7466 462.697 34.7466 462.697 70.3415 327.549 70.3415Z"
+       fill="#BFBFBF"
+       fill-rule="evenodd"
+       id="path154" />
+    <path
+       d="M462.697 34.7466 587.004 34.7466 587.004 70.3415 462.697 70.3415Z"
+       fill="#00B0F0"
+       fill-rule="evenodd"
+       id="path155" />
+    <path
+       d="M587.004 34.7466 714.925 34.7466 714.925 70.3415 587.004 70.3415Z"
+       fill="#92D050"
+       fill-rule="evenodd"
+       id="path156" />
+    <path
+       d="M714.925 34.7466 847.182 34.7466 847.182 70.3415 714.925 70.3415Z"
+       fill="#FFFF00"
+       fill-rule="evenodd"
+       id="path157" />
+    <path
+       d="M847.182 34.7466 975.826 34.7466 975.826 70.3415 847.182 70.3415Z"
+       fill="#FFC000"
+       fill-rule="evenodd"
+       id="path158" />
+    <path
+       d="M975.826 34.7466 1105.19 34.7466 1105.19 70.3415 975.826 70.3415Z"
+       fill="#FF4747"
+       fill-rule="evenodd"
+       id="path159" />
+    <path
+       d="M1105.19 34.7466 1230.7 34.7466 1230.7 70.3415 1105.19 70.3415Z"
+       fill="#C00000"
+       fill-rule="evenodd"
+       id="path160" />
+    <path
+       d="M327.549 34.5799 327.549 172.208"
+       stroke="#000000"
+       stroke-width="0.333333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path161" />
+    <path
+       d="M462.697 34.5799 462.697 172.208"
+       stroke="#000000"
+       stroke-width="0.333333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path162" />
+    <path
+       d="M587.004 34.5799 587.004 172.208"
+       stroke="#000000"
+       stroke-width="0.333333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path163" />
+    <path
+       d="M714.925 34.5799 714.925 172.208"
+       stroke="#000000"
+       stroke-width="0.333333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path164" />
+    <path
+       d="M847.182 34.5799 847.182 172.208"
+       stroke="#000000"
+       stroke-width="0.333333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path165" />
+    <path
+       d="M975.826 34.5799 975.826 172.208"
+       stroke="#000000"
+       stroke-width="0.333333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path166" />
+    <path
+       d="M1105.19 34.5799 1105.19 172.208"
+       stroke="#000000"
+       stroke-width="0.333333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path167" />
+    <path
+       d="M55.4005 70.3415 1230.87 70.3415"
+       stroke="#000000"
+       stroke-width="0.333333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path168" />
+    <path
+       d="M55.4005 95.7665 1230.87 95.7665"
+       stroke="#000000"
+       stroke-width="0.333333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path169" />
+    <path
+       d="M55.5671 34.5799 55.5671 172.208"
+       stroke="#000000"
+       stroke-width="0.333333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path170" />
+    <path
+       d="M1230.7 34.5799 1230.7 172.208"
+       stroke="#000000"
+       stroke-width="0.333333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path171" />
+    <path
+       d="M55.4005 34.7466 1230.87 34.7466"
+       stroke="#000000"
+       stroke-width="0.333333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path172" />
+    <path
+       d="M55.4005 172.042 1230.87 172.042"
+       stroke="#000000"
+       stroke-width="0.333333"
+       stroke-linejoin="round"
+       stroke-miterlimit="10"
+       fill="none"
+       fill-rule="evenodd"
+       id="path173" />
+    <text
+       fill="#FFFFFF"
+       font-family="Calibri,Calibri_MSFontService,sans-serif"
+       font-weight="700"
+       font-size="21.3333"
+       id="text173"
+       transform="translate(1156.86 65)">P0</text>
+    <text
+       fill="#FFFFFF"
+       font-family="Calibri,Calibri_MSFontService,sans-serif"
+       font-weight="700"
+       font-size="21.3333"
+       id="text174"
+       transform="translate(1029.43 65)">P1</text>
+    <text
+       fill="#FFFFFF"
+       font-family="Calibri,Calibri_MSFontService,sans-serif"
+       font-weight="700"
+       font-size="21.3333"
+       id="text175"
+       transform="translate(900.42 65)">P2</text>
+    <text
+       fill="#BFBFBF"
+       font-family="Calibri,Calibri_MSFontService,sans-serif"
+       font-weight="700"
+       font-size="21.3333"
+       id="text176"
+       transform="translate(769.97 65)">P3</text>
+    <text
+       fill="#FFFFFF"
+       font-family="Calibri,Calibri_MSFontService,sans-serif"
+       font-weight="700"
+       font-size="21.3333"
+       id="text177"
+       transform="translate(639.881 65)">P4</text>
+    <text
+       fill="#FFFFFF"
+       font-family="Calibri,Calibri_MSFontService,sans-serif"
+       font-weight="700"
+       font-size="21.3333"
+       id="text178"
+       transform="translate(513.767 65)">P5</text>
+    <text
+       fill="#FFFFFF"
+       font-family="Calibri,Calibri_MSFontService,sans-serif"
+       font-weight="700"
+       font-size="21.3333"
+       id="text179"
+       transform="translate(384.956 65)">PL</text>
+    <text
+       font-family="Calibri, Calibri_MSFontService, sans-serif"
+       font-weight="700"
+       font-size="18.6667px"
+       id="text180"
+       x="105.00935"
+       y="60.319527">Tipo de Prioridad</text>
+    <text
+       font-family="Calibri,Calibri_MSFontService,sans-serif"
+       font-weight="400"
+       font-size="14.6667"
+       id="text181"
+       transform="translate(1137.53 92)">Inmediato</text>
+    <text
+       font-family="Calibri,Calibri_MSFontService,sans-serif"
+       font-weight="400"
+       font-size="14.6667"
+       id="text182"
+       transform="translate(1024.93 92)">7dias</text>
+    <text
+       font-family="Calibri, Calibri_MSFontService, sans-serif"
+       font-weight="400"
+       font-size="14.6667px"
+       id="text183"
+       x="863.22607"
+       y="91.053253">1 mes (30 d)</text>
+    <text
+       font-family="Calibri, Calibri_MSFontService, sans-serif"
+       font-weight="400"
+       font-size="14.6667px"
+       id="text184"
+       x="731.00977"
+       y="90.106506">2 meses (60 d)</text>
+    <text
+       font-family="Calibri, Calibri_MSFontService, sans-serif"
+       font-weight="400"
+       font-size="14.6667px"
+       id="text185"
+       x="599.02728"
+       y="91.053253">3 meses (90 d)</text>
+    <text
+       font-family="Calibri, Calibri_MSFontService, sans-serif"
+       font-weight="400"
+       font-size="14.6667px"
+       id="text186"
+       x="468.21655"
+       y="90.106506">6 meses (180 d)</text>
+    <text
+       font-family="Calibri, Calibri_MSFontService, sans-serif"
+       font-weight="400"
+       font-size="14.6667px"
+       id="text187"
+       x="344.57877"
+       y="91.053253">1 Año (&gt;360 d)</text>
+    <text
+       font-family="Calibri, Calibri_MSFontService, sans-serif"
+       font-weight="700"
+       font-size="14.6667px"
+       id="text188"
+       x="60.005405"
+       y="89.15976">Plazo para ejecutar la OT, Hasta:</text>
+    <text
+       font-family="Calibri,Calibri_MSFontService,sans-serif"
+       font-weight="400"
+       font-size="14.6667"
+       id="text189"
+       transform="translate(1137.7 140)">inmediato</text>
+    <text
+       font-family="Calibri,Calibri_MSFontService,sans-serif"
+       font-weight="400"
+       font-size="14.6667"
+       id="text190"
+       transform="translate(1016.18 131)">Durante</text>
+    <text
+       font-family="Calibri,Calibri_MSFontService,sans-serif"
+       font-weight="400"
+       font-size="14.6667"
+       id="text191"
+       transform="translate(1017.34 148)">semana</text>
+    <text
+       font-family="Calibri, Calibri_MSFontService, sans-serif"
+       font-weight="400"
+       font-size="14.6667px"
+       id="text192"
+       x="914.6507"
+       y="128.63905"
+       style="text-align:center;text-anchor:middle"><tspan
+         sodipodi:role="line"
+         id="tspan205"
+         x="914.6507"
+         y="128.63905">Siguiente</tspan><tspan
+         sodipodi:role="line"
+         id="tspan206"
+         x="914.6507"
+         y="146.97243">Servicio</tspan></text>
+    <text
+       font-family="Calibri, Calibri_MSFontService, sans-serif"
+       font-weight="400"
+       font-size="14.6667px"
+       id="text193"
+       x="749.0719"
+       y="129.5858"><tspan
+         sodipodi:role="line"
+         id="tspan207"
+         x="749.0719"
+         y="129.5858">En 1 o 2</tspan><tspan
+         sodipodi:role="line"
+         id="tspan208"
+         x="749.0719"
+         y="147.91917">Servicios</tspan></text>
+    <text
+       font-family="Calibri, Calibri_MSFontService, sans-serif"
+       font-weight="400"
+       font-size="14.6667px"
+       id="text194"
+       x="593.61029"
+       y="122.94675">Por oportunidad</text>
+    <text
+       font-family="Calibri, Calibri_MSFontService, sans-serif"
+       font-weight="400"
+       font-size="14.6667px"
+       id="text195"
+       x="595.61029"
+       y="139.94675">Cuando recurso</text>
+    <text
+       font-family="Calibri, Calibri_MSFontService, sans-serif"
+       font-weight="400"
+       font-size="14.6667px"
+       id="text196"
+       x="611.77728"
+       y="157.94675">disponible</text>
+    <g
+       id="g197"
+       transform="translate(18.934911,-7.5739645)">
+      <text
+         font-family="Calibri, Calibri_MSFontService, sans-serif"
+         font-weight="400"
+         font-size="14.6667px"
+         transform="translate(468.267,140)"
+         id="text197"
+         style="text-align:center;text-anchor:middle"
+         x="43.727966"
+         y="0"><tspan
+           sodipodi:role="line"
+           id="tspan203"
+           x="43.727966"
+           y="0">Diferible a 6</tspan><tspan
+           sodipodi:role="line"
+           id="tspan204"
+           x="43.727966"
+           y="18.333376">meses</tspan></text>
+    </g>
+    <text
+       font-family="Calibri,Calibri_MSFontService,sans-serif"
+       font-weight="400"
+       font-size="14.6667"
+       id="text198"
+       transform="translate(364.373 140)">Plan anual</text>
+    <text
+       font-family="Calibri,Calibri_MSFontService,sans-serif"
+       font-weight="700"
+       font-size="14.6667"
+       id="text199"
+       transform="translate(160.391 140)">Detención</text>
+    <g
+       clip-path="url(#clip4)"
+       transform="matrix(7.1047276e-5,0,0,7.2907677e-5,52,673)"
+       id="g200">
+      <g
+         clip-path="url(#clip6)"
+         id="g199">
+        <use
+           width="100%"
+           height="100%"
+           xlink:href="#img5"
+           transform="matrix(9525,0,0,9525,-0.015625,0)"
+           id="use199" />
+      </g>
+    </g>
+    <g
+       clip-path="url(#clip7)"
+       transform="matrix(0.000104987 0 0 0.000104987 1110 676)"
+       id="g202">
+      <g
+         clip-path="url(#clip9)"
+         transform="matrix(1,0,0,1.21875,33674.921,6735.1842)"
+         id="g201">
+        <use
+           width="100%"
+           height="100%"
+           xlink:href="#img8"
+           transform="scale(9525)"
+           id="use200" />
+      </g>
+    </g>
+    <g
+       id="g203-7"
+       transform="translate(118.2441,-15.36982)">
+      <text
+         font-family="Calibri, Calibri_MSFontService, sans-serif"
+         font-weight="400"
+         font-size="13.3333px"
+         id="text105-5"
+         x="416.41205"
+         y="516"
+         style="text-align:center;text-anchor:middle"><tspan
+           sodipodi:role="line"
+           id="tspan211"
+           x="372.87701"
+           y="516">Preocupacion</tspan><tspan
+           sodipodi:role="line"
+           id="tspan212"
+           x="372.87701"
+           y="532.66663">minima por</tspan><tspan
+           sodipodi:role="line"
+           x="372.87701"
+           y="549.33325"
+           id="tspan213">la seguridad</tspan></text>
+    </g>
+    <text
+       xml:space="preserve"
+       style="writing-mode:lr-tb;direction:ltr;fill:#000000"
+       x="623"
+       y="514.5"
+       id="text214"><tspan
+         sodipodi:role="line"
+         id="tspan214"
+         x="623"
+         y="514.5">Primeros auxilios</tspan></text>
+    <text
+       xml:space="preserve"
+       style="text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000"
+       x="849.96387"
+       y="503"
+       id="text215"><tspan
+         sodipodi:role="line"
+         id="tspan215"
+         x="787.5"
+         y="503">Lesión o enfermedad</tspan><tspan
+         sodipodi:role="line"
+         x="787.5"
+         y="518"
+         id="tspan216">con restricción o con</tspan><tspan
+         sodipodi:role="line"
+         x="787.5"
+         y="533"
+         id="tspan217">tratamiento médico</tspan></text>
+    <text
+       xml:space="preserve"
+       style="text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000"
+       x="1005.6924"
+       y="509.5"
+       id="text218"><tspan
+         sodipodi:role="line"
+         id="tspan218"
+         x="1005.6924"
+         y="509.5">Lesión/ Enfermedad</tspan><tspan
+         sodipodi:role="line"
+         x="1005.6924"
+         y="524.5"
+         id="tspan219">con pérdida de tiempo</tspan></text>
+    <text
+       xml:space="preserve"
+       style="text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000"
+       x="1152.8203"
+       y="511"
+       id="text220"><tspan
+         sodipodi:role="line"
+         id="tspan220"
+         x="1152.8203"
+         y="511">Fatalidad o incapacidad</tspan><tspan
+         sodipodi:role="line"
+         x="1152.8203"
+         y="526"
+         id="tspan221">permanente</tspan></text>
+    <text
+       xml:space="preserve"
+       style="text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000"
+       x="534.56055"
+       y="551.5"
+       id="text222"><tspan
+         sodipodi:role="line"
+         id="tspan222"
+         x="534.56055"
+         y="551.5">Impacto mínimo y</tspan><tspan
+         sodipodi:role="line"
+         x="534.56055"
+         y="566.5"
+         id="tspan223">reversible, 1 sem</tspan><tspan
+         sodipodi:role="line"
+         x="534.56055"
+         y="581.5"
+         id="tspan224">para remediar</tspan></text>
+    <text
+       xml:space="preserve"
+       style="text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000"
+       x="682.32812"
+       y="554"
+       id="text225"><tspan
+         sodipodi:role="line"
+         id="tspan225"
+         x="611.5"
+         y="554">Preocupación, impacto</tspan><tspan
+         sodipodi:role="line"
+         x="611.5"
+         y="569"
+         id="tspan226">limitado pero reversible</tspan><tspan
+         sodipodi:role="line"
+         x="611.5"
+         y="584"
+         id="tspan227">&lt; 3 mes. Para remediar</tspan></text>
+    <text
+       xml:space="preserve"
+       style="text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000"
+       x="848.72363"
+       y="552.5"
+       id="text228"><tspan
+         sodipodi:role="line"
+         id="tspan228"
+         x="848.72363"
+         y="552.5">Impacto limitado pero</tspan><tspan
+         sodipodi:role="line"
+         x="848.72363"
+         y="567.5"
+         id="tspan229">reversible &lt; 2 años</tspan><tspan
+         sodipodi:role="line"
+         x="848.72363"
+         y="582.5"
+         id="tspan230">para remediar</tspan></text>
+    <text
+       xml:space="preserve"
+       style="text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000"
+       x="1009.4336"
+       y="555"
+       id="text231"><tspan
+         sodipodi:role="line"
+         id="tspan231"
+         x="943"
+         y="555">Efectos masivos pero</tspan><tspan
+         sodipodi:role="line"
+         x="943"
+         y="570"
+         id="tspan232">reversibles, 2–10 años</tspan><tspan
+         sodipodi:role="line"
+         x="943"
+         y="585"
+         id="tspan233">para remediar</tspan></text>
+    <text
+       xml:space="preserve"
+       style="text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000"
+       x="1153.6719"
+       y="553.5"
+       id="text234"><tspan
+         sodipodi:role="line"
+         x="1085"
+         y="553.5"
+         id="tspan235">Efectos masivos e</tspan><tspan
+         sodipodi:role="line"
+         x="1085"
+         y="568.5"
+         id="tspan236">irreversibles, &gt;10 años</tspan><tspan
+         sodipodi:role="line"
+         x="1085"
+         y="583.5"
+         id="tspan238">para remediar</tspan></text>
+    <text
+       xml:space="preserve"
+       style="writing-mode:lr-tb;direction:ltr;fill:#000000"
+       x="510.5"
+       y="615.5"
+       id="text239"><tspan
+         sodipodi:role="line"
+         id="tspan239"
+         x="510.5"
+         y="615.5">Mínima</tspan></text>
+    <text
+       xml:space="preserve"
+       style="writing-mode:lr-tb;direction:ltr;fill:#000000"
+       x="638"
+       y="614"
+       id="text240"><tspan
+         sodipodi:role="line"
+         id="tspan240"
+         x="638"
+         y="614">Preocupación</tspan></text>
+    <text
+       xml:space="preserve"
+       style="text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000"
+       x="849.49805"
+       y="606"
+       id="text241"><tspan
+         sodipodi:role="line"
+         id="tspan241"
+         x="849.49805"
+         y="606">Pérdida de reputación</tspan><tspan
+         sodipodi:role="line"
+         x="849.49805"
+         y="621"
+         id="tspan242">con impacto local</tspan></text>
+    <text
+       xml:space="preserve"
+       style="text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000"
+       x="1006.498"
+       y="603"
+       id="text243"><tspan
+         sodipodi:role="line"
+         id="tspan243"
+         x="1006.498"
+         y="603">Pérdida de reputación</tspan><tspan
+         sodipodi:role="line"
+         x="1006.498"
+         y="618"
+         id="tspan244">con impacto local y</tspan><tspan
+         sodipodi:role="line"
+         x="1006.498"
+         y="633"
+         id="tspan245">Nacional</tspan></text>
+    <text
+       xml:space="preserve"
+       style="text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000"
+       x="1155.5068"
+       y="602"
+       id="text246"><tspan
+         sodipodi:role="line"
+         id="tspan246"
+         x="1155.5068"
+         y="602">Grave pérdida de</tspan><tspan
+         sodipodi:role="line"
+         x="1155.5068"
+         y="617"
+         id="tspan247">reputación con impacto</tspan><tspan
+         sodipodi:role="line"
+         x="1155.5068"
+         y="632"
+         id="tspan248">nacional e internacional</tspan></text>
+    <text
+       xml:space="preserve"
+       style="text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000"
+       x="398.37793"
+       y="648.5"
+       id="text249"><tspan
+         sodipodi:role="line"
+         id="tspan249"
+         x="398.37793"
+         y="648.5">Sin costos</tspan><tspan
+         sodipodi:role="line"
+         x="398.37793"
+         y="663.5"
+         id="tspan250">considerables</tspan></text>
+    <text
+       xml:space="preserve"
+       style="writing-mode:lr-tb;direction:ltr;fill:#000000"
+       x="624"
+       y="657"
+       id="text251"><tspan
+         sodipodi:role="line"
+         id="tspan251"
+         x="624"
+         y="657">10.000–100.000</tspan></text>
+    <text
+       xml:space="preserve"
+       style="writing-mode:lr-tb;direction:ltr;fill:#000000"
+       x="790.5"
+       y="656.5"
+       id="text252"><tspan
+         sodipodi:role="line"
+         id="tspan252"
+         x="790.5"
+         y="656.5">100.000–300.000</tspan></text>
+    <text
+       xml:space="preserve"
+       style="writing-mode:lr-tb;direction:ltr;fill:#000000"
+       x="952.5"
+       y="656.5"
+       id="text253"><tspan
+         sodipodi:role="line"
+         id="tspan253"
+         x="952.5"
+         y="656.5">300.000–500.000</tspan></text>
+    <text
+       xml:space="preserve"
+       style="writing-mode:lr-tb;direction:ltr;fill:#000000"
+       x="1109"
+       y="656"
+       id="text254"><tspan
+         sodipodi:role="line"
+         id="tspan254"
+         x="1109"
+         y="656">&gt; 500.000 USD</tspan></text>
+  </g>
+</svg>
