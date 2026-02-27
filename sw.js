@@ -1,4 +1,4 @@
-const CACHE_NAME = 'priotool-v3.0.4';
+const CACHE_NAME = 'priotool-v3.0.6';
 const ASSETS = [
   './',
   './index.html',

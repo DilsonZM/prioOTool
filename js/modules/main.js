@@ -29,7 +29,7 @@ import {
 } from './auth-service.js';
 import { qs, toggle, setText } from './ui-common.js';
 
-const APP_VERSION = '3.0.4';
+const APP_VERSION = '3.0.6';
 const CERREJON_SECRET = 'PriOTool.Cerrejon.Access.2025!';
 const CONTRACTOR_SECRET = 'PriOTool.Contractor.Access.2025!';
 

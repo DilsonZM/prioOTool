@@ -11,7 +11,7 @@ const DATA = {
   ],
   seguridad: [
     { txt: 'Sin efecto', lvl: 1 },
-    { txt: 'Mínima', lvl: 2 },
+    { txt: 'Preocupacion minima por la seguridad', lvl: 2 },
     { txt: 'Lesión o enfermedad con primeros auxilios', lvl: 3 },
     { txt: 'Lesión o enfermedad con restricción o con tratamiento médico', lvl: 4 },
     { txt: 'Lesión / enfermedad con pérdida de tiempo', lvl: 5 },
